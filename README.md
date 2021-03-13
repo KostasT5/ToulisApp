@@ -14,6 +14,6 @@ The app is focused on an android version, so Android Studio is needed to run the
 
 Launch:
 
-To launch the app, open two terminals. From the root of the project directory write <npx react-native start>. This will start the Metro Javascript Bundler. Once this process is complete, on the next terminal you can initialize the app in the android emulator by writing <npx react-native run-android>. The first initialisation will take a couple of minutes, but if there are no issues, the app will load on the virtual device.
+To launch the app, open two terminals. From the root of the project directory write npx react-native start. This will start the Metro Javascript Bundler. Once this process is complete, on the next terminal you can initialize the app in the android emulator by writing npx react-native run-android. The first initialisation will take a couple of minutes, but if there are no issues, the app will load on the virtual device.
 
 
