@@ -4,4 +4,15 @@
 
  In order to run the app on your local machine, some steps need to be followed in order to complete the setup. 
 
- The app is focused on an android version, so Android Studio is needed to run the app on a simulated device. Following the instructions in the link provided under the React Native CLI Quickstart, you can complete the setup and launch the app in a virtual android device: https://reactnative.dev/docs/environment-setup
+
+Setup:
+
+    Once cloned from the depository, navigate to the project directory. First you will need to delete the package-lock.json file. Next, on a command window run <npm install>. This should install the dependencies of the project. 
+
+    The app is focused on an android version, so Android Studio is needed to run the app on a simulated device. Following the instructions in the link provided under the React Native CLI Quickstart tab, you can complete the setup and launch the app in a virtual android device: https://reactnative.dev/docs/environment-setup. The steps necessary are only the ones under the Android development environment section.
+
+Launch:
+
+    To launch the app, open two terminals. From the root of the project directory write <npx react-native start>. This will start the Metro Javascript Bundler. Once this process is complete, on the next terminal you can initialize the app in the android emulator by writing <npx react-native run-android>. The first initialisation will take a couple of minutes, but if there are no issues, the app will load on the virtual device.
+
+
