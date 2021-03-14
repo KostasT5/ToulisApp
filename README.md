@@ -7,7 +7,7 @@
 
 Setup:
 
-Once cloned from the depository, navigate to the project directory. First you will need to delete the package-lock.json file. Next, on a command window run <npm install>. This should install the dependencies of the project. 
+Once cloned from the depository, navigate to the project directory and run <npm install>. This should install the dependencies of the project. If this command doesn't complete successfully, you will need to delete the package-lock.json file from the project's root directory.
 
 The app is focused on an android version, so Android Studio is needed to run the app on a simulated device. Following the instructions in the link provided under the React Native CLI Quickstart tab, you can complete the setup and launch the app in a virtual android device: https://reactnative.dev/docs/environment-setup. The steps necessary are only the ones under the Android development environment section.
 
