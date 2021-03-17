@@ -125,20 +125,107 @@
 
 
 import * as React from 'react';
-import { Text, View, TextInput, Button, StyleSheet, Image, Platform } from 'react-native';
+import { Text, View, TextInput, Button, StyleSheet, Image, Platform, TouchableOpacity } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 // import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import MapView, {PROVIDER_GOOGLE, Marker, Callout} from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
 import {request, PERMISSIONS} from 'react-native-permissions';
+import { Component } from 'react';
+import { createStackNavigator } from '@react-navigation/stack';
 // import Tab_icons from './img';
 // import Icon from 'react-native-vector-icons/Ionicons'; 
+
+
+
+
+
+
+
+class LoginScreen extends React.Component {
+  state = {
+    user: '',
+    password: ''
+  }
+
+  handleUser = (text) => {
+      this.setState({ user: text })
+  }
+  handlePassword = (text) => {
+      this.setState({ password: text })
+  }
+  login = (user, pass) => {
+      alert('user: ' + user + ' password: ' + pass)
+  }
+  render(){
+    return (
+      <View style = {styles.container}>
+        <TextInput style = {styles.input}
+            underlineColorAndroid = "transparent"
+            placeholder = "Username"
+            placeholderTextColor = "#9a73ef"
+            autoCapitalize = "none"
+            onChangeText = {this.handleUser}/>
+
+        <TextInput style = {styles.input}
+            underlineColorAndroid = "transparent"
+            placeholder = "Password"
+            placeholderTextColor = "#9a73ef"
+            autoCapitalize = "none"
+            onChangeText = {this.handlePassword}/>
+
+        <TouchableOpacity
+            style = {styles.submitButton}
+            onPress = {
+                () => navigation.navigate('App')
+            }>
+            <Text style = {styles.submitButtonText}> Submit </Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+}
+
+function RegisterScreen({navigation}) {
+  return (
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      {/* <Text>User!</Text>
+       */}
+      <TouchableOpacity
+        style = {styles.submitButton}
+        onPress = {
+            () => navigation.navigate('App')
+        }>
+        <Text style = {styles.submitButtonText}> Submit </Text>
+      </TouchableOpacity>
+    </View>
+  );
+}
+
+
+const Stack = createStackNavigator();
+
+function Index() {
+  return(
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen name = "Login" component = {LoginScreen}/>
+        <Stack.Screen name = "Register" component = {RegisterScreen}/>
+        <Stack.Screen name = "App" component = {App}/>
+      </Stack.Navigator>
+  </NavigationContainer>
+  );
+  
+}
 
 function HomeScreen() {
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
       <Text>Home!</Text>
+      <Button 
+        title = 'Login'
+      />
     </View>
   );
 }
@@ -240,7 +327,7 @@ class MapScreen extends React.Component{
 // const Tab = createBottomTabNavigator();
 const Tab = createMaterialBottomTabNavigator();
 
-export default function App() {
+function App() {
   return (
     <NavigationContainer>
       <Tab.Navigator
@@ -315,6 +402,7 @@ export default function App() {
   );
 }
 
+export default Index;
 
 const styles = StyleSheet.create({
   map: {
@@ -332,5 +420,20 @@ const styles = StyleSheet.create({
   map_image: {
     height: '50%',
     width: '50%'
-  }
+  },
+  input: {
+    margin: 15,
+    height: 40,
+    borderColor: '#7a42f4',
+    borderWidth: 1
+    },
+    submitButton: {
+    backgroundColor: '#7a42f4',
+    padding: 10,
+    margin: 15,
+    height: 40,
+    },
+    submitButtonText:{
+    color: 'white'
+    }
 });
