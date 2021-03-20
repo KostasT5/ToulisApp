@@ -134,6 +134,7 @@ import Geolocation from '@react-native-community/geolocation';
 import {request, PERMISSIONS} from 'react-native-permissions';
 import { Component } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
+import General from './general.js'
 // import Tab_icons from './img';
 // import Icon from 'react-native-vector-icons/Ionicons'; 
 
@@ -195,7 +196,7 @@ function RegisterScreen({navigation}) {
       <TouchableOpacity
         style = {styles.submitButton}
         onPress = {
-            () => navigation.navigate('App')
+            () => navigation.navigate('General')
         }>
         <Text style = {styles.submitButtonText}> Submit </Text>
       </TouchableOpacity>
@@ -208,201 +209,203 @@ const Stack = createStackNavigator();
 
 function Index() {
   return(
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name = "Login" component = {LoginScreen}/>
-        <Stack.Screen name = "Register" component = {RegisterScreen}/>
-        <Stack.Screen name = "App" component = {App}/>
-      </Stack.Navigator>
-  </NavigationContainer>
+  //   <NavigationContainer>
+  //     <Stack.Navigator>
+  //       {/* <Stack.Screen name = "Login" component = {LoginScreen}/> */}
+  //       <Stack.Screen name = "Register" component = {RegisterScreen}/>
+  //       <Stack.Screen name = "General" component = {General}/>
+  //     </Stack.Navigator>
+  // </NavigationContainer>
+    <General />
   );
   
-}
-
-function HomeScreen() {
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Home!</Text>
-      <Button 
-        title = 'Login'
-      />
-    </View>
-  );
-}
-
-function UserScreen() {
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>User!</Text>
-    </View>
-  );
-}
-
-function SettingsScreen() {
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Settings!</Text>
-    </View>
-  );
-}
-
-class MapScreen extends React.Component{
-
-  state = {
-    coordinates: [
-      {name: 'Patras', latitude: 38.246550, longitude: 21.734669},
-    ]
-  }
-
-  requestLocationPermission = async () => {
-    if(Platform.OS === 'android') {
-      var response = await request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
-      
-      if(response === 'granted') {
-        this.locateCurrentPosition();
-      }
-    } else {
-
-    }
-  }
-
-
-  locateCurrentPosition = () => {
-    Geolocation.getCurrentPosition(
-      position => {
-        console.log(JSON.stringify(position));
-
-        let initialPosition = {
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-          latitudeDelta: 0.09,
-          longitudeDelta: 0.035,
-        }
-
-        this.setState({initialPosition});
-      },
-      error => Alert.alert(error.message),
-      {enableHighAccuracy: true, timeout: 10000, maximumAge: 1000}
-    )
-  }
-
-  componentDidMount() {
-    this.requestLocationPermission();
-  }
-
-  render() {
-    return (
-    
-      <MapView 
-        showsUserLocation={true}
-        provider={PROVIDER_GOOGLE}
-        ref={map => this._map = map}
-        style={styles.map}
-        initialRegion={this.state.initialPosition}>
-        <Marker
-          coordinate={{latitude: 38.246550, longitude: 21.734669}}
-          // coordinate={this.state.initialPosition.latitude, this.state.initialPosition.longitude}
-          title={'Position'}
-        >
-          {/* <Callout>
-            <Image 
-              source={require('./img/Map_Icons/chat.png')} 
-              style={styles.map_image}
-            />
-            <Text>You are here</Text>
-          </Callout> */}
-            {/* <Image 
-              source={require('./img/Map_Icons/chat.png')} 
-              style={styles.map_image}
-            /> */}
-        </Marker>
-      </MapView>
-      
-  
-    );
-  }
-  
-}
-
-// const Tab = createBottomTabNavigator();
-const Tab = createMaterialBottomTabNavigator();
-
-function App() {
-  return (
-    <NavigationContainer>
-      <Tab.Navigator
-        initialRouteName="Home"
-        activeColor="#FFFFFF"
-        inactiveColor="#B5B2B8"
-        barStyle={{ 
-          backgroundColor: '#2D068E',
-          height: 55,
-          // paddingBottom: 10
-        }}
-      >
-        <Tab.Screen 
-          name="Home" 
-          component={HomeScreen}
-          options={{
-            tabBarLabel: 'Home',
-
-            tabBarIcon: ({ tintColor }) => (
-              <Image
-                source={require('./img/Tab_icons/home.png')}
-                style={[styles.icon, {tintColor: '#c4c4c4'}]} />
-            )
-          }} 
-        />
-        <Tab.Screen 
-          name="Map" 
-          component={MapScreen} 
-          options={{
-            tabBarLabel: 'Map',
-            tabBarIcon: ({ tintColor }) => (
-              <Image
-                source={require('./img/Tab_icons/placeholder.png')}
-                style={[styles.icon, {tintColor: '#c4c4c4'}]} />
-            )
-          }} 
-        />
-        <Tab.Screen 
-          name="User" 
-          component={UserScreen} 
-          options={{
-            tabBarLabel: 'User',
-            tabBarIcon: ({tintColor }) => (
-              <Image
-                source={require('./img/Tab_icons/user.png')}
-                style={[styles.icon, {tintColor: '#c4c4c4'}]} />
-            )
-          }} 
-        />
-      <Tab.Screen 
-          name="Settings" 
-          component={SettingsScreen} 
-          options={{
-            tabBarLabel: 'Settings',
-            tabBarOptions: {
-              // activeTintColor: '#FF2300',
-              inactiveTintColor: '#ffffff'
-      
-          },
-            tabBarIcon: ({tintColor}) => (
-              <Image
-                // color={tintColor}
-                source={require('./img/Tab_icons/settings.png')}
-                style={[styles.icon, {tintColor: '#c4c4c4'}
-              ]} />
-            ),
-
-          }} 
-        />
-      </Tab.Navigator>
-    </NavigationContainer>
-  );
 }
 
 export default Index;
+// function HomeScreen() {
+//   return (
+//     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+//       <Text>Home!</Text>
+//       <Button 
+//         title = 'Login'
+//       />
+//     </View>
+//   );
+// }
+
+// function UserScreen() {
+//   return (
+//     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+//       <Text>User!</Text>
+//     </View>
+//   );
+// }
+
+// function SettingsScreen() {
+//   return (
+//     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+//       <Text>Settings!</Text>
+//     </View>
+//   );
+// }
+
+// class MapScreen extends React.Component{
+
+//   state = {
+//     coordinates: [
+//       {name: 'Patras', latitude: 38.246550, longitude: 21.734669},
+//     ]
+//   }
+
+//   requestLocationPermission = async () => {
+//     if(Platform.OS === 'android') {
+//       var response = await request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
+      
+//       if(response === 'granted') {
+//         this.locateCurrentPosition();
+//       }
+//     } else {
+
+//     }
+//   }
+
+
+//   locateCurrentPosition = () => {
+//     Geolocation.getCurrentPosition(
+//       position => {
+//         console.log(JSON.stringify(position));
+
+//         let initialPosition = {
+//           latitude: position.coords.latitude,
+//           longitude: position.coords.longitude,
+//           latitudeDelta: 0.09,
+//           longitudeDelta: 0.035,
+//         }
+
+//         this.setState({initialPosition});
+//       },
+//       error => Alert.alert(error.message),
+//       {enableHighAccuracy: true, timeout: 10000, maximumAge: 1000}
+//     )
+//   }
+
+//   componentDidMount() {
+//     this.requestLocationPermission();
+//   }
+
+//   render() {
+//     return (
+    
+//       <MapView 
+//         showsUserLocation={true}
+//         provider={PROVIDER_GOOGLE}
+//         ref={map => this._map = map}
+//         style={styles.map}
+//         initialRegion={this.state.initialPosition}>
+//         <Marker
+//           coordinate={{latitude: 38.246550, longitude: 21.734669}}
+//           // coordinate={this.state.initialPosition.latitude, this.state.initialPosition.longitude}
+//           title={'Position'}
+//         >
+//           {/* <Callout>
+//             <Image 
+//               source={require('./img/Map_Icons/chat.png')} 
+//               style={styles.map_image}
+//             />
+//             <Text>You are here</Text>
+//           </Callout> */}
+//             {/* <Image 
+//               source={require('./img/Map_Icons/chat.png')} 
+//               style={styles.map_image}
+//             /> */}
+//         </Marker>
+//       </MapView>
+      
+  
+//     );
+//   }
+  
+// }
+
+// // const Tab = createBottomTabNavigator();
+// const Tab = createMaterialBottomTabNavigator();
+
+// function App() {
+//   return (
+//     <NavigationContainer>
+//       <Tab.Navigator
+//         initialRouteName="Home"
+//         activeColor="#FFFFFF"
+//         inactiveColor="#B5B2B8"
+//         barStyle={{ 
+//           backgroundColor: '#2D068E',
+//           height: 55,
+//           // paddingBottom: 10
+//         }}
+//       >
+//         <Tab.Screen 
+//           name="Home" 
+//           component={HomeScreen}
+//           options={{
+//             tabBarLabel: 'Home',
+
+//             tabBarIcon: ({ tintColor }) => (
+//               <Image
+//                 source={require('./img/Tab_icons/home.png')}
+//                 style={[styles.icon, {tintColor: '#c4c4c4'}]} />
+//             )
+//           }} 
+//         />
+//         <Tab.Screen 
+//           name="Map" 
+//           component={MapScreen} 
+//           options={{
+//             tabBarLabel: 'Map',
+//             tabBarIcon: ({ tintColor }) => (
+//               <Image
+//                 source={require('./img/Tab_icons/placeholder.png')}
+//                 style={[styles.icon, {tintColor: '#c4c4c4'}]} />
+//             )
+//           }} 
+//         />
+//         <Tab.Screen 
+//           name="User" 
+//           component={UserScreen} 
+//           options={{
+//             tabBarLabel: 'User',
+//             tabBarIcon: ({tintColor }) => (
+//               <Image
+//                 source={require('./img/Tab_icons/user.png')}
+//                 style={[styles.icon, {tintColor: '#c4c4c4'}]} />
+//             )
+//           }} 
+//         />
+//       <Tab.Screen 
+//           name="Settings" 
+//           component={SettingsScreen} 
+//           options={{
+//             tabBarLabel: 'Settings',
+//             tabBarOptions: {
+//               // activeTintColor: '#FF2300',
+//               inactiveTintColor: '#ffffff'
+      
+//           },
+//             tabBarIcon: ({tintColor}) => (
+//               <Image
+//                 // color={tintColor}
+//                 source={require('./img/Tab_icons/settings.png')}
+//                 style={[styles.icon, {tintColor: '#c4c4c4'}
+//               ]} />
+//             ),
+
+//           }} 
+//         />
+//       </Tab.Navigator>
+//     </NavigationContainer>
+//   );
+// }
+
+// export default Index;
 
 const styles = StyleSheet.create({
   map: {

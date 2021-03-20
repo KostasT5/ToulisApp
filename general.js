@@ -6,6 +6,9 @@ import { createMaterialBottomTabNavigator } from '@react-navigation/material-bot
 import MapView, {PROVIDER_GOOGLE, Marker, Callout} from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
 import {request, PERMISSIONS} from 'react-native-permissions';
+// import SettingsScreen from './settings.js'
+import LoginScreen from './loginpage.js'
+import RegisterScreen from './registerpage.js'
 
 function HomeScreen() {
     return (
@@ -26,13 +29,54 @@ return (
 );
 }
 
-function SettingsScreen() {
-return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-    <Text>Settings!</Text>
-    </View>
-);
+class SettingsScreen extends React.Component {
+
+    constructor(props) {
+        super(props);
+
+    }
+    handleLogin = () => {
+        // console.log("Login");
+        return <LoginScreen />;
+        // navigation.push('LoginScreen');
+    }
+    
+    render() {
+        // var loginToken = False;
+        return(
+            // <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            //     <Text>Settings!</Text>
+                   
+            //     <TouchableOpacity
+            //         style = {styles.loginBttn}
+            //         onPress = {this.handleLogin
+            //             // () => console.log("button")
+            //         }>
+            //         <Text 
+            //             style = {styles.loginText}
+            //         >Login</Text>
+            //     </TouchableOpacity>
+            //     <Text>or</Text>
+            //     <TouchableOpacity
+            //         style = {styles.loginBttn}
+            //         onPress = {
+            //             () => console.log("registerbutton")
+            //         }>
+            //         <Text 
+            //             style = {styles.loginText}
+            //         >Register</Text>
+            //     </TouchableOpacity>
+            // </View>
+            
+            // <LoginScreen />
+            <RegisterScreen />
+        );
+    }
+    
+    
+    
 }
+
 
 class MapScreen extends React.Component{
 
@@ -129,61 +173,61 @@ return (
         }}
     >
         <Tab.Screen 
-        name="Home" 
-        component={HomeScreen}
-        options={{
-            tabBarLabel: 'Home',
+            name="Home" 
+            component={HomeScreen}
+            options={{
+                tabBarLabel: 'Home',
 
-            tabBarIcon: ({ tintColor }) => (
-            <Image
-                source={require('./img/Tab_icons/home.png')}
-                style={[styles.icon, {tintColor: '#c4c4c4'}]} />
-            )
-        }} 
+                tabBarIcon: ({ tintColor }) => (
+                <Image
+                    source={require('./img/Tab_icons/home.png')}
+                    style={[styles.icon, {tintColor: '#c4c4c4'}]} />
+                )
+            }} 
         />
         <Tab.Screen 
-        name="Map" 
-        component={MapScreen} 
-        options={{
-            tabBarLabel: 'Map',
-            tabBarIcon: ({ tintColor }) => (
-            <Image
-                source={require('./img/Tab_icons/placeholder.png')}
-                style={[styles.icon, {tintColor: '#c4c4c4'}]} />
-            )
-        }} 
+            name="Map" 
+            component={MapScreen} 
+            options={{
+                tabBarLabel: 'Map',
+                tabBarIcon: ({ tintColor }) => (
+                <Image
+                    source={require('./img/Tab_icons/placeholder.png')}
+                    style={[styles.icon, {tintColor: '#c4c4c4'}]} />
+                )
+            }} 
         />
         <Tab.Screen 
-        name="User" 
-        component={UserScreen} 
-        options={{
-            tabBarLabel: 'User',
-            tabBarIcon: ({tintColor }) => (
-            <Image
-                source={require('./img/Tab_icons/user.png')}
-                style={[styles.icon, {tintColor: '#c4c4c4'}]} />
-            )
-        }} 
+            name="User" 
+            component={UserScreen} 
+            options={{
+                tabBarLabel: 'User',
+                tabBarIcon: ({tintColor }) => (
+                <Image
+                    source={require('./img/Tab_icons/user.png')}
+                    style={[styles.icon, {tintColor: '#c4c4c4'}]} />
+                )
+            }} 
         />
-    <Tab.Screen 
-        name="Settings" 
-        component={SettingsScreen} 
-        options={{
-            tabBarLabel: 'Settings',
-            tabBarOptions: {
-            // activeTintColor: '#FF2300',
-            inactiveTintColor: '#ffffff'
-    
-        },
-            tabBarIcon: ({tintColor}) => (
-            <Image
-                // color={tintColor}
-                source={require('./img/Tab_icons/settings.png')}
-                style={[styles.icon, {tintColor: '#c4c4c4'}
-            ]} />
-            ),
+        <Tab.Screen 
+            name="Settings" 
+            component={SettingsScreen} 
+            options={{
+                tabBarLabel: 'Settings',
+                tabBarOptions: {
+                // activeTintColor: '#FF2300',
+                inactiveTintColor: '#ffffff'
+        
+                },
+                tabBarIcon: ({tintColor}) => (
+                <Image
+                    // color={tintColor}
+                    source={require('./img/Tab_icons/settings.png')}
+                    style={[styles.icon, {tintColor: '#c4c4c4'}
+                ]} />
+                ),
 
-        }} 
+            }} 
         />
     </Tab.Navigator>
     </NavigationContainer>
@@ -215,14 +259,24 @@ const styles = StyleSheet.create({
         borderColor: '#7a42f4',
         borderWidth: 1
         },
-        submitButton: {
+    submitButton: {
         backgroundColor: '#7a42f4',
         padding: 10,
         margin: 15,
         height: 40,
         },
-        submitButtonText:{
+    submitButtonText:{
         color: 'white'
+    },
+    loginBttn: {
+        color:'white',
+        backgroundColor:'white'
+    },
+    loginText: {
+        color:'blue'
+    },
+    registerButton: {
+
     }
 });
   
