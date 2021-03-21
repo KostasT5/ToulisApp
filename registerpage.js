@@ -4,7 +4,7 @@ import { View, Text, TouchableOpacity, TextInput, StyleSheet } from 'react-nativ
 function RegisterScreen(){
     const[email, setEmail] = useState('');
     const[psswd, setPsswd] = useState('');
-    
+    const[confirm, setConfirm] = useState('');
     const emailHandler = (val) => {
         setEmail(val);
     }
@@ -13,8 +13,23 @@ function RegisterScreen(){
         setPsswd(val);
     }
 
+    const confirmHandler = (val) => {
+        if (val === psswd) {
+            // console.log(psswd);
+            setConfirm(true);
+            console.log(confirm);
+            return true;
+        } else {
+            // console.log('val');
+            return false;
+        }
+    }
+
     const registerHandler = () => {
-        console.log('email: ' + email + ' password: ' + psswd);
+        if (confirm) {
+            console.log('email: ' + email + ' password: ' + psswd);
+        }
+        
         // setEmail(val)
     }
 
@@ -51,7 +66,7 @@ function RegisterScreen(){
                 placeholder = "Confirm Password"
                 placeholderTextColor = "#9a73ef"
                 autoCapitalize = "none"
-                onChangeText = {psswdHandler}
+                onChangeText = {confirmHandler}
             />
 
             <TouchableOpacity
@@ -70,7 +85,8 @@ export default RegisterScreen
 
 const styles = StyleSheet.create({
     container: {
-        // backgroundColor: 'black',
+        backgroundColor: '#1C1C1C',
+        flex: 1,
         paddingTop: 23
     },
     input: {

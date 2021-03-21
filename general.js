@@ -12,7 +12,7 @@ import RegisterScreen from './registerpage.js'
 
 function HomeScreen() {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <View style={styles.container}>
         <Text>Home!</Text>
         <Button 
           title = 'Login'
@@ -23,7 +23,7 @@ function HomeScreen() {
   
 function UserScreen() {
 return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <View style={ styles.container }>
     <Text>User!</Text>
     </View>
 );
@@ -168,7 +168,7 @@ return (
         inactiveColor="#B5B2B8"
         barStyle={{ 
         backgroundColor: '#2D068E',
-        height: 55,
+        // height: 55,
         // paddingBottom: 10
         }}
     >
@@ -277,6 +277,11 @@ const styles = StyleSheet.create({
     },
     registerButton: {
 
-    }
+    },
+    container: {
+        backgroundColor: '#1C1C1C',
+        flex: 1,
+        paddingTop: 23
+    },
 });
   
