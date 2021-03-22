@@ -14,9 +14,9 @@ function HomeScreen() {
     return (
       <View style={styles.container}>
         <Text>Home!</Text>
-        <Button 
+        {/* <Button 
           title = 'Login'
-        />
+        /> */}
       </View>
     );
 }
