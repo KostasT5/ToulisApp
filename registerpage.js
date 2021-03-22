@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
     },
     input: {
         margin: 15,
-        height: 40,
+        height: 50,
         borderColor: '#7a42f4',
         borderWidth: 1
     },
@@ -99,10 +99,15 @@ const styles = StyleSheet.create({
         backgroundColor: '#5C29F0',
         padding: 10,
         margin: 15,
-        height: 40,
+        marginTop: 25,
+        height: 50,
+        alignContent: 'center',
+        justifyContent: 'center'
     },
     submitButtonText:{
-        color: 'white'
+        color: 'white',
+        flex: 2
+        
     }
     
 })
