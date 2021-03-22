@@ -166,10 +166,12 @@ return (
         initialRouteName="Home"
         activeColor="#FFFFFF"
         inactiveColor="#B5B2B8"
+        // inactiveColor = "#FF3E00"
         barStyle={{ 
-        backgroundColor: '#2D068E',
-        // height: 55,
-        // paddingBottom: 10
+            // backgroundColor: '#2D068E',
+            backgroundColor: '#AF1500',
+            // height: 55,
+            // paddingBottom: 10
         }}
     >
         <Tab.Screen 

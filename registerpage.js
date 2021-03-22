@@ -40,7 +40,10 @@ function RegisterScreen(){
             <TextInput style = {styles.input}
                 underlineColorAndroid = "transparent"
                 placeholder = "Email"
-                placeholderTextColor = "#9a73ef"
+                // placeholderTextColor = "#9a73ef"
+                placeholderTextColor= '#FF3E00'
+                textContentType = 'emailAddress'
+                selectionColor = 'white'
                 autoCapitalize = "none"
                 onChangeText = {emailHandler}
             />
@@ -48,7 +51,9 @@ function RegisterScreen(){
             <TextInput style = {styles.input}
                 underlineColorAndroid = "transparent"
                 placeholder = "Username"
-                placeholderTextColor = "#9a73ef"
+                // placeholderTextColor = "#9a73ef"
+                placeholderTextColor= '#FF3E00'
+                selectionColor = 'white'
                 autoCapitalize = "none"
                 onChangeText = {psswdHandler}
             />
@@ -56,7 +61,11 @@ function RegisterScreen(){
             <TextInput style = {styles.input}
                 underlineColorAndroid = "transparent"
                 placeholder = "Password"
-                placeholderTextColor = "#9a73ef"
+                // placeholderTextColor = "#9a73ef"
+                placeholderTextColor= '#FF3E00'
+                textContentType = 'password'
+                selectionColor = 'white'
+                secureTextEntry={true}
                 autoCapitalize = "none"
                 onChangeText = {psswdHandler}
             />
@@ -64,7 +73,11 @@ function RegisterScreen(){
             <TextInput style = {styles.input}
                 underlineColorAndroid = "transparent"
                 placeholder = "Confirm Password"
-                placeholderTextColor = "#9a73ef"
+                // placeholderTextColor = "#9a73ef"
+                placeholderTextColor= '#FF3E00'
+                textContentType = 'password'
+                selectionColor = 'white'
+                secureTextEntry={true}
                 autoCapitalize = "none"
                 onChangeText = {confirmHandler}
             />
@@ -92,21 +105,25 @@ const styles = StyleSheet.create({
     input: {
         margin: 15,
         height: 50,
-        borderColor: '#7a42f4',
+        color: 'white',
+        // borderColor: '#7a42f4',
+        // placeholderTextColor: '#C22F00',
+        borderColor: '#C22F00',
         borderWidth: 1
     },
     submitButton: {
-        backgroundColor: '#5C29F0',
+        // backgroundColor: '#5C29F0',
+        backgroundColor: '#C22F00',
         padding: 10,
         margin: 15,
         marginTop: 25,
         height: 50,
-        alignContent: 'center',
-        justifyContent: 'center'
+        // alignContent: 'center',
+        // justifyContent: 'center'
     },
     submitButtonText:{
         color: 'white',
-        flex: 2
+        // flex: 2
         
     }
     
