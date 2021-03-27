@@ -135,6 +135,7 @@ import {request, PERMISSIONS} from 'react-native-permissions';
 import { Component } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import General from './general.js'
+import RootStackScreen from './RootStackScreen.js'
 // import Tab_icons from './img';
 // import Icon from 'react-native-vector-icons/Ionicons'; 
 
@@ -149,21 +150,22 @@ import General from './general.js'
 
 const Stack = createStackNavigator();
 
-function Index() {
+function App() {
   return(
-  //   <NavigationContainer>
-  //     <Stack.Navigator>
-  //       {/* <Stack.Screen name = "Login" component = {LoginScreen}/> */}
-  //       <Stack.Screen name = "Register" component = {RegisterScreen}/>
-  //       <Stack.Screen name = "General" component = {General}/>
-  //     </Stack.Navigator>
-  // </NavigationContainer>
-    <General />
+    <NavigationContainer>
+        <RootStackScreen />
+       {/* <Stack.Navigator>
+         <Stack.Screen name = "Login" component = {LoginScreen}/>
+         <Stack.Screen name = "Register" component = {RegisterScreen}/>
+         <Stack.Screen name = "General" component = {General}/>
+       </Stack.Navigator> */}
+    </NavigationContainer>
+
   );
   
 }
 
-export default Index;
+export default App;
 
 
 const styles = StyleSheet.create({

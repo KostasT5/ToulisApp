@@ -7,8 +7,10 @@ import MapView, {PROVIDER_GOOGLE, Marker, Callout} from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
 import {request, PERMISSIONS} from 'react-native-permissions';
 // import SettingsScreen from './settings.js'
-import LoginScreen from './loginpage.js'
+import LoginScreen from './LoginScreen.js'
 import RegisterScreen from './registerpage.js'
+import StartingScreen from './loginorregister.js'
+
 
 function HomeScreen() {
     return (
@@ -30,11 +32,26 @@ return (
 }
 
 class SettingsScreen extends React.Component {
-
     constructor(props) {
         super(props);
-
+        this.state = {selectedPage: 'Start'}
     }
+
+    renderCaseView = (param) => {
+        switch(param) {
+            case 'Start':
+                return <StartingScreen />;
+                break;
+            case 'Login':
+                return <LoginScreen />;
+                break;
+            case 'Register':
+                return <RegisterScreen />
+                break;
+            
+        }
+    }
+
     handleLogin = () => {
         // console.log("Login");
         return <LoginScreen />;
@@ -68,8 +85,8 @@ class SettingsScreen extends React.Component {
             //     </TouchableOpacity>
             // </View>
             
-            // <LoginScreen />
-            <RegisterScreen />
+            <LoginScreen />
+            // <RegisterScreen />
         );
     }
     
@@ -125,30 +142,30 @@ componentDidMount() {
 render() {
     return (
     
-    <MapView 
-        showsUserLocation={true}
-        provider={PROVIDER_GOOGLE}
-        ref={map => this._map = map}
-        style={styles.map}
-        initialRegion={this.state.initialPosition}>
-        <Marker
-        coordinate={{latitude: 38.246550, longitude: 21.734669}}
-        // coordinate={this.state.initialPosition.latitude, this.state.initialPosition.longitude}
-        title={'Position'}
-        >
-        {/* <Callout>
-            <Image 
-            source={require('./img/Map_Icons/chat.png')} 
-            style={styles.map_image}
-            />
-            <Text>You are here</Text>
-        </Callout> */}
-            {/* <Image 
-            source={require('./img/Map_Icons/chat.png')} 
-            style={styles.map_image}
-            /> */}
-        </Marker>
-    </MapView>
+        <MapView 
+            showsUserLocation={true}
+            provider={PROVIDER_GOOGLE}
+            ref={map => this._map = map}
+            style={styles.map}
+            initialRegion={this.state.initialPosition}>
+            <Marker
+                coordinate={{latitude: 38.246550, longitude: 21.734669}}
+                // coordinate={this.state.initialPosition.latitude, this.state.initialPosition.longitude}
+                title={'Position'}
+            >
+            {/* <Callout>
+                <Image 
+                source={require('./img/Map_Icons/chat.png')} 
+                style={styles.map_image}
+                />
+                <Text>You are here</Text>
+            </Callout> */}
+                {/* <Image 
+                source={require('./img/Map_Icons/chat.png')} 
+                style={styles.map_image}
+                /> */}
+            </Marker>
+        </MapView>
     
 
     );
@@ -161,7 +178,7 @@ const Tab = createMaterialBottomTabNavigator();
 
 export default function App() {
 return (
-    <NavigationContainer>
+    // <NavigationContainer independent={true}>
     <Tab.Navigator
         initialRouteName="Home"
         activeColor="#FFFFFF"
@@ -169,7 +186,7 @@ return (
         // inactiveColor = "#FF3E00"
         barStyle={{ 
             // backgroundColor: '#2D068E',
-            backgroundColor: '#AF1500',
+            backgroundColor: '#C34E01',
             // height: 55,
             // paddingBottom: 10
         }}
@@ -232,7 +249,7 @@ return (
             }} 
         />
     </Tab.Navigator>
-    </NavigationContainer>
+    // </NavigationContainer>
 );
 }
 
