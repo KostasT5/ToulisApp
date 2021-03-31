@@ -90,7 +90,7 @@ function RegisterScreen(){
                 onPress = {
                     registerHandler
                 }>
-                <Text style = {styles.submitButtonText}> Submit </Text>
+                <Text style = {styles.buttonText}> Submit </Text>
             </TouchableOpacity>
         </View>
     )
@@ -101,9 +101,11 @@ export default RegisterScreen
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: '#1C1C1C',
+        backgroundColor: '#222831',
         flex: 1,
-        paddingTop: 23
+        // paddingTop: -10,
+        alignContent: 'center',
+        justifyContent: 'center',
     },
     input: {
         margin: 15,
@@ -111,23 +113,22 @@ const styles = StyleSheet.create({
         color: 'white',
         // borderColor: '#7a42f4',
         // placeholderTextColor: '#C22F00',
-        borderColor: '#C22F00',
+        borderColor: '#f05454',
         borderWidth: 1
     },
     submitButton: {
         // backgroundColor: '#5C29F0',
-        backgroundColor: '#C22F00',
+        backgroundColor: '#f05454',
         padding: 10,
         margin: 15,
         marginTop: 25,
         height: 50,
-        // alignContent: 'center',
-        // justifyContent: 'center'
+        alignContent: 'center',
+        justifyContent: 'center',
     },
-    submitButtonText:{
-        color: 'white',
-        // flex: 2
-        
-    }
+    buttonText: {
+        fontSize: 20,
+        color: '#ffffff',
+    },
     
 })

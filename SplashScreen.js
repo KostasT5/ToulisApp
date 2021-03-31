@@ -22,19 +22,19 @@ const SplashScreen = ({navigation}) => {
                 
             </View>
             <View style={styles.footer}>
-                <Text style={styles.title}>Discover Your City</Text>
+                <Text style={styles.title}>Login or Create an Account</Text>
                 <View style={styles.buttonContainer}>
                     <TouchableOpacity
                         style={styles.buttonStyle}
                         activeOpacity={0.5}
-                        onPress={() => {navigation.navigate('LoginScreen')}}>
-                        <Text style={styles.innerText}>Log In</Text>
+                        onPress={() => {navigation.navigate('LoginScreen')}}> 
+                        <Text style={styles.buttonText}>Log In</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={styles.buttonStyle}
                         activeOpacity={0.5}
                         onPress={() => {navigation.navigate('RegisterScreen')}}>
-                        <Text style={styles.innerText}>Register</Text>
+                        <Text style={styles.buttonText}>Register</Text> 
                     </TouchableOpacity>
                 </View>
                 
@@ -53,62 +53,72 @@ const styles = StyleSheet.create({
         flex: 1,
         // alignItems: 'center',
         // justifyContent: 'center',
-        backgroundColor: '#C34E01'
+        backgroundColor: '#dddddd'
     },
     header: {
         flex: 2,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#C34E01'
+        backgroundColor: '#dddddd'
     },
     logo: {
         width: 0.25*height,
         height: 0.25*height,
     },
     innerText: {
-        color: '#1c1c1c'
+        color: '#ffffff',
+        flex: 1
     },
     footer: {
         flex: 1,
-        flexWrap: 'wrap',
-        flexDirection: 'column',
-        alignItems: 'stretch',
-        justifyContent: 'space-evenly',
-        backgroundColor: '#1c1c1c',
-        borderTopLeftRadius: 30,
-        borderTopRightRadius:30,
+        // flexWrap: 'wrap',
+        borderWidth: 2,
+        // flexDirection: 'row',
+        // alignItems: 'flex-start',
+        // justifyContent: 'space-between',
+        backgroundColor: '#222831',
+        borderTopLeftRadius: 40,
+        borderTopRightRadius: 40,
         paddingVertical: 50,
         paddingHorizontal: 30
     },
     buttonContainer:{
         flex: 1,
         flexWrap: 'wrap',
-        flexDirection: 'column',
-        alignItems: 'stretch',
-        justifyContent: 'space-evenly',
-        backgroundColor: '#1c1c1c',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        backgroundColor: '#222831',
+        marginTop: 40,
+        marginLeft: -20,
+        marginRight: -20,
     },
     buttonStyle: {
-        flex: 1,
+        // flex: 1,
         // flexDirection: 'column',
-        backgroundColor: '#ffffff',
+        backgroundColor: '#f05454',
         borderWidth: 1,
-        color: '#FF3E00',
+        color: '#9dbeb7',
         borderColor: '#FF3E00',
         height: 70,
-        width: 100,
+        width: 140,
         alignItems: 'center',
-        borderRadius: 50,
-        marginLeft: 35,
-        marginRight: 35,
-        marginTop: 20,
-        marginBottom: 25,
+        justifyContent: 'center',
+        borderRadius: 15,
+        marginLeft: 10,
+        marginRight: 10,
+        marginTop: 30,
+        marginBottom: 15,
     },
     title: {
         fontSize: 25,
         color: '#ffffff',
         // marginBottom: 30,
-        marginTop: -30
+        marginTop: 0
+    },
+    buttonText: {
+        fontSize: 20,
+        color: '#ffffff',
     },
 });
 
