@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Text, View, TextInput, Button, StyleSheet, Image, Platform, TouchableOpacity } from 'react-native';
+import {useState} from 'react';
+import { Text, View, TextInput, Button, StyleSheet, Image, Platform, TouchableOpacity, FlatList } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 // import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
@@ -10,87 +11,64 @@ import {request, PERMISSIONS} from 'react-native-permissions';
 import LoginScreen from './LoginScreen.js'
 import RegisterScreen from './registerpage.js'
 import StartingScreen from './loginorregister.js'
+// import User from './UserScreen.js'
 
 
 function HomeScreen() {
+    const [places, setPlaces] = useState([
+        {name: 'Place 1', key: '1', description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'},
+        {name: 'Place 2', key: '2', description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'},
+        {name: 'Place 3', key: '3', description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'},
+        {name: 'Place 4', key: '4', description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'},
+        {name: 'Place 5', key: '5', description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'},
+        {name: 'Place 6', key: '6', description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'},
+        {name: 'Place 7', key: '7', description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'},
+        {name: 'Place 8', key: '8', description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'},  
+        {name: 'Place 9', key: '9', description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'},
+        {name: 'Place 10', key: '10', description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'},
+        {name: 'Place 11', key: '11', description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'},
+        {name: 'Place 12', key: '12', description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'},
+        {name: 'Place 13', key: '13', description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'},
+        {name: 'Place 14', key: '14', description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'},
+        {name: 'Place 15', key: '15', description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'},
+        {name: 'Place 16', key: '16', description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'},  
+    ]);
     return (
       <View style={styles.container}>
-        <Text>Home!</Text>
-        {/* <Button 
-          title = 'Login'
-        /> */}
+        
+        <Text style={styles.title}>Places near you:</Text>
+        <FlatList
+            style={styles.list}
+            data={places}
+            renderItem={({item}) => (
+                <View>
+                    <Text style={styles.item}>{item.name}</Text>
+                    <Text style={styles.innerText}>{item.description}</Text>
+                </View>
+            )}
+        />
       </View>
     );
 }
   
 function UserScreen({navigation}) {
-
     const logoutHandler = () => {
         navigation.navigate('SplashScreen');
     }
-
-return (
-    <View style={ styles.container }>
-        <Text>User!</Text>
-        <TouchableOpacity
-                style = {styles.submitButton}
-                onPress = {
-                    logoutHandler
-                }>
-                <Text style = {styles.buttonText}> Logout </Text>
-        </TouchableOpacity>
-    </View>
-);
+    return (
+        <View style={ styles.container }>
+            <Text>User!</Text>
+            <TouchableOpacity
+                    style = {styles.submitButton}
+                    onPress = {
+                        logoutHandler
+                    }>
+                    <Text style = {styles.buttonText}> Logout </Text>
+            </TouchableOpacity>
+        </View>
+    );
 }
 
-class SettingsScreen extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {selectedPage: 'Start'}
-    }
-
-
-    handleLogin = () => {
-        // console.log("Login");
-        return <LoginScreen />;
-        // navigation.push('LoginScreen');
-    }
-    
-    render() {
-        // var loginToken = False;
-        return(
-            // <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            //     <Text>Settings!</Text>
-                   
-            //     <TouchableOpacity
-            //         style = {styles.loginBttn}
-            //         onPress = {this.handleLogin
-            //             // () => console.log("button")
-            //         }>
-            //         <Text 
-            //             style = {styles.loginText}
-            //         >Login</Text>
-            //     </TouchableOpacity>
-            //     <Text>or</Text>
-            //     <TouchableOpacity
-            //         style = {styles.loginBttn}
-            //         onPress = {
-            //             () => console.log("registerbutton")
-            //         }>
-            //         <Text 
-            //             style = {styles.loginText}
-            //         >Register</Text>
-            //     </TouchableOpacity>
-            // </View>
-            
-            <LoginScreen />
-            // <RegisterScreen />
-        );
-    }
-    
-    
-    
-}
 
 
 class MapScreen extends React.Component{
@@ -226,26 +204,6 @@ return (
                 )
             }} 
         />
-        {/* <Tab.Screen 
-            name="Settings" 
-            component={SettingsScreen} 
-            options={{
-                tabBarLabel: 'Settings',
-                tabBarOptions: {
-                // activeTintColor: '#FF2300',
-                inactiveTintColor: '#ffffff'
-        
-                },
-                tabBarIcon: ({tintColor}) => (
-                <Image
-                    // color={tintColor}
-                    source={require('./img/Tab_icons/settings.png')}
-                    style={[styles.icon, {tintColor: '#c4c4c4'}
-                ]} />
-                ),
-
-            }} 
-        /> */}
     </Tab.Navigator>
     // </NavigationContainer>
 );
@@ -304,6 +262,32 @@ const styles = StyleSheet.create({
         backgroundColor: '#222831',
         flex: 1,
         paddingTop: 23
+    },
+    innerText: {
+        color: '#ffffff',
+        flex: 1
+    },
+    title: {
+        fontSize: 35,
+        color: '#ffffff',
+        // marginBottom: 30,
+        marginTop: 0,
+        paddingLeft: 10,
+        paddingBottom: 20,
+        
+    },
+    item :{
+        fontSize: 25,
+        color: '#ffffff',
+        paddingBottom: 10,
+        paddingLeft: 15,
+    },
+    list: {
+        flex: 1,
+        backgroundColor: '#30475e',
+        padding: 15,
+        borderTopRightRadius: 15,
+        borderTopLeftRadius: 15,
     },
 });
   
