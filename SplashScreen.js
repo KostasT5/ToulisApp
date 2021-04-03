@@ -9,7 +9,8 @@ import {
   Text, 
   Button,
   Dimensions,
-  TouchableOpacity
+  TouchableOpacity,
+  Image,
 } from 'react-native';
 
 // import LoginScreen from './LoginScreen.js'
@@ -18,7 +19,12 @@ const SplashScreen = ({navigation}) => {
     return (
         <View style={styles.container}>
             <View style={styles.header}>
-                <Text style={styles.logo}>Logo</Text>
+                {/* <Text style={styles.logo}>Logo</Text>
+                 */}
+                <Image
+                    source={require('./img/logo.png')}
+                    style={styles.logo}
+                />
                 
             </View>
             <View style={styles.footer}>
@@ -62,8 +68,9 @@ const styles = StyleSheet.create({
         backgroundColor: '#dddddd'
     },
     logo: {
-        width: 0.25*height,
-        height: 0.25*height,
+        width: 0.5*height,
+        height: 0.5*height,
+        flex: 1,
     },
     innerText: {
         color: '#ffffff',
@@ -72,7 +79,7 @@ const styles = StyleSheet.create({
     footer: {
         flex: 1,
         // flexWrap: 'wrap',
-        borderWidth: 2,
+        borderWidth: 1,
         // flexDirection: 'row',
         // alignItems: 'flex-start',
         // justifyContent: 'space-between',

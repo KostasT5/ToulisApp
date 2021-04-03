@@ -52,6 +52,24 @@ function HomeScreen() {
 }
   
 function UserScreen({navigation}) {
+    const [history,setHistory] = useState([
+        {name: 'Place 1', key: '1', comment:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'},
+        {name: 'Place 2', key: '2', comment:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'},
+        {name: 'Place 3', key: '3', comment:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'},
+        {name: 'Place 4', key: '4', comment:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'},
+        {name: 'Place 5', key: '5', comment:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'},
+        {name: 'Place 6', key: '6', comment:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'},
+        {name: 'Place 7', key: '7', comment:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'},
+        {name: 'Place 8', key: '8', comment:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'},  
+        {name: 'Place 9', key: '9', comment:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'},
+        {name: 'Place 10', key: '10', comment:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'},
+        {name: 'Place 11', key: '11', comment:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'},
+        {name: 'Place 12', key: '12', comment:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'},
+        {name: 'Place 13', key: '13', comment:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'},
+        {name: 'Place 14', key: '14', comment:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'},
+        {name: 'Place 15', key: '15', comment:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'},
+        {name: 'Place 16', key: '16', comment:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'}, 
+    ]);
     const logoutHandler = () => {
         navigation.navigate('SplashScreen');
     }
@@ -65,6 +83,16 @@ function UserScreen({navigation}) {
                     }>
                     <Text style = {styles.buttonText}> Logout </Text>
             </TouchableOpacity>
+            <FlatList
+                style={styles.list}
+                data={history}
+                renderItem={({item}) => (
+                    <View>
+                        <Text style={styles.item}>{item.name}</Text>
+                        <Text style={styles.innerText}>{item.comment}</Text>
+                    </View>
+                )}
+            />
         </View>
     );
 }
@@ -274,6 +302,7 @@ const styles = StyleSheet.create({
         marginTop: 0,
         paddingLeft: 10,
         paddingBottom: 20,
+        // paddingTop: 20,
         
     },
     item :{
@@ -281,11 +310,13 @@ const styles = StyleSheet.create({
         color: '#ffffff',
         paddingBottom: 10,
         paddingLeft: 15,
+        paddingTop: 10,
     },
     list: {
         flex: 1,
         backgroundColor: '#30475e',
         padding: 15,
+        // paddingBottom: 40,
         borderTopRightRadius: 15,
         borderTopLeftRadius: 15,
     },
