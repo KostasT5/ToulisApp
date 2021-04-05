@@ -13,6 +13,8 @@ import {
   Image,
 } from 'react-native';
 
+import LinearGradient from 'react-native-linear-gradient'
+import * as Animatable from 'react-native-animatable'
 // import LoginScreen from './LoginScreen.js'
 
 const SplashScreen = ({navigation}) => {
@@ -21,30 +23,47 @@ const SplashScreen = ({navigation}) => {
             <View style={styles.header}>
                 {/* <Text style={styles.logo}>Logo</Text>
                  */}
-                <Image
+                <Animatable.Image
+                    animation='bounceIn'
+                    duraton={2000}
                     source={require('./img/logo.png')}
                     style={styles.logo}
                 />
                 
             </View>
-            <View style={styles.footer}>
+            <Animatable.View 
+                style={styles.footer}
+                animation='fadeInUp'
+                delay={200}
+            >
                 <Text style={styles.title}>Login or Create an Account</Text>
                 <View style={styles.buttonContainer}>
                     <TouchableOpacity
-                        style={styles.buttonStyle}
+                        // style={styles.buttonStyle}
                         activeOpacity={0.5}
                         onPress={() => {navigation.navigate('LoginScreen')}}> 
-                        <Text style={styles.buttonText}>Log In</Text>
+                        <LinearGradient
+                            colors={['#f05454','#FF1D1D']}
+                            style={styles.buttonStyle}    
+                        >
+                            <Text style={styles.buttonText}>Log In</Text>
+                        </LinearGradient>
+                        
                     </TouchableOpacity>
                     <TouchableOpacity
-                        style={styles.buttonStyle}
+                        // style={styles.buttonStyle}
                         activeOpacity={0.5}
                         onPress={() => {navigation.navigate('RegisterScreen')}}>
-                        <Text style={styles.buttonText}>Register</Text> 
+                        <LinearGradient
+                            colors={['#f05454','#FF1D1D']}
+                            style={styles.buttonStyle}    
+                        >
+                            <Text style={styles.buttonText}>Register</Text>
+                        </LinearGradient>
                     </TouchableOpacity>
                 </View>
                 
-            </View>
+            </Animatable.View>
             
         </View>
     );
@@ -103,18 +122,18 @@ const styles = StyleSheet.create({
     buttonStyle: {
         // flex: 1,
         // flexDirection: 'column',
-        backgroundColor: '#f05454',
+        // backgroundColor: '#f05454',
         borderWidth: 1,
-        color: '#9dbeb7',
+        // color: '#9dbeb7',
         borderColor: '#FF3E00',
-        height: 70,
+        height: 60,
         width: 140,
         alignItems: 'center',
         justifyContent: 'center',
         borderRadius: 15,
         marginLeft: 10,
         marginRight: 10,
-        marginTop: 30,
+        marginTop: 20,
         marginBottom: 15,
     },
     title: {

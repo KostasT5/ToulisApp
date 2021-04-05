@@ -100,80 +100,94 @@ function UserScreen({navigation}) {
 
 
 class MapScreen extends React.Component{
-
-state = {
-    coordinates: [
-    {name: 'Patras', latitude: 38.246550, longitude: 21.734669},
-    ]
-}
-
-requestLocationPermission = async () => {
-    if(Platform.OS === 'android') {
-    var response = await request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
-    
-    if(response === 'granted') {
-        this.locateCurrentPosition();
+    constructor(props) {
+        super(props);
+        this.handlePlace = this.handlePlace.bind(this);
     }
-    } else {
-
+    state = {
+        coordinates: [
+        {name: 'Patras', latitude: 38.246550, longitude: 21.734669},
+        ]
     }
-}
 
-
-locateCurrentPosition = () => {
-    Geolocation.getCurrentPosition(
-    position => {
-        console.log(JSON.stringify(position));
-
-        let initialPosition = {
-        latitude: position.coords.latitude,
-        longitude: position.coords.longitude,
-        latitudeDelta: 0.09,
-        longitudeDelta: 0.035,
+    requestLocationPermission = async () => {
+        if(Platform.OS === 'android') {
+        var response = await request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
+        
+        if(response === 'granted') {
+            this.locateCurrentPosition();
         }
+        } else {
 
-        this.setState({initialPosition});
-    },
-    error => Alert.alert(error.message),
-    {enableHighAccuracy: true, timeout: 10000, maximumAge: 1000}
-    )
-}
+        }
+    }
 
-componentDidMount() {
-    this.requestLocationPermission();
-}
 
-render() {
-    return (
-    
-        <MapView 
-            showsUserLocation={true}
-            provider={PROVIDER_GOOGLE}
-            ref={map => this._map = map}
-            style={styles.map}
-            initialRegion={this.state.initialPosition}>
-            <Marker
-                coordinate={{latitude: 38.246550, longitude: 21.734669}}
-                // coordinate={this.state.initialPosition.latitude, this.state.initialPosition.longitude}
-                title={'Position'}
-            >
-            {/* <Callout>
-                <Image 
-                source={require('./img/Map_Icons/chat.png')} 
-                style={styles.map_image}
-                />
-                <Text>You are here</Text>
-            </Callout> */}
-                {/* <Image 
-                source={require('./img/Map_Icons/chat.png')} 
-                style={styles.map_image}
-                /> */}
-            </Marker>
-        </MapView>
-    
+    locateCurrentPosition = () => {
+        Geolocation.getCurrentPosition(
+        position => {
+            console.log(JSON.stringify(position));
 
-    );
-}
+            let initialPosition = {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            latitudeDelta: 0.09,
+            longitudeDelta: 0.035,
+            }
+
+            this.setState({initialPosition});
+        },
+        error => Alert.alert(error.message),
+        {enableHighAccuracy: true, timeout: 10000, maximumAge: 1000}
+        )
+    }
+
+    componentDidMount() {
+        this.requestLocationPermission();
+        this.props.navigation;
+    }
+
+    handlePlace = ({navigation}) => {
+        // console.log("PlaceScreen");
+        this.props.navigation.navigate('PlaceScreen');
+    } 
+
+
+    render() {
+
+        
+
+        return (
+        
+            <MapView 
+                showsUserLocation={true}
+                provider={PROVIDER_GOOGLE}
+                ref={map => this._map = map}
+                style={styles.map}
+                initialRegion={this.state.initialPosition}>
+                <Marker
+                    coordinate={{latitude: 38.246550, longitude: 21.734669}}
+                    // coordinate={this.state.initialPosition.latitude, this.state.initialPosition.longitude}
+                    title={'Position'}
+                    onPress = {this.handlePlace}
+                >
+                {/* <Callout>
+                    <Image 
+                    source={require('./img/Map_Icons/chat.png')} 
+                    style={styles.map_image}
+                    />
+                    <Text>You are here</Text>
+                </Callout> */}
+                    {/* <Image 
+                    source={require('./img/Map_Icons/chat.png')} 
+                    style={styles.map_image}
+                    /> */}
+                </Marker>
+            </MapView>
+        
+
+        );
+    }
 
 }
 

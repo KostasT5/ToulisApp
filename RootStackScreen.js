@@ -6,6 +6,7 @@ import SplashScreen from './SplashScreen.js'
 import LoginScreen from './LoginScreen.js'
 import RegisterScreen from './RegisterScreen.js'
 import GeneralScreen from './GeneralScreen.js'
+import PlaceScreen from './PlaceScreen.js'
 
 const RootStack = createStackNavigator();
 
@@ -16,6 +17,7 @@ const RootStackScreen = ({navigation}) => {
             <RootStack.Screen name = 'LoginScreen' component = {LoginScreen}/>
             <RootStack.Screen name = 'RegisterScreen' component = {RegisterScreen}/>
             <RootStack.Screen name = 'GeneralScreen' component = {GeneralScreen}/>
+            <RootStack.Screen name = 'PlaceScreen' component = {PlaceScreen}/>
         </RootStack.Navigator>
     );
 }
