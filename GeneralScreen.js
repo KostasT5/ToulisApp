@@ -8,6 +8,7 @@ import MapView, {PROVIDER_GOOGLE, Marker, Callout} from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
 import {request, PERMISSIONS} from 'react-native-permissions';
 // import SettingsScreen from './settings.js'
+import LinearGradient from 'react-native-linear-gradient'
 import LoginScreen from './LoginScreen.js'
 import RegisterScreen from './registerpage.js'
 import StartingScreen from './loginorregister.js'
@@ -75,14 +76,19 @@ function UserScreen({navigation}) {
     }
     return (
         <View style={ styles.container }>
-            <Text>User!</Text>
             <TouchableOpacity
-                    style = {styles.submitButton}
-                    onPress = {
-                        logoutHandler
-                    }>
-                    <Text style = {styles.buttonText}> Logout </Text>
+                // style = {styles.submitButton}
+                onPress = {
+                    logoutHandler
+                }>
+                    <LinearGradient
+                        colors={['#f05454','#FF1D1D']}
+                        style={styles.buttonStyle}    
+                    >
+                    <Text style={styles.buttonText}>Logout</Text>
+                </LinearGradient>
             </TouchableOpacity>
+            <Text style={styles.title}>History</Text>
             <FlatList
                 style={styles.list}
                 data={history}
@@ -333,6 +339,23 @@ const styles = StyleSheet.create({
         // paddingBottom: 40,
         borderTopRightRadius: 15,
         borderTopLeftRadius: 15,
+    },
+    buttonStyle: {
+        // flex: 1,
+        // flexDirection: 'column',
+        // backgroundColor: '#f05454',
+        borderWidth: 1,
+        // color: '#9dbeb7',
+        borderColor: '#FF3E00',
+        height: 40,
+        width: 80,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 15,
+        marginLeft: 10,
+        marginRight: 10,
+        marginTop: 0,
+        marginBottom: 15,
     },
 });
   

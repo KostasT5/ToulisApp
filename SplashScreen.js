@@ -26,7 +26,7 @@ const SplashScreen = ({navigation}) => {
                 <Animatable.Image
                     animation='bounceIn'
                     duraton={2000}
-                    source={require('./img/logo.png')}
+                    source={require('./img/logo1.png')}
                     style={styles.logo}
                 />
                 
@@ -87,9 +87,9 @@ const styles = StyleSheet.create({
         backgroundColor: '#dddddd'
     },
     logo: {
-        width: 0.5*height,
-        height: 0.5*height,
-        flex: 1,
+        width: 0.35*height,
+        height: 0.35*height,
+        // flex: 0.75,
     },
     innerText: {
         color: '#ffffff',

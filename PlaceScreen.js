@@ -87,12 +87,12 @@ const PlaceScreen = ({navigation}) => {
                 onPress = {
                     submitHandler
                 }>
-                <LinearGradient
-                    colors={['#f05454','#FF1D1D']}
-                    style={styles.buttonStyle}    
-                >
-                  <Text style={styles.buttonText}>Submit</Text>
-              </LinearGradient>
+                    <LinearGradient
+                        colors={['#f05454','#FF1D1D']}
+                        style={styles.buttonStyle}    
+                    >
+                    <Text style={styles.buttonText}>Submit</Text>
+                </LinearGradient>
             </TouchableOpacity>
             </View>
             <View style={{flex:1}}>
