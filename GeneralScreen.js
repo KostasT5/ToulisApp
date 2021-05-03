@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {useState} from 'react';
+import {useState, setState} from 'react';
 import { Text, View, TextInput, Button, StyleSheet, Image, Platform, TouchableOpacity, FlatList } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 // import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -13,7 +13,7 @@ import LoginScreen from './LoginScreen.js'
 import RegisterScreen from './registerpage.js'
 import StartingScreen from './loginorregister.js'
 // import User from './UserScreen.js'
-
+// import apiKey from './google_api_key.txt'
 
 function HomeScreen() {
     const [places, setPlaces] = useState([
@@ -110,10 +110,21 @@ class MapScreen extends React.Component{
         super(props);
         this.handlePlace = this.handlePlace.bind(this);
     }
+    
+
     state = {
-        coordinates: [
-        {name: 'Patras', latitude: 38.246550, longitude: 21.734669},
-        ]
+        // coordinates: [
+        // {name: 'Patras', latitude: 38.246550, longitude: 21.734669},
+        // ],
+        // position: [
+        //     {
+        latitude: '',
+        longitude: '',
+        places: []
+        //     }
+            
+        // ]
+        
     }
 
     requestLocationPermission = async () => {
@@ -132,24 +143,68 @@ class MapScreen extends React.Component{
     locateCurrentPosition = () => {
         Geolocation.getCurrentPosition(
         position => {
-            console.log(JSON.stringify(position));
+            // console.log(JSON.stringify(position));
 
             let initialPosition = {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
+            
             latitudeDelta: 0.09,
             longitudeDelta: 0.035,
             }
-
+            // console.log(initialPosition.latitude,initialPosition.longitude);
             this.setState({initialPosition});
+            this.setState({latitude: initialPosition.latitude, longitude:initialPosition.longitude});
+            // console.log(this.state.latitude);
+            this.findPlace();
+            // console.log(this.state.latitude);
+            // console.log(this.state.longitude);
+            // this.state.latitude = initialPosition.latitude;
+            // this.state.longitude = initialPosition.longitude;
+            
         },
         error => Alert.alert(error.message),
         {enableHighAccuracy: true, timeout: 10000, maximumAge: 1000}
         )
+        // console.log(this.state.latitude);
+        // console.log(this.state.longitude);
+       
+    }
+
+    async findPlace() {
+        const apiKey = 'AIzaSyBSpTY-M9Ztfu7vKq8pqsusrGoe_FuUG4s'
+        console.log(this.state.latitude);
+        console.log(this.state.longitude);
+        const apiURL = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${this.state.latitude}, ${this.state.longitude}&radius=3000&type=tourist_attraction&key=${apiKey}`
+        try{
+            const result = await fetch(apiURL);
+            const json = await result.json();
+            var json_res = json['results'];
+            // console.log(json['results']['geometry'].location);
+            // this.state.places = json['results'];
+            // this.setState({places: [json['results']['place_id'], json['results']['name'], json['results']['geometry']]});
+            // console.log(this.state.places);  
+
+            const temp = [];
+            for (var item in json_res) {
+                temp.push({"id": json_res[item]["place_id"], "name": json_res[item]["name"], "lat": json_res[item]['geometry'].location['lat'], "lng": json_res[item]['geometry'].location['lng'], "icon": json_res[item]["icon"]});
+                // console.log(this.state.places[item]["geometry"].location);
+                // this.setState({places: [json['results']['place_id'], json['results']['name'], json['results']['geometry']]});
+            }
+            // console.log(places_id);
+            this.setState({places: temp});
+            // console.log(this.state.places);
+            // console.log(this.state.places[0][2].lat);
+        } catch (err) {
+            console.error(err);
+        }
+      
+        
     }
 
     componentDidMount() {
         this.requestLocationPermission();
+        // this.findPlace();
         this.props.navigation;
     }
 
@@ -158,6 +213,18 @@ class MapScreen extends React.Component{
         this.props.navigation.navigate('PlaceScreen');
     } 
 
+    createMarker = () => {
+        console.log(this.state.places);
+        return this.state.places.map((place) => 
+            <Marker
+                key={place.id}
+                coordinate={{latitude: place.lat, longitude: place.lng}}
+                title={place.name}
+                icon={place.icon}
+            />
+            
+        )
+    }
 
     render() {
 
@@ -176,7 +243,17 @@ class MapScreen extends React.Component{
                     // coordinate={this.state.initialPosition.latitude, this.state.initialPosition.longitude}
                     title={'Position'}
                     onPress = {this.handlePlace}
-                >
+                />
+                {this.createMarker()}
+                
+                {/* {this.state.places.map(places => (
+                    <MapView.Marker 
+                    coordinate={{places["geometry"].location["lat"], }}
+                    title={marker.title}
+                    />
+                ))} */}
+
+
                 {/* <Callout>
                     <Image 
                     source={require('./img/Map_Icons/chat.png')} 
@@ -188,7 +265,8 @@ class MapScreen extends React.Component{
                     source={require('./img/Map_Icons/chat.png')} 
                     style={styles.map_image}
                     /> */}
-                </Marker>
+
+                {/* </Marker> */}
             </MapView>
         
 
