@@ -1,6 +1,11 @@
 import * as React from 'react';
+<<<<<<< Updated upstream
 import {useState} from 'react';
 import { Text, View, TextInput, Button, StyleSheet, Image, Platform, TouchableOpacity, FlatList } from 'react-native';
+=======
+import {useState, setState} from 'react';
+import { Text, View, TextInput, Button, StyleSheet, Image, Platform, TouchableOpacity, FlatList, ImageComponent } from 'react-native';
+>>>>>>> Stashed changes
 import { NavigationContainer } from '@react-navigation/native';
 // import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
@@ -12,6 +17,7 @@ import LinearGradient from 'react-native-linear-gradient'
 import LoginScreen from './LoginScreen.js'
 import RegisterScreen from './registerpage.js'
 import StartingScreen from './loginorregister.js'
+<<<<<<< Updated upstream
 // import User from './UserScreen.js'
 
 
@@ -36,20 +42,161 @@ function HomeScreen() {
     ]);
     return (
       <View style={styles.container}>
+=======
+
+
+class HomeScreen extends React.Component{
+    // const [places, setPlaces] = useState([
+    //     {name: 'Place 1', key: '1', description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'},
+    //     {name: 'Place 2', key: '2', description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'},
+    //     {name: 'Place 3', key: '3', description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'},
+    //     {name: 'Place 4', key: '4', description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'},
+    //     {name: 'Place 5', key: '5', description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'},
+    //     {name: 'Place 6', key: '6', description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'},
+    //     {name: 'Place 7', key: '7', description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'},
+    //     {name: 'Place 8', key: '8', description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'},  
+    //     {name: 'Place 9', key: '9', description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'},
+    //     {name: 'Place 10', key: '10', description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'},
+    //     {name: 'Place 11', key: '11', description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'},
+    //     {name: 'Place 12', key: '12', description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'},
+    //     {name: 'Place 13', key: '13', description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'},
+    //     {name: 'Place 14', key: '14', description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'},
+    //     {name: 'Place 15', key: '15', description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'},
+    //     {name: 'Place 16', key: '16', description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'},  
+    // ]);
+    
+    constructor(props) {
+        super(props);
+    } 
+
+    state = {
+        latitude: '',
+        longitude: '',
+        places: []      
+    }
+
+    requestLocationPermission = async () => {
+        if(Platform.OS === 'android') {
+        var response = await request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
+>>>>>>> Stashed changes
         
-        <Text style={styles.title}>Places near you:</Text>
-        <FlatList
-            style={styles.list}
-            data={places}
-            renderItem={({item}) => (
-                <View>
-                    <Text style={styles.item}>{item.name}</Text>
-                    <Text style={styles.innerText}>{item.description}</Text>
-                </View>
-            )}
-        />
-      </View>
-    );
+        if(response === 'granted') {
+            this.locateCurrentPosition();
+        }
+        } else {
+
+        }
+    }
+
+
+    locateCurrentPosition = () => {
+        Geolocation.getCurrentPosition(
+        position => {
+       
+
+            let initialPosition = {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            
+            latitudeDelta: 0.09,
+            longitudeDelta: 0.035,
+            }
+          
+            this.setState({initialPosition});
+            this.setState({latitude: initialPosition.latitude, longitude:initialPosition.longitude});
+       
+            this.findPlace();
+            
+            
+        },
+        error => Alert.alert(error.message),
+        {enableHighAccuracy: true, timeout: 10000, maximumAge: 1000}
+        )
+        
+       
+    }
+
+    async findPlace() {
+        const apiKey = 'AIzaSyBSpTY-M9Ztfu7vKq8pqsusrGoe_FuUG4s'
+        console.log(this.state.latitude);
+        console.log(this.state.longitude);
+        const apiURL = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${this.state.latitude}, ${this.state.longitude}&radius=3000&type=tourist_attraction&key=${apiKey}`
+        try{
+            const result = await fetch(apiURL);
+            const json = await result.json();
+            var json_res = json['results'];
+            const temp = [];
+            for (var item in json_res) {
+                temp.push({"id": json_res[item]["place_id"], "name": json_res[item]["name"], "lat": json_res[item]['geometry'].location['lat'], 
+                    "lng": json_res[item]['geometry'].location['lng'], "icon": json_res[item]["icon"]});
+                try {
+                    temp.push({"photo_id": json_res[item]["photos"][0].photo_reference});
+
+                } catch (err) {
+                    temp.push({"photo_id": "unavailable"}); //'"https://media.fdmckosovo.org/2020/07/placeholder.png"'});
+                }
+            }
+            this.setState({places: temp});
+            this.getPhoto();
+        } catch (err) {
+            console.error(err);
+        }
+        // for (var i in this.state.places) {
+        //     console.log(this.state.places[i].photo_id);
+        // }
+       
+        
+    }
+
+    getPhoto() {
+        const apiKey = 'AIzaSyBSpTY-M9Ztfu7vKq8pqsusrGoe_FuUG4s'
+        console.log('getphoto');
+        for (var i in this.state.places) {
+            var apiURL = `https://maps.googleapis.com/maps/api/place/photo?key=${apiKey}&photoreference=${this.state.places[i].photo_id}&maxheight=200&maxwidth=200`
+            try{
+                console.log(this.state.places[i].name);
+                // var xhr = new XMLHttpRequest();
+                // xhr.open('GET', apiURL, true);
+                // xhr.onload = () => {
+                //     // this.setState({imageUrl: xhr.responseURL});
+                //     console.log(this.state.places[i].name);
+                //     console.log(xhr.responseURL);
+                // };
+                // xhr.send(null);
+            
+            } catch (err) {
+                console.log(err);
+            }
+        }
+    }
+
+    componentDidMount() {
+        this.requestLocationPermission();
+        // this.findPlace();
+        this.props.navigation;
+    }
+
+    render(){
+        return (
+            <View style={styles.container}>
+              
+              <Text style={styles.title}>Places near you:</Text>
+              <FlatList
+                  style={styles.list}
+                  data={this.state.places}
+                  keyExtractor={(item,index) => item.id}
+                  renderItem={({item}) => (
+                      <View>
+                          <Text style={styles.item}>{item.name}</Text>
+                          {/* <Text style={styles.item}>{item.photo}</Text> */}
+      
+                      </View>
+                  )}
+              />
+            </View>
+          );
+    }
+    
 }
   
 function UserScreen({navigation}) {
@@ -111,9 +258,15 @@ class MapScreen extends React.Component{
         this.handlePlace = this.handlePlace.bind(this);
     }
     state = {
+<<<<<<< Updated upstream
         coordinates: [
         {name: 'Patras', latitude: 38.246550, longitude: 21.734669},
         ]
+=======
+        latitude: '',
+        longitude: '',
+        places: []      
+>>>>>>> Stashed changes
     }
 
     requestLocationPermission = async () => {
@@ -137,8 +290,14 @@ class MapScreen extends React.Component{
             let initialPosition = {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
+<<<<<<< Updated upstream
             latitudeDelta: 0.09,
             longitudeDelta: 0.035,
+=======
+            
+            latitudeDelta: 0.06,
+            longitudeDelta: 0.025,
+>>>>>>> Stashed changes
             }
 
             this.setState({initialPosition});
@@ -146,6 +305,33 @@ class MapScreen extends React.Component{
         error => Alert.alert(error.message),
         {enableHighAccuracy: true, timeout: 10000, maximumAge: 1000}
         )
+<<<<<<< Updated upstream
+=======
+        // console.log(this.state.latitude);
+        // console.log(this.state.longitude);
+       
+    }
+
+    async findPlace() {
+        const apiKey = 'AIzaSyBSpTY-M9Ztfu7vKq8pqsusrGoe_FuUG4s'
+        console.log(this.state.latitude);
+        console.log(this.state.longitude);
+        const apiURL = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${this.state.latitude}, ${this.state.longitude}&radius=3000&type=tourist_attraction&key=${apiKey}`
+        try{
+            const result = await fetch(apiURL);
+            const json = await result.json();
+            var json_res = json['results'];
+            const temp = [];
+            for (var item in json_res) {
+                temp.push({"id": json_res[item]["place_id"], "name": json_res[item]["name"], "lat": json_res[item]['geometry'].location['lat'], "lng": json_res[item]['geometry'].location['lng'], "icon": json_res[item]["icon"]});
+            }
+            this.setState({places: temp});
+        } catch (err) {
+            console.error(err);
+        }
+      
+        
+>>>>>>> Stashed changes
     }
 
     componentDidMount() {
@@ -153,11 +339,37 @@ class MapScreen extends React.Component{
         this.props.navigation;
     }
 
-    handlePlace = ({navigation}) => {
-        // console.log("PlaceScreen");
-        this.props.navigation.navigate('PlaceScreen');
+    handlePlace = ({place,navigation}) => {
+        console.log(place);
+        // if (Math.abs(this.state.longitude-place.lat)<0.1 && Math.abs(this.state.longitude-place.lng)<0.1){
+        //     this.props.navigation.navigate('PlaceScreen');
+        // }
+        // this.props.navigation.navigate('PlaceScreen');
     } 
 
+<<<<<<< Updated upstream
+=======
+    createMarker = () => {
+        // console.log(this.state.places);
+        return this.state.places.map((place) => 
+            <Marker
+                key={place.id}
+                coordinate={{latitude: place.lat, longitude: place.lng}}
+                title={place.name}
+                icon={place.icon}
+                onPress = {this.handlePlace(place)}
+            > 
+                {/* <Callout>
+                    <Image 
+                        source={require(place.icon)} 
+                        style={styles.map_image}
+                    />
+                </Callout> */}
+            </Marker>
+            
+        )
+    }
+>>>>>>> Stashed changes
 
     render() {
 
@@ -356,6 +568,10 @@ const styles = StyleSheet.create({
         marginRight: 10,
         marginTop: 0,
         marginBottom: 15,
+    },
+    imageList: {
+        flex: 1,
+        borderRadius: 10,
     },
 });
   
