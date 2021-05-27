@@ -15,41 +15,134 @@ import StartingScreen from './loginorregister.js'
 // import User from './UserScreen.js'
 // import apiKey from './google_api_key.txt'
 
-function HomeScreen() {
-    const [places, setPlaces] = useState([
-        {name: 'Place 1', key: '1', description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'},
-        {name: 'Place 2', key: '2', description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'},
-        {name: 'Place 3', key: '3', description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'},
-        {name: 'Place 4', key: '4', description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'},
-        {name: 'Place 5', key: '5', description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'},
-        {name: 'Place 6', key: '6', description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'},
-        {name: 'Place 7', key: '7', description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'},
-        {name: 'Place 8', key: '8', description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'},  
-        {name: 'Place 9', key: '9', description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'},
-        {name: 'Place 10', key: '10', description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'},
-        {name: 'Place 11', key: '11', description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'},
-        {name: 'Place 12', key: '12', description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'},
-        {name: 'Place 13', key: '13', description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'},
-        {name: 'Place 14', key: '14', description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'},
-        {name: 'Place 15', key: '15', description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'},
-        {name: 'Place 16', key: '16', description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'},  
-    ]);
-    return (
-      <View style={styles.container}>
+class HomeScreen extends React.Component{
+    
+    constructor(props) {
+        super(props);
+        this.state = {
+            places: this.props.dataParentToChild
+        }
+    } 
+
+    // state = {
+    //     latitude: '',
+    //     longitude: '',
+    //     places: []      
+    // }
+    // requestLocationPermission = async () => {
+    //     if(Platform.OS === 'android') {
+    //     var response = await request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
         
-        <Text style={styles.title}>Places near you:</Text>
-        <FlatList
-            style={styles.list}
-            data={places}
-            renderItem={({item}) => (
-                <View>
-                    <Text style={styles.item}>{item.name}</Text>
-                    <Text style={styles.innerText}>{item.description}</Text>
-                </View>
-            )}
-        />
-      </View>
-    );
+    //     if(response === 'granted') {
+    //         this.locateCurrentPosition();
+    //     }
+    //     } else {
+    //     }
+    // }
+    // locateCurrentPosition = () => {
+    //     Geolocation.getCurrentPosition(
+    //     position => {
+       
+    //         let initialPosition = {
+    //         latitude: position.coords.latitude,
+    //         longitude: position.coords.longitude,
+            
+    //         latitudeDelta: 0.09,
+    //         longitudeDelta: 0.035,
+    //         }
+          
+    //         this.setState({initialPosition});
+    //         this.setState({latitude: initialPosition.latitude, longitude:initialPosition.longitude});
+       
+    //         this.findPlace();
+            
+            
+    //     },
+    //     error => Alert.alert(error.message),
+    //     {enableHighAccuracy: true, timeout: 10000, maximumAge: 1000}
+    //     )
+        
+       
+    // }
+    // async findPlace() {
+    //     const apiKey = 'AIzaSyBSpTY-M9Ztfu7vKq8pqsusrGoe_FuUG4s'
+    //     console.log(this.state.latitude);
+    //     console.log(this.state.longitude);
+    //     const apiURL = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${this.state.latitude}, ${this.state.longitude}&radius=3000&type=tourist_attraction&key=${apiKey}`
+    //     try{
+    //         const result = await fetch(apiURL);
+    //         const json = await result.json();
+    //         var json_res = json['results'];
+    //         const temp = [];
+    //         for (var item in json_res) {
+    //             temp.push({"id": json_res[item]["place_id"], "name": json_res[item]["name"], "lat": json_res[item]['geometry'].location['lat'], 
+    //                 "lng": json_res[item]['geometry'].location['lng'], "icon": json_res[item]["icon"]});
+    //             try {
+    //                 temp.push({"photo_id": json_res[item]["photos"][0].photo_reference});
+    //             } catch (err) {
+    //                 temp.push({"photo_id": "unavailable"}); //'"https://media.fdmckosovo.org/2020/07/placeholder.png"'});
+    //             }
+    //         }
+    //         this.setState({places: temp});
+    //         this.getPhoto();
+    //     } catch (err) {
+    //         console.error(err);
+    //     }
+    //     // for (var i in this.state.places) {
+    //     //     console.log(this.state.places[i].photo_id);
+    //     // }
+       
+        
+    // }
+    // getPhoto() {
+    //     const apiKey = 'AIzaSyBSpTY-M9Ztfu7vKq8pqsusrGoe_FuUG4s'
+    //     console.log('getphoto');
+    //     for (var i in this.state.places) {
+    //         var apiURL = `https://maps.googleapis.com/maps/api/place/photo?key=${apiKey}&photoreference=${this.state.places[i].photo_id}&maxheight=200&maxwidth=200`
+    //         try{
+    //             console.log(this.state.places[i].name);
+    //             // var xhr = new XMLHttpRequest();
+    //             // xhr.open('GET', apiURL, true);
+    //             // xhr.onload = () => {
+    //             //     // this.setState({imageUrl: xhr.responseURL});
+    //             //     console.log(this.state.places[i].name);
+    //             //     console.log(xhr.responseURL);
+    //             // };
+    //             // xhr.send(null);
+            
+    //         } catch (err) {
+    //             console.log(err);
+    //         }
+    //     }
+    // }
+
+    // componentDidMount() {
+    //     this.requestLocationPermission();
+    //     // this.findPlace();
+    //     this.props.navigation;
+    // }
+
+    render(){
+        return (
+            <View style={styles.container}>
+              
+              <Text style={styles.title}>Places near you:</Text>
+              <FlatList
+                  style={styles.list}
+                  data={this.state.places}
+                  keyExtractor={(item,index) => item.id}
+                  renderItem={({item}) => (
+                      <View>
+                          <Text style={styles.item}>{item.name}</Text>
+                          {/* <Text style={styles.item}>{item.photo}</Text> */}
+      
+                      </View>
+                  )}
+              />
+            </View>
+          );
+    }
+    
 }
   
 function UserScreen({navigation}) {
@@ -220,7 +313,7 @@ class MapScreen extends React.Component{
                 key={place.id}
                 coordinate={{latitude: place.lat, longitude: place.lng}}
                 title={place.name}
-                icon={place.icon}
+                // icon={place.icon}
             />
             
         )
@@ -278,61 +371,162 @@ class MapScreen extends React.Component{
 // const Tab = createBottomTabNavigator();
 const Tab = createMaterialBottomTabNavigator();
 
-export default function App() {
-return (
-    // <NavigationContainer independent={true}>
-    <Tab.Navigator
-        initialRouteName="Home"
-        activeColor="#FFFFFF"
-        inactiveColor="#222831"
-        // inactiveColor = "#FF3E00"
-        barStyle={{ 
-            // backgroundColor: '#2D068E',
-            backgroundColor: '#f05454',
-            // height: 55,
-            // paddingBottom: 10
-        }}
-    >
-        <Tab.Screen 
-            name="Home" 
-            component={HomeScreen}
-            options={{
-                tabBarLabel: 'Home',
 
-                tabBarIcon: ({ tintColor }) => (
-                <Image
-                    source={require('./img/Tab_icons/home.png')}
-                    style={[styles.icon, {tintColor: '#c4c4c4'}]} />
-                )
-            }} 
-        />
-        <Tab.Screen 
-            name="Map" 
-            component={MapScreen} 
-            options={{
-                tabBarLabel: 'Map',
-                tabBarIcon: ({ tintColor }) => (
-                <Image
-                    source={require('./img/Tab_icons/placeholder.png')}
-                    style={[styles.icon, {tintColor: '#c4c4c4'}]} />
-                )
-            }} 
-        />
-        <Tab.Screen 
-            name="User" 
-            component={UserScreen} 
-            options={{
-                tabBarLabel: 'User',
-                tabBarIcon: ({tintColor }) => (
-                <Image
-                    source={require('./img/Tab_icons/user.png')}
-                    style={[styles.icon, {tintColor: '#c4c4c4'}]} />
-                )
-            }} 
-        />
-    </Tab.Navigator>
-    // </NavigationContainer>
-);
+
+export default class App extends React.Component{
+
+    constructor(props) {
+        super(props);
+        // this.handlePlace = this.handlePlace.bind(this);
+    }
+    
+    state = {
+        
+        latitude: '',
+        longitude: '',
+        places: []
+        
+    }
+
+    requestLocationPermission = async () => {
+        if(Platform.OS === 'android') {
+        var response = await request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
+        
+        if(response === 'granted') {
+            this.locateCurrentPosition();
+        }
+        } else {
+
+        }
+    }
+
+
+    locateCurrentPosition = () => {
+        Geolocation.getCurrentPosition(
+        position => {
+            // console.log(JSON.stringify(position));
+
+            let initialPosition = {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            
+            latitudeDelta: 0.09,
+            longitudeDelta: 0.035,
+            }
+            // console.log(initialPosition.latitude,initialPosition.longitude);
+            this.setState({initialPosition});
+            this.setState({latitude: initialPosition.latitude, longitude:initialPosition.longitude});
+            // console.log(this.state.latitude);
+            this.findPlace();
+            // console.log(this.state.latitude);
+            // console.log(this.state.longitude);
+            // this.state.latitude = initialPosition.latitude;
+            // this.state.longitude = initialPosition.longitude;
+            
+        },
+        error => Alert.alert(error.message),
+        {enableHighAccuracy: true, timeout: 10000, maximumAge: 1000}
+        )
+        // console.log(this.state.latitude);
+        // console.log(this.state.longitude);
+       
+    }
+
+    async findPlace() {
+        const apiKey = 'AIzaSyBSpTY-M9Ztfu7vKq8pqsusrGoe_FuUG4s'
+        console.log(this.state.latitude);
+        console.log(this.state.longitude);
+        const apiURL = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${this.state.latitude}, ${this.state.longitude}&radius=3000&type=tourist_attraction&key=${apiKey}`
+        try{
+            const result = await fetch(apiURL);
+            const json = await result.json();
+            var json_res = json['results'];
+            // console.log(json['results']['geometry'].location);
+            // this.state.places = json['results'];
+            // this.setState({places: [json['results']['place_id'], json['results']['name'], json['results']['geometry']]});
+            // console.log(this.state.places);  
+
+            const temp = [];
+            for (var item in json_res) {
+                temp.push({"id": json_res[item]["place_id"], "name": json_res[item]["name"], "lat": json_res[item]['geometry'].location['lat'], "lng": json_res[item]['geometry'].location['lng'], "icon": json_res[item]["icon"]});
+                // console.log(this.state.places[item]["geometry"].location);
+                // this.setState({places: [json['results']['place_id'], json['results']['name'], json['results']['geometry']]});
+            }
+            // console.log(places_id);
+            this.setState({places: temp});
+            // console.log(this.state.places);
+            // console.log(this.state.places[0][2].lat);
+        } catch (err) {
+            console.error(err);
+        }
+      
+        
+    }
+
+    componentDidMount() {
+        this.requestLocationPermission();
+        // this.findPlace();
+        this.props.navigation;
+    }
+    render() {
+        return (
+            // <NavigationContainer independent={true}>
+            <Tab.Navigator
+                initialRouteName="Home"
+                activeColor="#FFFFFF"
+                inactiveColor="#222831"
+                // inactiveColor = "#FF3E00"
+                barStyle={{ 
+                    // backgroundColor: '#2D068E',
+                    backgroundColor: '#f05454',
+                    // height: 55,
+                    // paddingBottom: 10
+                }}
+            >
+                <Tab.Screen 
+                    name="Home" 
+                    component={HomeScreen}
+                    // children={() => <App places={this.state.places}/>}
+                    options={{
+                        tabBarLabel: 'Home',
+        
+                        tabBarIcon: ({ tintColor }) => (
+                        <Image
+                            source={require('./img/Tab_icons/home.png')}
+                            style={[styles.icon, {tintColor: '#c4c4c4'}]} />
+                        )
+                    }} 
+                />
+                <Tab.Screen 
+                    name="Map" 
+                    component={MapScreen} 
+                    options={{
+                        tabBarLabel: 'Map',
+                        tabBarIcon: ({ tintColor }) => (
+                        <Image
+                            source={require('./img/Tab_icons/placeholder.png')}
+                            style={[styles.icon, {tintColor: '#c4c4c4'}]} />
+                        )
+                    }} 
+                />
+                <Tab.Screen 
+                    name="User" 
+                    component={UserScreen} 
+                    options={{
+                        tabBarLabel: 'User',
+                        tabBarIcon: ({tintColor }) => (
+                        <Image
+                            source={require('./img/Tab_icons/user.png')}
+                            style={[styles.icon, {tintColor: '#c4c4c4'}]} />
+                        )
+                    }} 
+                />
+            </Tab.Navigator>
+            // </NavigationContainer>
+        );
+
+    }
+
 }
 
 
