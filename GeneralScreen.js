@@ -17,110 +17,115 @@ import StartingScreen from './loginorregister.js'
 
 class HomeScreen extends React.Component{
     
-    constructor(props) {
-        super(props);
-        this.state = {
-            places: this.props.dataParentToChild
-        }
-    } 
-
-    // state = {
-    //     latitude: '',
-    //     longitude: '',
-    //     places: []      
-    // }
-    // requestLocationPermission = async () => {
-    //     if(Platform.OS === 'android') {
-    //     var response = await request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
-        
-    //     if(response === 'granted') {
-    //         this.locateCurrentPosition();
+    // constructor(props) {
+    //     super(props);
+    //     this.state = {
+    //         places: this.props.dataParentToChild
     //     }
-    //     } else {
-    //     }
-    // }
-    // locateCurrentPosition = () => {
-    //     Geolocation.getCurrentPosition(
-    //     position => {
-       
-    //         let initialPosition = {
-    //         latitude: position.coords.latitude,
-    //         longitude: position.coords.longitude,
-            
-    //         latitudeDelta: 0.09,
-    //         longitudeDelta: 0.035,
-    //         }
-          
-    //         this.setState({initialPosition});
-    //         this.setState({latitude: initialPosition.latitude, longitude:initialPosition.longitude});
-       
-    //         this.findPlace();
-            
-            
-    //     },
-    //     error => Alert.alert(error.message),
-    //     {enableHighAccuracy: true, timeout: 10000, maximumAge: 1000}
-    //     )
-        
-       
-    // }
-    // async findPlace() {
-    //     const apiKey = 'AIzaSyBSpTY-M9Ztfu7vKq8pqsusrGoe_FuUG4s'
-    //     console.log(this.state.latitude);
-    //     console.log(this.state.longitude);
-    //     const apiURL = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${this.state.latitude}, ${this.state.longitude}&radius=3000&type=tourist_attraction&key=${apiKey}`
-    //     try{
-    //         const result = await fetch(apiURL);
-    //         const json = await result.json();
-    //         var json_res = json['results'];
-    //         const temp = [];
-    //         for (var item in json_res) {
-    //             temp.push({"id": json_res[item]["place_id"], "name": json_res[item]["name"], "lat": json_res[item]['geometry'].location['lat'], 
-    //                 "lng": json_res[item]['geometry'].location['lng'], "icon": json_res[item]["icon"]});
-    //             try {
-    //                 temp.push({"photo_id": json_res[item]["photos"][0].photo_reference});
-    //             } catch (err) {
-    //                 temp.push({"photo_id": "unavailable"}); //'"https://media.fdmckosovo.org/2020/07/placeholder.png"'});
-    //             }
-    //         }
-    //         this.setState({places: temp});
-    //         this.getPhoto();
-    //     } catch (err) {
-    //         console.error(err);
-    //     }
-    //     // for (var i in this.state.places) {
-    //     //     console.log(this.state.places[i].photo_id);
+    //     // this.state = {
+    //     //     places: this.props.dataParentToChild
     //     // }
+    //     // console.log(places);
+    // } 
+
+    state = {
+        latitude: '',
+        longitude: '',
+        // places: []      
+    }
+    requestLocationPermission = async () => {
+        if(Platform.OS === 'android') {
+        var response = await request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
+        
+        if(response === 'granted') {
+            this.locateCurrentPosition();
+        }
+        } else {
+        }
+    }
+    locateCurrentPosition = () => {
+        Geolocation.getCurrentPosition(
+        position => {
+       
+            let initialPosition = {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            
+            latitudeDelta: 0.09,
+            longitudeDelta: 0.035,
+            }
+          
+            this.setState({initialPosition});
+            this.setState({latitude: initialPosition.latitude, longitude:initialPosition.longitude});
+       
+            this.findPlace();
+            
+            
+        },
+        error => Alert.alert(error.message),
+        {enableHighAccuracy: true, timeout: 10000, maximumAge: 1000}
+        )
+        
+       
+    }
+    async findPlace() {
+        const apiKey = 'AIzaSyBSpTY-M9Ztfu7vKq8pqsusrGoe_FuUG4s'
+        console.log(this.state.latitude);
+        console.log(this.state.longitude);
+        const apiURL = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${this.state.latitude}, ${this.state.longitude}&radius=3000&type=tourist_attraction&key=${apiKey}`
+        try{
+            const result = await fetch(apiURL);
+            const json = await result.json();
+            var json_res = json['results'];
+            const temp = [];
+            for (var item in json_res) {
+                temp.push({"id": json_res[item]["place_id"], "name": json_res[item]["name"], "lat": json_res[item]['geometry'].location['lat'], 
+                    "lng": json_res[item]['geometry'].location['lng'], "icon": json_res[item]["icon"]});
+                try {
+                    temp.push({"photo_id": json_res[item]["photos"][0].photo_reference});
+                } catch (err) {
+                    temp.push({"photo_id": "unavailable"}); //'"https://media.fdmckosovo.org/2020/07/placeholder.png"'});
+                }
+            }
+            this.setState({places: temp});
+            this.getPhoto();
+        } catch (err) {
+            console.error(err);
+        }
+        // for (var i in this.state.places) {
+        //     console.log(this.state.places[i].photo_id);
+        // }
        
         
-    // }
-    // getPhoto() {
-    //     const apiKey = 'AIzaSyBSpTY-M9Ztfu7vKq8pqsusrGoe_FuUG4s'
-    //     console.log('getphoto');
-    //     for (var i in this.state.places) {
-    //         var apiURL = `https://maps.googleapis.com/maps/api/place/photo?key=${apiKey}&photoreference=${this.state.places[i].photo_id}&maxheight=200&maxwidth=200`
-    //         try{
-    //             console.log(this.state.places[i].name);
-    //             // var xhr = new XMLHttpRequest();
-    //             // xhr.open('GET', apiURL, true);
-    //             // xhr.onload = () => {
-    //             //     // this.setState({imageUrl: xhr.responseURL});
-    //             //     console.log(this.state.places[i].name);
-    //             //     console.log(xhr.responseURL);
-    //             // };
-    //             // xhr.send(null);
+    }
+    getPhoto() {
+        const apiKey = 'AIzaSyBSpTY-M9Ztfu7vKq8pqsusrGoe_FuUG4s'
+        console.log('getphoto');
+        for (var i in this.state.places) {
+            var apiURL = `https://maps.googleapis.com/maps/api/place/photo?key=${apiKey}&photoreference=${this.state.places[i].photo_id}&maxheight=200&maxwidth=200`
+            try{
+                console.log(this.state.places[i].name);
+                // var xhr = new XMLHttpRequest();
+                // xhr.open('GET', apiURL, true);
+                // xhr.onload = () => {
+                //     // this.setState({imageUrl: xhr.responseURL});
+                //     console.log(this.state.places[i].name);
+                //     console.log(xhr.responseURL);
+                // };
+                // xhr.send(null);
             
-    //         } catch (err) {
-    //             console.log(err);
-    //         }
-    //     }
-    // }
+            } catch (err) {
+                console.log(err);
+            }
+        }
+    }
 
-    // componentDidMount() {
-    //     this.requestLocationPermission();
-    //     // this.findPlace();
-    //     this.props.navigation;
-    // }
+    componentDidMount() {
+        // this.requestLocationPermission();
+        // // this.findPlace();
+        // this.props.navigation;
+        console.log(this.props.places);
+    }
 
     render(){
         return (
@@ -129,7 +134,7 @@ class HomeScreen extends React.Component{
               <Text style={styles.title}>Places near you:</Text>
               <FlatList
                   style={styles.list}
-                  data={this.state.places}
+                  data={this.props.places}
                   keyExtractor={(item,index) => item.id}
                   renderItem={({item}) => (
                       <View>
@@ -434,8 +439,8 @@ export default class App extends React.Component{
 
     async findPlace() {
         const apiKey = 'AIzaSyBSpTY-M9Ztfu7vKq8pqsusrGoe_FuUG4s'
-        console.log(this.state.latitude);
-        console.log(this.state.longitude);
+        // console.log(this.state.latitude);
+        // console.log(this.state.longitude);
         const apiURL = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${this.state.latitude}, ${this.state.longitude}&radius=3000&type=tourist_attraction&key=${apiKey}`
         try{
             const result = await fetch(apiURL);
@@ -459,6 +464,7 @@ export default class App extends React.Component{
         } catch (err) {
             console.error(err);
         }
+        // console.log(this.state.places);
       
         
     }
@@ -467,8 +473,10 @@ export default class App extends React.Component{
         this.requestLocationPermission();
         // this.findPlace();
         this.props.navigation;
+        
     }
     render() {
+        // console.log(this.state.places);
         return (
             // <NavigationContainer independent={true}>
             <Tab.Navigator
@@ -476,6 +484,7 @@ export default class App extends React.Component{
                 activeColor="#FFFFFF"
                 inactiveColor="#222831"
                 // inactiveColor = "#FF3E00"
+                // dataParentToChild = {this.state.places}
                 barStyle={{ 
                     // backgroundColor: '#2D068E',
                     backgroundColor: '#f05454',
@@ -485,17 +494,30 @@ export default class App extends React.Component{
             >
                 <Tab.Screen 
                     name="Home" 
+                    children={() => <HomeScreen 
+                        places={this.state.places}
+                        options={{
+                            tabBarLabel: 'Home',
+            
+                            tabBarIcon: ({ tintColor }) => (
+                            <Image
+                                source={require('./img/Tab_icons/home.png')}
+                                style={[styles.icon, {tintColor: '#c4c4c4'}]} />
+                            )
+                        }} 
+                    />}
                     component={HomeScreen}
-                    // children={() => <App places={this.state.places}/>}
-                    options={{
-                        tabBarLabel: 'Home',
+                    // dataParentToChild = {this.state.places}
+                    
+                    // options={{
+                    //     tabBarLabel: 'Home',
         
-                        tabBarIcon: ({ tintColor }) => (
-                        <Image
-                            source={require('./img/Tab_icons/home.png')}
-                            style={[styles.icon, {tintColor: '#c4c4c4'}]} />
-                        )
-                    }} 
+                    //     tabBarIcon: ({ tintColor }) => (
+                    //     <Image
+                    //         source={require('./img/Tab_icons/home.png')}
+                    //         style={[styles.icon, {tintColor: '#c4c4c4'}]} />
+                    //     )
+                    // }} 
                 />
                 <Tab.Screen 
                     name="Map" 
