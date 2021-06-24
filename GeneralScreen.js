@@ -31,7 +31,7 @@ class HomeScreen extends React.Component{
     state = {
         latitude: '',
         longitude: '',
-        // places: []      
+        places: []      
     }
     requestLocationPermission = async () => {
         if(Platform.OS === 'android') {
@@ -121,24 +121,26 @@ class HomeScreen extends React.Component{
     }
 
     componentDidMount() {
-        // this.requestLocationPermission();
-        // // this.findPlace();
-        // this.props.navigation;
-        console.log(this.props.places);
+        this.requestLocationPermission();
+        // this.findPlace();
+        this.props.navigation;
+        // console.log(this.props.places);
     }
 
     render(){
+        console.log(this.state.places);
         return (
             <View style={styles.container}>
               
               <Text style={styles.title}>Places near you:</Text>
               <FlatList
                   style={styles.list}
-                  data={this.props.places}
-                  keyExtractor={(item,index) => item.id}
+                  data={this.state.places}
+                //   keyExtractor={(item,index) => item.id}
+                //   key={item.id}
                   renderItem={({item}) => (
                       <View>
-                          <Text style={styles.item}>{item.name}</Text>
+                          <Text style={styles.item} key={item.id}>{item.name}</Text>
                           {/* <Text style={styles.item}>{item.photo}</Text> */}
       
                       </View>
@@ -494,30 +496,30 @@ export default class App extends React.Component{
             >
                 <Tab.Screen 
                     name="Home" 
-                    children={() => <HomeScreen 
-                        places={this.state.places}
-                        options={{
-                            tabBarLabel: 'Home',
+                    // children={() => <HomeScreen 
+                    //     places={this.state.places}
+                    //     options={{
+                    //         tabBarLabel: 'Home',
             
-                            tabBarIcon: ({ tintColor }) => (
-                            <Image
-                                source={require('./img/Tab_icons/home.png')}
-                                style={[styles.icon, {tintColor: '#c4c4c4'}]} />
-                            )
-                        }} 
-                    />}
+                    //         tabBarIcon: ({ tintColor }) => (
+                    //         <Image
+                    //             source={require('./img/Tab_icons/home.png')}
+                    //             style={[styles.icon, {tintColor: '#c4c4c4'}]} />
+                    //         )
+                    //     }} 
+                    // />}
                     component={HomeScreen}
                     // dataParentToChild = {this.state.places}
                     
-                    // options={{
-                    //     tabBarLabel: 'Home',
+                    options={{
+                        tabBarLabel: 'Home',
         
-                    //     tabBarIcon: ({ tintColor }) => (
-                    //     <Image
-                    //         source={require('./img/Tab_icons/home.png')}
-                    //         style={[styles.icon, {tintColor: '#c4c4c4'}]} />
-                    //     )
-                    // }} 
+                        tabBarIcon: ({ tintColor }) => (
+                        <Image
+                            source={require('./img/Tab_icons/home.png')}
+                            style={[styles.icon, {tintColor: '#c4c4c4'}]} />
+                        )
+                    }} 
                 />
                 <Tab.Screen 
                     name="Map" 
