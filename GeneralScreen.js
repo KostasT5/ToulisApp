@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {useState, setState} from 'react';
-import { Text, View, TextInput, Button, StyleSheet, Image, Platform, TouchableOpacity, FlatList } from 'react-native';
+import { Text, View, TextInput, Button, StyleSheet, Image, Platform, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 // import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
@@ -70,8 +70,8 @@ class HomeScreen extends React.Component{
     }
     async findPlace() {
         const apiKey = 'AIzaSyBSpTY-M9Ztfu7vKq8pqsusrGoe_FuUG4s'
-        console.log(this.state.latitude);
-        console.log(this.state.longitude);
+        // console.log(this.state.latitude);
+        // console.log(this.state.longitude);
         const apiURL = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${this.state.latitude}, ${this.state.longitude}&radius=3000&type=tourist_attraction&key=${apiKey}`
         try{
             const result = await fetch(apiURL);
@@ -100,11 +100,11 @@ class HomeScreen extends React.Component{
     }
     getPhoto() {
         const apiKey = 'AIzaSyBSpTY-M9Ztfu7vKq8pqsusrGoe_FuUG4s'
-        console.log('getphoto');
+        // console.log('getphoto');
         for (var i in this.state.places) {
             var apiURL = `https://maps.googleapis.com/maps/api/place/photo?key=${apiKey}&photoreference=${this.state.places[i].photo_id}&maxheight=200&maxwidth=200`
             try{
-                console.log(this.state.places[i].name);
+                // console.log(this.state.places[i].name);
                 // var xhr = new XMLHttpRequest();
                 // xhr.open('GET', apiURL, true);
                 // xhr.onload = () => {
@@ -128,7 +128,7 @@ class HomeScreen extends React.Component{
     }
 
     render(){
-        console.log(this.state.places);
+        // console.log(this.state.places);
         return (
             <View style={styles.container}>
               
@@ -273,8 +273,8 @@ class MapScreen extends React.Component{
 
     async findPlace() {
         const apiKey = 'AIzaSyBSpTY-M9Ztfu7vKq8pqsusrGoe_FuUG4s'
-        console.log(this.state.latitude);
-        console.log(this.state.longitude);
+        // console.log(this.state.latitude);
+        // console.log(this.state.longitude);
         const apiURL = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${this.state.latitude}, ${this.state.longitude}&radius=3000&type=tourist_attraction&key=${apiKey}`
         try{
             const result = await fetch(apiURL);
@@ -314,7 +314,7 @@ class MapScreen extends React.Component{
     } 
 
     createMarker = () => {
-        console.log(this.state.places);
+        // console.log(this.state.places);
         return this.state.places.map((place) => 
             <Marker
                 key={place.id}

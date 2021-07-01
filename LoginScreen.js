@@ -1,36 +1,54 @@
 import React, { Component, useState } from 'react'
-import { View, Text, TouchableOpacity, TextInput, StyleSheet } from 'react-native'
+import { View, Text, TouchableOpacity, TextInput, StyleSheet, ActivityIndicator } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
 
 
 function LoginScreen({navigation}){
-    const[email, setEmail] = useState('');
+    const[user, setUser] = useState('');
     const[psswd, setPsswd] = useState('');
-    // const[confirm, setConfirm] = useState('');
-    const emailHandler = (val) => {
-        setEmail(val);
+    
+    const userHandler = (val) => {
+        setUser(val);
     }
 
     const psswdHandler = (val) => {
         setPsswd(val);
     }
 
-    // const confirmHandler = (val) => {
-    //     if (val === psswd) {
-    //         // console.log(psswd);
-    //         setConfirm(true);
-    //         console.log(confirm);
-    //         return true;
-    //     } else {
-    //         // console.log('val');
-    //         // alert('Passwords need to match');
-    //         return false;
-    //     }
-    // }
+ 
 
     const loginHandler = () => {
-      console.log('email: ' + email + ' password: ' + psswd);
-      navigation.navigate('GeneralScreen');
+        console.log('user: ' + user + ' password: ' + psswd);
+    //   BASE = 'http://127.0.0.1:5000/'
+        // console.log('loginHanlder');
+
+        fetch('http://10.0.2.2:5000/login', {
+            method: 'POST',
+            headers: {
+                // Accept: 'application/json',
+                // AcceptLanguage: '*',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                user_name: user,
+                password: psswd
+            })
+        })          
+        .then((response) => 
+            response.json())
+        .then((response) => {
+           if (response['result']==202){
+               navigation.navigate('GeneralScreen');
+           } else {
+               alert('Wrong Username or Password');
+           }
+        })
+            // console.log(response))               
+        .catch((error) => console.log(error));
+        
+
+        
+      
     }
 
     
@@ -39,13 +57,13 @@ function LoginScreen({navigation}){
         <View style = {styles.container}>
             <TextInput style = {styles.input}
                 underlineColorAndroid = "transparent"
-                placeholder = "Email"
+                placeholder = "User Name"
                 // placeholderTextColor = "#9a73ef"
                 placeholderTextColor= '#FF3E00'
                 textContentType = 'emailAddress'
                 selectionColor = 'white'
                 autoCapitalize = "none"
-                onChangeText = {emailHandler}
+                onChangeText = {userHandler}
             />
 
             <TextInput style = {styles.input}

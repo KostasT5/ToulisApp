@@ -1,90 +1,130 @@
-import React, { Component, useState } from 'react'
+import React, { Component, useState, setState } from 'react'
 import { View, Text, TouchableOpacity, TextInput, StyleSheet } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
 
 
-function RegisterScreen(){
+function RegisterScreen({navigation}){
+
     const[email, setEmail] = useState('');
+    const[user, setUser] = useState('');
     const[psswd, setPsswd] = useState('');
     const[confirm, setConfirm] = useState('');
+
     const emailHandler = (val) => {
+        // console.log(val);
         setEmail(val);
+        // console.log(email);
+    }
+
+    const userHandler = (val) => {
+        setUser(val);
+        // console.log(user);
     }
 
     const psswdHandler = (val) => {
         setPsswd(val);
+        // console.log(psswd);
     }
 
     const confirmHandler = (val) => {
-        if (val === psswd) {
-            // console.log(psswd);
-            setConfirm(true);
-            console.log(confirm);
-            return true;
-        } else {
-            // console.log('val');
-            // alert('Passwords need to match');
-            return false;
-        }
+        setConfirm(val);
     }
 
     const registerHandler = () => {
-        if (confirm) {
-            console.log('email: ' + email + ' password: ' + psswd);
-        } else {
-            alert('Passwords need to match');
+        console.log(email,user,psswd);
+        if (psswd.length < 6) {
+            alert('Password length must be at least 6 characters');
         }
-        
-        // setEmail(val)
-    }
+        else {
+            if (confirm === psswd && email != '' && user != '' && psswd != '') {
+                // console.log('email: ' + email + ' password: ' + psswd);
+                console.log('Registering user with credentials: ' + email + ' ' + user + ' ' + psswd);
+                fetch('http://10.0.2.2:5000/register', {
+                    method: 'POST',
+                    headers: {
+                        // Accept: 'application/json',
+                        // AcceptLanguage: '*',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        user_name: user,
+                        password: psswd
+                    })
+                })          
+                .then((response) => 
+                    response.json())
+                .then((response) => {
+                    if (response['result']==201){
+                        navigation.navigate('GeneralScreen');
+                    } else {
+                        alert(response['message']);
+                    }
+                })   
+                .catch((error) => console.log(error));
+            
+            } else {
+                console.log('DATA: ' + email + ' ' + user + ' ' + psswd);
+                alert('Invalid Data');
+            }
 
-    
-    // render(){
+        }
+    }
+        
+
     return (
         <View style = {styles.container}>
             <TextInput style = {styles.input}
                 underlineColorAndroid = "transparent"
                 placeholder = "Email"
+                // value = {email}
                 // placeholderTextColor = "#9a73ef"
                 placeholderTextColor= '#FF3E00'
                 textContentType = 'emailAddress'
                 selectionColor = 'white'
                 autoCapitalize = "none"
+                // onEndEditing = {emailHandler}
                 onChangeText = {emailHandler}
             />
 
             <TextInput style = {styles.input}
                 underlineColorAndroid = "transparent"
                 placeholder = "Username"
+                // value = {user}
                 // placeholderTextColor = "#9a73ef"
                 placeholderTextColor= '#FF3E00'
                 selectionColor = 'white'
                 autoCapitalize = "none"
-                onChangeText = {psswdHandler}
+                // onEndEditing = {userHandler}
+                onChangeText = {userHandler}
             />
 
             <TextInput style = {styles.input}
                 underlineColorAndroid = "transparent"
                 placeholder = "Password"
+                // value = {psswd}
                 // placeholderTextColor = "#9a73ef"
                 placeholderTextColor= '#FF3E00'
                 textContentType = 'password'
                 selectionColor = 'white'
                 secureTextEntry={true}
                 autoCapitalize = "none"
+                // onEndEditing = {psswdHandler}
                 onChangeText = {psswdHandler}
             />
 
             <TextInput style = {styles.input}
                 underlineColorAndroid = "transparent"
                 placeholder = "Confirm Password"
+                // value = {confirm}
                 // placeholderTextColor = "#9a73ef"
                 placeholderTextColor= '#FF3E00'
                 textContentType = 'password'
                 selectionColor = 'white'
                 secureTextEntry={true}
                 autoCapitalize = "none"
-                onEndEditing = {confirmHandler}
+                // onEndEditing = {confirmHandler}
+                onChangeText = {confirmHandler}
             />
 
             <TouchableOpacity
@@ -101,8 +141,10 @@ function RegisterScreen(){
             </TouchableOpacity>
         </View>
     )
-    // }
+  
 }
+
+
 
 export default RegisterScreen
 
