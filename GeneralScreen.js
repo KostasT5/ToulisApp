@@ -1,19 +1,24 @@
 import * as React from 'react';
-import {useState, setState} from 'react';
-import { Text, View, TextInput, Button, StyleSheet, Image, Platform, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native';
+import {useState, setState, useEffect} from 'react';
+import { Text, View, TextInput, Button, StyleSheet, Image, Platform, TouchableOpacity, FlatList, ActivityIndicator, ScrollView, Animated, Dimensions } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 // import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import MapView, {PROVIDER_GOOGLE, Marker, Callout} from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
 import {request, PERMISSIONS} from 'react-native-permissions';
+import axios from 'axios';
 // import SettingsScreen from './settings.js'
 import LinearGradient from 'react-native-linear-gradient'
 import LoginScreen from './LoginScreen.js'
 import RegisterScreen from './registerpage.js'
 import StartingScreen from './loginorregister.js'
+import StarRating from 'react-native-star-rating';
+
 // import User from './UserScreen.js'
 // import apiKey from './google_api_key.txt'
+
+const { width, height } = Dimensions.get("window");
 
 class HomeScreen extends React.Component{
     
@@ -33,98 +38,80 @@ class HomeScreen extends React.Component{
         longitude: '',
         places: []      
     }
-    requestLocationPermission = async () => {
-        if(Platform.OS === 'android') {
-        var response = await request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
+    // requestLocationPermission = async () => {
+    //     if(Platform.OS === 'android') {
+    //     var response = await request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
         
-        if(response === 'granted') {
-            this.locateCurrentPosition();
-        }
-        } else {
-        }
-    }
-    locateCurrentPosition = () => {
-        Geolocation.getCurrentPosition(
-        position => {
+    //     if(response === 'granted') {
+    //         this.locateCurrentPosition();
+    //     }
+    //     } else {
+    //     }
+    // }
+    // locateCurrentPosition = () => {
+    //     Geolocation.getCurrentPosition(
+    //     position => {
        
-            let initialPosition = {
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
+    //         let initialPosition = {
+    //         latitude: position.coords.latitude,
+    //         longitude: position.coords.longitude,
             
-            latitudeDelta: 0.09,
-            longitudeDelta: 0.035,
-            }
+    //         latitudeDelta: 0.09,
+    //         longitudeDelta: 0.035,
+    //         }
           
-            this.setState({initialPosition});
-            this.setState({latitude: initialPosition.latitude, longitude:initialPosition.longitude});
+    //         this.setState({initialPosition});
+    //         this.setState({latitude: initialPosition.latitude, longitude:initialPosition.longitude});
        
-            this.findPlace();
+    //         this.findPlace();
             
             
-        },
-        error => Alert.alert(error.message),
-        {enableHighAccuracy: true, timeout: 10000, maximumAge: 1000}
-        )
+    //     },
+    //     error => Alert.alert(error.message),
+    //     {enableHighAccuracy: true, timeout: 10000, maximumAge: 1000}
+    //     )
         
        
-    }
-    async findPlace() {
-        const apiKey = 'AIzaSyBSpTY-M9Ztfu7vKq8pqsusrGoe_FuUG4s'
-        // console.log(this.state.latitude);
-        // console.log(this.state.longitude);
-        const apiURL = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${this.state.latitude}, ${this.state.longitude}&radius=3000&type=tourist_attraction&key=${apiKey}`
-        try{
-            const result = await fetch(apiURL);
-            const json = await result.json();
-            var json_res = json['results'];
-            const temp = [];
-            for (var item in json_res) {
-                temp.push({"id": json_res[item]["place_id"], "name": json_res[item]["name"], "lat": json_res[item]['geometry'].location['lat'], 
-                    "lng": json_res[item]['geometry'].location['lng'], "icon": json_res[item]["icon"]});
-                try {
-                    temp.push({"photo_id": json_res[item]["photos"][0].photo_reference});
-                } catch (err) {
-                    temp.push({"photo_id": "unavailable"}); //'"https://media.fdmckosovo.org/2020/07/placeholder.png"'});
-                }
-            }
-            this.setState({places: temp});
-            this.getPhoto();
-        } catch (err) {
-            console.error(err);
-        }
-        // for (var i in this.state.places) {
-        //     console.log(this.state.places[i].photo_id);
-        // }
+    // }
+    // async findPlace() {
+    //     const apiKey = 'AIzaSyBSpTY-M9Ztfu7vKq8pqsusrGoe_FuUG4s'
+    //     const apiURL = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${this.state.latitude}, ${this.state.longitude}&radius=3000&type=tourist_attraction&key=${apiKey}`
+    //     try{
+    //         const result = await axios.get(apiURL);
+    //         const json = await result.json();
+    //         var json_res = json['results'];
+    //         const temp = [];
+    //         for (var item in json_res) {
+    //             temp.push({"id": json_res[item]["place_id"], "name": json_res[item]["name"], "lat": json_res[item]['geometry'].location['lat'], 
+    //                 "lng": json_res[item]['geometry'].location['lng'], "icon": json_res[item]["icon"]});
+    //             try {
+    //                 temp.push({"photo_id": json_res[item]["photos"][0].photo_reference});
+    //             } catch (err) {
+    //                 temp.push({"photo_id": "unavailable"}); 
+    //             }
+    //         }
+    //         this.setState({places: temp});
+    //     } catch (err) {
+    //         console.error(err);
+    //     }
+ 
        
         
-    }
-    getPhoto() {
-        const apiKey = 'AIzaSyBSpTY-M9Ztfu7vKq8pqsusrGoe_FuUG4s'
-        // console.log('getphoto');
-        for (var i in this.state.places) {
-            var apiURL = `https://maps.googleapis.com/maps/api/place/photo?key=${apiKey}&photoreference=${this.state.places[i].photo_id}&maxheight=200&maxwidth=200`
-            try{
-                // console.log(this.state.places[i].name);
-                // var xhr = new XMLHttpRequest();
-                // xhr.open('GET', apiURL, true);
-                // xhr.onload = () => {
-                //     // this.setState({imageUrl: xhr.responseURL});
-                //     console.log(this.state.places[i].name);
-                //     console.log(xhr.responseURL);
-                // };
-                // xhr.send(null);
-            
-            } catch (err) {
-                console.log(err);
-            }
-        }
-    }
+    // }
+    // getPhoto() {
+
+    //     for (var i in this.state.places) {
+    //         var apiURL = `https://maps.googleapis.com/maps/api/place/photo?key=${apiKey}&photoreference=${this.state.places[i].photo_id}&maxheight=200&maxwidth=200`
+    //         try{            
+    //         } catch (err) {
+    //             console.log(err);
+    //         }
+    //     }
+    // }
 
     componentDidMount() {
-        this.requestLocationPermission();
-        // this.findPlace();
+        // this.requestLocationPermission();
         this.props.navigation;
-        // console.log(this.props.places);
     }
 
     render(){
@@ -208,23 +195,21 @@ function UserScreen({navigation}) {
 class MapScreen extends React.Component{
     constructor(props) {
         super(props);
+        // this.state = {
+        //     places: this.props.dataParentToChild
+        // }
         this.handlePlace = this.handlePlace.bind(this);
     }
     
+    // React.useEffect(() => {
+
+    // })
 
     state = {
-        // coordinates: [
-        // {name: 'Patras', latitude: 38.246550, longitude: 21.734669},
-        // ],
-        // position: [
-        //     {
         latitude: '',
         longitude: '',
-        places: []
-        //     }
-            
-        // ]
-        
+        places: [],
+        isLoading: true
     }
 
     requestLocationPermission = async () => {
@@ -243,7 +228,6 @@ class MapScreen extends React.Component{
     locateCurrentPosition = () => {
         Geolocation.getCurrentPosition(
         position => {
-            // console.log(JSON.stringify(position));
 
             let initialPosition = {
             latitude: position.coords.latitude,
@@ -252,66 +236,78 @@ class MapScreen extends React.Component{
             latitudeDelta: 0.09,
             longitudeDelta: 0.035,
             }
-            // console.log(initialPosition.latitude,initialPosition.longitude);
             this.setState({initialPosition});
             this.setState({latitude: initialPosition.latitude, longitude:initialPosition.longitude});
-            // console.log(this.state.latitude);
             this.findPlace();
-            // console.log(this.state.latitude);
-            // console.log(this.state.longitude);
-            // this.state.latitude = initialPosition.latitude;
-            // this.state.longitude = initialPosition.longitude;
             
         },
         error => Alert.alert(error.message),
         {enableHighAccuracy: true, timeout: 10000, maximumAge: 1000}
-        )
-        // console.log(this.state.latitude);
-        // console.log(this.state.longitude);
-       
+        )      
     }
 
     async findPlace() {
-        const apiKey = 'AIzaSyBSpTY-M9Ztfu7vKq8pqsusrGoe_FuUG4s'
-        // console.log(this.state.latitude);
-        // console.log(this.state.longitude);
-        const apiURL = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${this.state.latitude}, ${this.state.longitude}&radius=3000&type=tourist_attraction&key=${apiKey}`
         try{
-            const result = await fetch(apiURL);
-            const json = await result.json();
-            var json_res = json['results'];
-            // console.log(json['results']['geometry'].location);
-            // this.state.places = json['results'];
-            // this.setState({places: [json['results']['place_id'], json['results']['name'], json['results']['geometry']]});
-            // console.log(this.state.places);  
-
-            const temp = [];
-            for (var item in json_res) {
-                temp.push({"id": json_res[item]["place_id"], "name": json_res[item]["name"], "lat": json_res[item]['geometry'].location['lat'], "lng": json_res[item]['geometry'].location['lng'], "icon": json_res[item]["icon"]});
-                // console.log(this.state.places[item]["geometry"].location);
-                // this.setState({places: [json['results']['place_id'], json['results']['name'], json['results']['geometry']]});
-            }
-            // console.log(places_id);
-            this.setState({places: temp});
-            // console.log(this.state.places);
-            // console.log(this.state.places[0][2].lat);
+            await fetch('http://10.0.2.2:5000/places', {  //'http://192.168.43.218/places', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                AcceptLanguage: '*',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                latitude: this.state.latitude,
+                longitude: this.state.longitude
+            })
+            })
+            // await axios({
+            //     method: 'post',
+            //     url: 'http://10.0.2.2:5000/places',
+            //     data: {
+            //         latitude: this.state.latitude,
+            //         longitude: this.state.longitude
+            //     }
+            // })
+            .then((response) => response.json())
+            .then((response) => {
+                console.log(response);
+                const temp = [];
+                for (var item in response['data']['results']) {
+                    temp.push({"id": response['data']['results'][item]["place_id"], "name": response['data']['results'][item]["name"], 
+                    "lat": response['data']['results'][item]['geometry'].location['lat'], "lng": response['data']['results'][item]['geometry'].location['lng'], 
+                    "icon": response['data']['results'][item]["icon"], "rating":response['data']['results'][item]['rating']});
+                
+                }
+                this.setState({places: temp});
+                console.log(this.state.places);
+                this.setState({isLoading: false});
+            });
         } catch (err) {
             console.error(err);
         }
-      
+        
         
     }
 
     componentDidMount() {
         this.requestLocationPermission();
-        // this.findPlace();
         this.props.navigation;
     }
 
-    handlePlace = ({navigation}) => {
+    handlePlace(place_id) {
         // console.log("PlaceScreen");
         this.props.navigation.navigate('PlaceScreen');
     } 
+
+    checkDistance(place_id, place_lat, place_lng) {
+        console.log('Checking Distance');   
+        if ((Math.abs(this.state.latitude - place_lat) < 0.001)&&(Math.abs(this.state.longitude - place_lng) < 0.001)){
+            console.log("Accessing place Details");
+            this.handlePlace(place_id);
+        } else {
+            // alert("Move closer to the site to access more info");
+        }
+    }
 
     createMarker = () => {
         // console.log(this.state.places);
@@ -320,54 +316,112 @@ class MapScreen extends React.Component{
                 key={place.id}
                 coordinate={{latitude: place.lat, longitude: place.lng}}
                 title={place.name}
-                // icon={place.icon}
-            />
+                // onPress = {this.checkDistance(place.lat, place.lng)}
+                icon={place.icon}
+            > 
+                <Callout>
+                    <View>
+                        <View style={styles.bubble}>
+                            <Text style={styles.name}>{place.name}</Text>
+                            <TouchableOpacity
+                                style={styles.button}
+                                onPress={this.checkDistance}
+                            ><Text>More Info</Text></TouchableOpacity>
+                        </View>
+                        <View style={styles.arrowBorder}/>
+                        <View style={styles.arrow}/>
+                    </View>
+                </Callout>
+            </Marker>
             
         )
     }
 
     render() {
 
-        
+        console.log(this.state);
 
+        if (this.state.isLoading){
+            return(
+              <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
+                  <ActivityIndicator size='large'/>
+              </View>  
+            );
+        }
+        
         return (
-        
-            <MapView 
-                showsUserLocation={true}
-                provider={PROVIDER_GOOGLE}
-                ref={map => this._map = map}
-                style={styles.map}
-                initialRegion={this.state.initialPosition}>
-                <Marker
-                    coordinate={{latitude: 38.246550, longitude: 21.734669}}
-                    // coordinate={this.state.initialPosition.latitude, this.state.initialPosition.longitude}
-                    title={'Position'}
-                    onPress = {this.handlePlace}
-                />
-                {this.createMarker()}
-                
-                {/* {this.state.places.map(places => (
-                    <MapView.Marker 
-                    coordinate={{places["geometry"].location["lat"], }}
-                    title={marker.title}
+            <View>
+                <MapView 
+                    showsUserLocation={true}
+                    provider={PROVIDER_GOOGLE}
+                    ref={map => this._map = map}
+                    style={styles.map}
+                    initialRegion={this.state.initialPosition}>
+                    <Marker
+                        coordinate={{latitude: 38.246550, longitude: 21.734669}}
+                        // coordinate={this.state.initialPosition.latitude, this.state.initialPosition.longitude}
+                        title={'Position'}
+                        onPress = {this.handlePlace}
                     />
-                ))} */}
+                    {this.createMarker()}
+                    
+                    {/* {this.state.places.map(places => (
+                        <MapView.Marker 
+                        coordinate={{places["geometry"].location["lat"], }}
+                        title={marker.title}
+                        />
+                    ))} */}
 
 
-                {/* <Callout>
-                    <Image 
-                    source={require('./img/Map_Icons/chat.png')} 
-                    style={styles.map_image}
-                    />
-                    <Text>You are here</Text>
-                </Callout> */}
-                    {/* <Image 
-                    source={require('./img/Map_Icons/chat.png')} 
-                    style={styles.map_image}
-                    /> */}
+                    {/* <Callout>
+                        <Image 
+                        source={require('./img/Map_Icons/chat.png')} 
+                        style={styles.map_image}
+                        />
+                        <Text>You are here</Text>
+                    </Callout> */}
+                        {/* <Image 
+                        source={require('./img/Map_Icons/chat.png')} 
+                        style={styles.map_image}
+                        /> */}
 
-                {/* </Marker> */}
-            </MapView>
+                    {/* </Marker> */}
+                </MapView>
+                <Animated.ScrollView
+                    horizontal
+                    scrollEventThrottle={1}
+                    showsHorizontalScrollIndicator={false}
+                    
+                    style={styles.scrollView}
+                >
+                    {this.state.places.map((place, index) => (
+                        <View style={styles.card} key={index}>
+                            <Image
+                                source={require('./img/placeholder.jpg')}
+                                style={styles.cardImage}
+                            />
+                            <View style={styles.textContent}>
+                                <Text style={styles.cardTitle} numberOfLines={1}>{place.name}</Text>
+                                {/* <Text style={styles.cardDescription}>Rating: {place.rating}</Text> */}
+                                <StarRating ratings={Math.round(place.rating)} />
+                                <TouchableOpacity
+                                    onPress = {() => {
+                                        this._map.animateToRegion({
+                                            latitude: place.lat,
+                                            longitude: place.lng,
+                                            latitudeDelta: 0.01,
+                                            longitudeDelta: 0.01
+                                        });
+                                        this.checkDistance(place.id, place.lat, place.lng);
+                                    }}
+                                >
+                                    <Text style={styles.cardDescription}>View on Map</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    ))}
+                </Animated.ScrollView>
+            </View>
         
 
         );
@@ -388,95 +442,80 @@ export default class App extends React.Component{
     }
     
     state = {
-        
         latitude: '',
         longitude: '',
         places: []
-        
     }
 
-    requestLocationPermission = async () => {
-        if(Platform.OS === 'android') {
-        var response = await request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
+    // requestLocationPermission = async () => {
+    //     if(Platform.OS === 'android') {
+    //     var response = await request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
         
-        if(response === 'granted') {
-            this.locateCurrentPosition();
-        }
-        } else {
+    //     if(response === 'granted') {
+    //         this.locateCurrentPosition();
+    //     }
+    //     } else {
 
-        }
-    }
+    //     }
+    // }
 
 
-    locateCurrentPosition = () => {
-        Geolocation.getCurrentPosition(
-        position => {
-            // console.log(JSON.stringify(position));
+    // locateCurrentPosition = () => {
+    //     Geolocation.getCurrentPosition(
+    //     position => {
 
-            let initialPosition = {
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
+    //         let initialPosition = {
+    //         latitude: position.coords.latitude,
+    //         longitude: position.coords.longitude,
             
-            latitudeDelta: 0.09,
-            longitudeDelta: 0.035,
-            }
-            // console.log(initialPosition.latitude,initialPosition.longitude);
-            this.setState({initialPosition});
-            this.setState({latitude: initialPosition.latitude, longitude:initialPosition.longitude});
-            // console.log(this.state.latitude);
-            this.findPlace();
-            // console.log(this.state.latitude);
-            // console.log(this.state.longitude);
-            // this.state.latitude = initialPosition.latitude;
-            // this.state.longitude = initialPosition.longitude;
+    //         latitudeDelta: 0.09,
+    //         longitudeDelta: 0.035,
+    //         }
+    //         this.setState({initialPosition});
+    //         this.setState({latitude: initialPosition.latitude, longitude:initialPosition.longitude});
+    //         this.findPlace();
             
-        },
-        error => Alert.alert(error.message),
-        {enableHighAccuracy: true, timeout: 10000, maximumAge: 1000}
-        )
-        // console.log(this.state.latitude);
-        // console.log(this.state.longitude);
-       
-    }
+    //     },
+    //     error => Alert.alert(error.message),
+    //     {enableHighAccuracy: true, timeout: 10000, maximumAge: 1000}
+    //     )      
+    // }
 
-    async findPlace() {
-        const apiKey = 'AIzaSyBSpTY-M9Ztfu7vKq8pqsusrGoe_FuUG4s'
-        // console.log(this.state.latitude);
-        // console.log(this.state.longitude);
-        const apiURL = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${this.state.latitude}, ${this.state.longitude}&radius=3000&type=tourist_attraction&key=${apiKey}`
-        try{
-            const result = await fetch(apiURL);
-            const json = await result.json();
-            var json_res = json['results'];
-            // console.log(json['results']['geometry'].location);
-            // this.state.places = json['results'];
-            // this.setState({places: [json['results']['place_id'], json['results']['name'], json['results']['geometry']]});
-            // console.log(this.state.places);  
-
-            const temp = [];
-            for (var item in json_res) {
-                temp.push({"id": json_res[item]["place_id"], "name": json_res[item]["name"], "lat": json_res[item]['geometry'].location['lat'], "lng": json_res[item]['geometry'].location['lng'], "icon": json_res[item]["icon"]});
-                // console.log(this.state.places[item]["geometry"].location);
-                // this.setState({places: [json['results']['place_id'], json['results']['name'], json['results']['geometry']]});
-            }
-            // console.log(places_id);
-            this.setState({places: temp});
-            // console.log(this.state.places);
-            // console.log(this.state.places[0][2].lat);
-        } catch (err) {
-            console.error(err);
-        }
-        // console.log(this.state.places);
-      
+    // async findPlace() {
+    //     try{
+    //         fetch('http://10.0.2.2:5000/places', {
+    //         method: 'POST',
+    //         headers: {
+    //             // Accept: 'application/json',
+    //             // AcceptLanguage: '*',
+    //             'Content-Type': 'application/json'
+    //         },
+    //         body: JSON.stringify({
+    //             latitude: this.state.latitude,
+    //             longitude: this.state.longitude
+    //         })
+    //         })
+    //         .then((response) => response.json())
+    //         .then((response) => {
+    //             const temp = [];
+    //             for (var item in response['data']) {
+    //                 temp.push({"id": response['data'][item]["place_id"], "name": response['data'][item]["name"], "lat": response['data'][item]['geometry'].location['lat'], "lng": response['data'][item]['geometry'].location['lng'], "icon": response['data'][item]["icon"]});
+                
+    //             }
+    //             this.setState({places: temp});
+    //         });
+    //     } catch (err) {
+    //         console.error(err);
+    //     }
         
-    }
+        
+    // }
 
     componentDidMount() {
-        this.requestLocationPermission();
-        // this.findPlace();
+        // this.requestLocationPermission();
         this.props.navigation;
-        
     }
+
     render() {
         // console.log(this.state.places);
         return (
@@ -524,6 +563,7 @@ export default class App extends React.Component{
                 <Tab.Screen 
                     name="Map" 
                     component={MapScreen} 
+                    initialParams = {this.state.places}
                     options={{
                         tabBarLabel: 'Map',
                         tabBarIcon: ({ tintColor }) => (
@@ -611,6 +651,96 @@ const styles = StyleSheet.create({
         color: '#ffffff',
         flex: 1
     },
+    bubble: {
+        flexDirection: 'column',
+        alignSelf: 'flex-start',
+        backgroundColor: '#fff',
+        borderRadius: 6,
+        borderColor: '#ccc',
+        borderWidth: 0.5,
+        padding: 15,
+        width: 150,
+    },
+    name: {
+        fontSize: 16,
+        marginBottom: 5,
+    },
+    arrowBorder: {
+        backgroundColor: 'transparent',
+        borderColor: 'transparent',
+        borderTopColor: '#007a87',
+        borderWidth: 16,
+        alignSelf: 'center',
+        marginTop: -0.5,
+    },
+    arrow: {
+        backgroundColor: 'transparent',
+        borderColor: 'transparent',
+        borderTopColor: '#fff',
+        borderWidth: 16,
+        alignSelf: 'center',
+        marginTop: -32,
+    },
+    chipsScrollView: {
+        position:'absolute',
+        paddingHorizontal: 10,
+    },
+    chipsItem: {
+        flexDirection: 'row',
+        backgroundColor:'#fff',
+        borderRadius:20,
+        padding:0,
+        paddingHorizontal:20,
+        marginHorizontal:10,
+        height:35,
+        shadowColor:'#ccc',
+        shadowOffset:{width:0, height:3},
+        shadowOpacity: 0.5,
+        shadowRadius:5,
+        elevation:10,
+    },
+    scrollView: {
+        position: "absolute",
+        bottom: 0,
+        left: 0,
+        right: 0,
+        paddingVertical: 10,
+    },
+    card: {
+        // padding: 10,
+        elevation: 2,
+        backgroundColor: "#FFF",
+        borderTopLeftRadius: 5,
+        borderTopRightRadius: 5,
+        marginHorizontal: 10,
+        shadowColor: "#000",
+        shadowRadius: 5,
+        shadowOpacity: 0.3,
+        shadowOffset: { x: 2, y: -2 },
+        height: 220,
+        width: width*0.8,
+        overflow: "hidden",
+    },
+    cardImage: {
+        flex: 3,
+        width: "100%",
+        height: "100%",
+        alignSelf: "center",
+    },
+    textContent: {
+        flex: 2,
+        padding: 10,
+    },
+    cardTitle: {
+        fontSize: 17,
+        // marginTop: 5,
+        fontWeight: "bold",
+    },
+    cardDescription: {
+        fontSize: 14,
+        color: "#444",
+    },
+
     title: {
         fontSize: 35,
         color: '#ffffff',
