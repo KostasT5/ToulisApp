@@ -15,6 +15,9 @@ import RegisterScreen from './registerpage.js'
 import StartingScreen from './loginorregister.js'
 import StarRating from 'react-native-star-rating';
 
+
+// import StarRatingBar from 'react-native-star-rating-view/StarRatingBar'
+
 // import User from './UserScreen.js'
 // import apiKey from './google_api_key.txt'
 
@@ -403,7 +406,14 @@ class MapScreen extends React.Component{
                             <View style={styles.textContent}>
                                 <Text style={styles.cardTitle} numberOfLines={1}>{place.name}</Text>
                                 {/* <Text style={styles.cardDescription}>Rating: {place.rating}</Text> */}
-                                <StarRating ratings={Math.round(place.rating)} />
+                                <StarRating 
+                                    ratings={place.rating} 
+                                    disabled={true}
+                                    fullStarColor={'#FDF900'}
+                                    emptyStarColor={'#BCBCBC'}
+                                    starSize={20}
+                                />
+
                                 <TouchableOpacity
                                     onPress = {() => {
                                         this._map.animateToRegion({
@@ -615,7 +625,7 @@ const styles = StyleSheet.create({
     input: {
         margin: 15,
         height: 40,
-        borderColor: '#7a42f4',
+        borderColor: '#2F3454',
         borderWidth: 1
         },
     submitButton: {
@@ -643,7 +653,7 @@ const styles = StyleSheet.create({
 
     },
     container: {
-        backgroundColor: '#222831',
+        backgroundColor: '#1C1E31',
         flex: 1,
         paddingTop: 23
     },
@@ -709,7 +719,7 @@ const styles = StyleSheet.create({
     card: {
         // padding: 10,
         elevation: 2,
-        backgroundColor: "#FFF",
+        backgroundColor: "#2F3454",
         borderTopLeftRadius: 5,
         borderTopRightRadius: 5,
         marginHorizontal: 10,
@@ -735,10 +745,11 @@ const styles = StyleSheet.create({
         fontSize: 17,
         // marginTop: 5,
         fontWeight: "bold",
+        color: 'white',
     },
     cardDescription: {
-        fontSize: 14,
-        color: "#444",
+        fontSize: 24,
+        color: "#f05454",
     },
 
     title: {
@@ -760,7 +771,7 @@ const styles = StyleSheet.create({
     },
     list: {
         flex: 1,
-        backgroundColor: '#30475e',
+        backgroundColor: '#2F3454',
         padding: 15,
         // paddingBottom: 40,
         borderTopRightRadius: 15,

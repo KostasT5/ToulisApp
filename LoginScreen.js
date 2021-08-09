@@ -99,7 +99,7 @@ export default LoginScreen
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: '#222831',
+        backgroundColor: '#1C1E31',
         flex: 1,
         // paddingTop: 23,
         alignContent: 'center',
