@@ -56,7 +56,10 @@ function RegisterScreen({navigation}){
                     response.json())
                 .then((response) => {
                     if (response['result']==201){
-                        navigation.navigate('GeneralScreen');
+                        navigation.reset({
+                            index: 0,
+                            routes: [{name: 'GeneralScreen'}],
+                        });
                     } else {
                         alert(response['message']);
                     }

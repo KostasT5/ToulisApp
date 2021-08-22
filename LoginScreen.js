@@ -1,7 +1,9 @@
 import React, { Component, useState } from 'react'
 import { View, Text, TouchableOpacity, TextInput, StyleSheet, ActivityIndicator } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
+import {useNavigation} from '@react-navigation/native';
 
+// const navigation = useNavigation();
 
 function LoginScreen({navigation}){
     const[user, setUser] = useState('');
@@ -38,7 +40,10 @@ function LoginScreen({navigation}){
             response.json())
         .then((response) => {
            if (response['result']==202){
-               navigation.navigate('GeneralScreen');
+                navigation.reset({
+                    index: 0,
+                    routes: [{name: 'GeneralScreen'}],
+                });
            } else {
                alert('Wrong Username or Password');
            }
