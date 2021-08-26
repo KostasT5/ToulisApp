@@ -2,6 +2,7 @@ import React, { Component, useState } from 'react'
 import { View, Text, TouchableOpacity, TextInput, StyleSheet, ActivityIndicator } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
 import {useNavigation} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // const navigation = useNavigation();
 
@@ -17,10 +18,17 @@ function LoginScreen({navigation}){
         setPsswd(val);
     }
 
- 
+    const storeData = async () => {
+        try {
+            console.log(user);
+            await AsyncStorage.setItem('user_name', user);
+        } catch (e) {
+            console.log(e);
+        }
+    }
 
     const loginHandler = () => {
-        console.log('user: ' + user + ' password: ' + psswd);
+        // console.log('user: ' + user + ' password: ' + psswd);
     //   BASE = 'http://127.0.0.1:5000/'
         // console.log('loginHanlder');
 
@@ -40,6 +48,8 @@ function LoginScreen({navigation}){
             response.json())
         .then((response) => {
            if (response['result']==202){
+                storeData();
+                console.log(AsyncStorage.getItem('user_name'));
                 navigation.reset({
                     index: 0,
                     routes: [{name: 'GeneralScreen'}],
@@ -134,14 +144,12 @@ const styles = StyleSheet.create({
         color: '#ffffff',
     },
     buttonStyle: {
-      // flex: 1,
-      // flexDirection: 'column',
-      // backgroundColor: '#f05454',
+      
       borderWidth: 1,
-      // color: '#9dbeb7',
+      
       borderColor: '#FF3E00',
       height: 60,
-      // width: 140,
+      
       alignItems: 'center',
       justifyContent: 'center',
       borderRadius: 15,

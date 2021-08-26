@@ -164,7 +164,7 @@ export default class MapScreen extends React.Component{
         if (this.state.isLoading){
             return(
               <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
-                  <ActivityIndicator size='large'/>
+                  <ActivityIndicator size={50} color='#E50D0D'/>
               </View>  
             );
         }
@@ -224,11 +224,12 @@ export default class MapScreen extends React.Component{
                                 <Text style={styles.cardTitle} numberOfLines={1}>{place.name}</Text>
                                 {/* <Text style={styles.cardDescription}>Rating: {place.rating}</Text> */}
                                 <StarRating 
-                                    ratings={place.rating} 
+                                    rating={place.rating} 
                                     disabled={true}
                                     fullStarColor={'#FDF900'}
                                     emptyStarColor={'#BCBCBC'}
-                                    starSize={20}
+                                    starSize={25}
+                                    containerStyle={{paddingLeft:30, paddingRight:30}}
                                 />
 
                                 <TouchableOpacity
@@ -242,7 +243,7 @@ export default class MapScreen extends React.Component{
                                         this.checkDistance(place.id, place.lat, place.lng);
                                     }}
                                 >
-                                    <Text style={styles.cardDescription}>View on Map</Text>
+                                    <Text style={styles.cardDescription}>Details</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>
@@ -396,13 +397,13 @@ const styles = StyleSheet.create({
         padding: 10,
     },
     cardTitle: {
-        fontSize: 17,
+        fontSize: 20,
         // marginTop: 5,
         fontWeight: "bold",
         color: 'white',
     },
     cardDescription: {
-        fontSize: 24,
+        fontSize: 19,
         color: "#f05454",
     },
 

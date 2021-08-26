@@ -20,6 +20,7 @@ import { getHeaderTitle } from '@react-navigation/elements';
 import { Header } from './Header.js';
 
 import Icon from 'react-native-vector-icons/Ionicons'
+import TestScreen from './TestScreen.js';
 // import { getHeaderTitle } from '@react-navigation/elements';
 
 // import StarRatingBar from 'react-native-star-rating-view/StarRatingBar'
@@ -95,7 +96,7 @@ export default class App extends React.Component{
             // </NavigationContainer>
             <NavigationContainer independent={true}>
             <Tab.Navigator
-                initialRouteName="User"
+                initialRouteName="Test"
                 activeColor="#FFFFFF"
                 inactiveColor="#222831"
                 // inactiveColor = "#FF3E00"
@@ -127,8 +128,8 @@ export default class App extends React.Component{
                     }} 
                 />
                 <Tab.Screen 
-                    name="User" 
-                    component={UserScreen} 
+                    name="Test" 
+                    component={TestScreen} 
                     options={{
                         tabBarLabel: 'User',
                         tabBarIcon: ({color }) => (

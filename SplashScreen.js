@@ -79,13 +79,15 @@ const styles = StyleSheet.create({
         flex: 1,
         // alignItems: 'center',
         // justifyContent: 'center',
-        backgroundColor: '#dddddd'
+        // backgroundColor: '#dddddd'
+        
+        backgroundColor: '#F8F8FF'
     },
     header: {
         flex: 2,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#dddddd'
+        backgroundColor: '#F8F8FF'
     },
     logo: {
         width: 0.35*height,

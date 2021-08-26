@@ -8,6 +8,7 @@ import { Icon } from 'react-native-vector-icons/Ionicons'
 import { Header } from 'react-native-elements'
 import { useNavigation, DrawerActions } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 const { width, height } = Dimensions.get("window");
@@ -32,44 +33,39 @@ function UserScreen() {
         {name: 'Place 15', key: '15', comment:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'},
         {name: 'Place 16', key: '16', comment:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'}, 
     ]);
-    const logoutHandler = () => {
-        navigation.navigate('SplashScreen');
-    }
+    // const logoutHandler = () => {
+    //     navigation.navigate('SplashScreen');
+    // }
 
-    const navigation = useNavigation();
+    // const navigation = useNavigation();
+
+    // const user_name = AsyncStorage.getItem('@user_name');
+
+    const [user, setUser] = useState('');
+
+    useEffect(() => {
+        readData()
+    });
+    
+    const readData = async () => {
+        try {
+            const username = await AsyncStorage.getItem('user_name');
+        
+            if (username !== null) {
+                setUser(username);
+            } else {
+                console.log('USername not set');
+            }
+        } catch (e) {
+            console.log('Failed to fetch the data from storage');
+        }
+      }
 
     return (
+        
         <View style={ styles.container }>
-            {/* <Header 
-                backgroundColor="#5f9ea0"
-                placement="left"
-                leftComponent={{ icon: 'menu', color: '#fff', onPress: () => {
-                    console.log('menu');
-                    DrawerActions.openDrawer();} }}
-                centerComponent={{ text: 'Home', style: { color: '#fff' } }}
-            />
-            <Button
-                title='Drawer'
-                onPress = {() => {
-                    console.log('button');
-                    navigation.dispatch(DrawerActions.openDrawer());
-                    navigation.dispatch(DrawerActions.toggleDrawer());
-                }}
-            /> */}
-
-            {/* <TouchableOpacity
-                // style = {styles.submitButton}
-                onPress = {
-                    logoutHandler
-                }>
-                    <LinearGradient
-                        colors={['#f05454','#FF1D1D']}
-                        style={styles.buttonStyle}    
-                    >
-                    <Text style={styles.buttonText}>Logout</Text>
-                </LinearGradient>
-            </TouchableOpacity> */}
-            <Text style={styles.title}>History</Text>
+            <Text style={styles.title}>Welcome {user}</Text>
+            <Text style={styles.title2}>History</Text>
             <FlatList
                 style={styles.list}
                 data={history}
@@ -235,6 +231,16 @@ const styles = StyleSheet.create({
 
     title: {
         fontSize: 35,
+        color: '#ffffff',
+        // marginBottom: 30,
+        marginTop: 0,
+        paddingLeft: 10,
+        paddingBottom: 20,
+        // paddingTop: 20,
+        
+    },
+    title2: {
+        fontSize: 30,
         color: '#ffffff',
         // marginBottom: 30,
         marginTop: 0,
