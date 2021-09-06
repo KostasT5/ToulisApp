@@ -15,6 +15,8 @@ import MapScreen from './MapScreen.js';
 import UserScreen from './UserScreen.js';
 import SettingsScreen from './SettingsScreen.js';
 import DrawerContent from './DrawerContent.js';
+import PlaceScreen from './PlaceScreen.js';
+import MapStackScreen from './MapStackScreen.js';
 import { getHeaderTitle } from '@react-navigation/elements';
 
 import { Header } from './Header.js';
@@ -96,7 +98,7 @@ export default class App extends React.Component{
             // </NavigationContainer>
             <NavigationContainer independent={true}>
             <Tab.Navigator
-                initialRouteName="Test"
+                initialRouteName="User"
                 activeColor="#FFFFFF"
                 inactiveColor="#222831"
                 // inactiveColor = "#FF3E00"
@@ -111,7 +113,7 @@ export default class App extends React.Component{
                 
                 <Tab.Screen 
                     name="Map" 
-                    component={MapScreen} 
+                    component={MapStackScreen} 
                     initialParams = {this.state.places}
                     options={{
                         tabBarLabel: 'Map',
@@ -128,8 +130,8 @@ export default class App extends React.Component{
                     }} 
                 />
                 <Tab.Screen 
-                    name="Test" 
-                    component={TestScreen} 
+                    name="User" 
+                    component={UserScreen} 
                     options={{
                         tabBarLabel: 'User',
                         tabBarIcon: ({color }) => (

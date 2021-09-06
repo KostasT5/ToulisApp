@@ -9,75 +9,125 @@ import { Header } from 'react-native-elements'
 import { useNavigation, DrawerActions } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack'
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import StarRating from 'react-native-star-rating';
 
 
 const { width, height } = Dimensions.get("window");
 
 
-function UserScreen() {
-    const [history,setHistory] = useState([
-        {name: 'Place 1', key: '1', comment:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'},
-        {name: 'Place 2', key: '2', comment:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'},
-        {name: 'Place 3', key: '3', comment:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'},
-        {name: 'Place 4', key: '4', comment:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'},
-        {name: 'Place 5', key: '5', comment:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'},
-        {name: 'Place 6', key: '6', comment:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'},
-        {name: 'Place 7', key: '7', comment:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'},
-        {name: 'Place 8', key: '8', comment:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'},  
-        {name: 'Place 9', key: '9', comment:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'},
-        {name: 'Place 10', key: '10', comment:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'},
-        {name: 'Place 11', key: '11', comment:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'},
-        {name: 'Place 12', key: '12', comment:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'},
-        {name: 'Place 13', key: '13', comment:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'},
-        {name: 'Place 14', key: '14', comment:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'},
-        {name: 'Place 15', key: '15', comment:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'},
-        {name: 'Place 16', key: '16', comment:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'}, 
-    ]);
-    // const logoutHandler = () => {
-    //     navigation.navigate('SplashScreen');
-    // }
+class UserScreen extends React.Component{
+    // const [history,setHistory] = useState(
+   
+    // );
 
-    // const navigation = useNavigation();
+    // const [user, setUser] = useState('');
 
-    // const user_name = AsyncStorage.getItem('@user_name');
+    // useEffect(() => {
+    //     readData();
+    //     fetchHistory();
+    // });
 
-    const [user, setUser] = useState('');
-
-    useEffect(() => {
-        readData()
-    });
+    state = {
+        history: null,
+        user: null,
+        isLoading: true
+    }
     
-    const readData = async () => {
+    async readData() {
+        console.log('Read username');
         try {
             const username = await AsyncStorage.getItem('user_name');
         
             if (username !== null) {
-                setUser(username);
+                // setUser(username);
+                this.setState({user: username});
+                this.fetchHistory();
             } else {
                 console.log('USername not set');
             }
         } catch (e) {
             console.log('Failed to fetch the data from storage');
         }
-      }
+    }
 
-    return (
-        
-        <View style={ styles.container }>
-            <Text style={styles.title}>Welcome {user}</Text>
-            <Text style={styles.title2}>History</Text>
-            <FlatList
-                style={styles.list}
-                data={history}
-                renderItem={({item}) => (
-                    <View>
-                        <Text style={styles.item}>{item.name}</Text>
-                        <Text style={styles.innerText}>{item.comment}</Text>
-                    </View>
-                )}
-            />
-        </View>
-    );
+    async fetchHistory() {
+        try{
+            await fetch('http://10.0.2.2:5000/history', {  
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    AcceptLanguage: '*',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({    
+                    user_name: this.state.user,                
+                })
+            })
+            .then((response) => response.json())
+            .then((response) => {
+                // if (response['result']=='202'){
+                    // setHistory(response['history']);
+                // }
+                console.log(response);
+                // setHistory(response);
+                this.setState({history:response});
+                this.setState({isLoading: false})
+            })
+        } catch (e) {
+            console.log(e)
+        }
+    }
+    
+    componentDidMount() {
+        this.readData();
+        // this.fetchHistory();
+    }
+
+    render() {
+        if (this.state.isLoading){
+            return(
+              <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
+                  <ActivityIndicator size={50} color='#E50D0D'/>
+              </View>  
+            );
+        }
+
+        return (
+            <View style={ styles.container }>
+                <Text style={styles.title}>Welcome {this.state.user}</Text>
+                <Text style={styles.title2}>History</Text>
+                <FlatList
+                    style={styles.list}
+                    data={this.state.history}
+                    renderItem={({item}) => (
+                        <View key={item[0]}>
+                            <Text style={styles.item}>{item[0]}</Text>
+                            <Text style={{color: '#ffffff', flex: 1, fontSize: 23, paddingBottom: 5,}}>
+                                Date: {item[1]}
+                                <StarRating 
+                                    rating={parseInt(item[2])} 
+                                    disabled={true}
+                                    fullStarColor={'#FDF900'}
+                                    emptyStarColor={'#BCBCBC'}
+                                    starSize={20}
+                                    containerStyle={{paddingLeft:30, paddingRight:30}}
+                                />
+                            </Text>
+                            <Text style={styles.innerText}>{item[3]}</Text>
+                            <View
+                                style={{
+                                    borderBottomColor: 'white',
+                                    borderBottomWidth: 1,
+                                    paddingTop: 3,
+                                }}
+                            />
+                        </View>
+                    )}
+                />
+            </View>
+        );
+    }
+    
 }
 
 export default UserScreen
@@ -136,7 +186,8 @@ const styles = StyleSheet.create({
     },
     innerText: {
         color: '#ffffff',
-        flex: 1
+        flex: 1,
+        fontSize: 18
     },
     bubble: {
         flexDirection: 'column',

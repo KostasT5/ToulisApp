@@ -12,7 +12,7 @@ import {
   ScrollView,
   SafeAreaView,
   Animated,
-  ActivityIndicator,
+  ActivityIndicator
 } from 'react-native';
 
 import Header from 'react-native-elements'
@@ -34,7 +34,6 @@ class PlaceScreen extends React.Component {
         comment: '',
         place:{},
         user_reviews: [],
-        first_visit: true,
         isLoading: true,
     }
     
@@ -54,7 +53,6 @@ class PlaceScreen extends React.Component {
                     rating: temp5,
                 }});
                 this.fetchReviews();
-                // this.checkFirstVisit();
             } else {
                 console.log('Place details were not saved');
             }
@@ -75,73 +73,33 @@ class PlaceScreen extends React.Component {
             body: JSON.stringify({
                 place_id: place_id,
             })
-        })
-        // .then((response) => {
-        //     if (response.status==400){
-        //         console.log('No registered reviews');
-        //     }
-        // })          
-        .then((response) => 
-            // console.log("Status: ", response.status);
-            // if (response.status == 400){
-            //     console.log("No reviews rageistered for this place");
-            // }
-            response.json()
-            // console.log(response);
-        )
- 
-        .then((response) => {
-            if (response.length){
-                // console.log(response);
-                const temp = [];
-                for (var item in response) {
-                    temp.push({"user": response[item][4], "rating": response[item][3], 
-                    "comment": response[item][2]});
-                
-                }
-                this.setState({user_reviews: temp});
-                // console.log(this.state.user_reviews);
-            }
-            this.checkFirstVisit();
-            
-        })
-            // console.log(response))               
-        .catch((error) => console.log(error));
-    }
-
-    async checkFirstVisit() {
-        try{
-            const user = await AsyncStorage.getItem('user_name');
-            fetch('http://10.0.2.2:5000/check_history', {
-            method: 'POST',
-            headers: {
-                // Accept: 'application/json',
-                // AcceptLanguage: '*',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                place_id: this.props.route.params.place.id,
-                user_name: user,
-            })
         })          
         .then((response) => 
             response.json())
         .then((response) => {
-            
-            if (response.length){
-                console.log("USer has already visited this place");
-                console.log(response);
-                this.setState({first_visit: false});
-                this.setState({rating: response[0][3], comment: response[0][2]});
-                // console.log(this.state.rating, this.state.comment);
+        //    if (response['result']==202){
+        //         console.log(response);
+        //         const temp = [];
+        //         for (var item in response['data']) {
+        //             temp.push({"user": response['data'][item]["user"], "rating": response['data'][item]["rating"], 
+        //             "comment": response['data'][item]['comment']});
+                
+        //         }
+        //         this.setState({user_reviews: temp});
+        //         console.log(this.state.user_reviews);
+        //     } else {
+        //         console.log('No reviews registered for this place');
+        //    }
+            console.log(response);
+            var temp = [];
+            for (var item in response) {
+                temp.push({'user': response[item][4], 'rating': response[item][3], 'comment': response[item][2]});
             }
+            this.setState({user_reviews: temp});
+            this.setState({isLoading: false});
         })
-        } catch (e) {
-            console.log(e);
-        }
-        this.setState({isLoading: false});
-        // console.log('Check First Visit')
-        
+            // console.log(response))               
+        .catch((error) => console.log(error));
     }
 
     ratingHandler(val){
@@ -191,10 +149,32 @@ class PlaceScreen extends React.Component {
         }
     }
 
-    midSection() {
-        console.log(this.state.user_reviews);
-        if (this.state.user_reviews.length) {
+    componentDidMount() {
+        this.placeData();
+    }
+
+    render() {
+
+        if (this.state.isLoading){
             return(
+              <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
+                  <ActivityIndicator size={50} color='#E50D0D'/>
+              </View>  
+            );
+        }
+        
+        return(
+            <ScrollView style={styles.container}>
+                <Text style={styles.title}>{this.state.place.name}</Text>
+
+                <View style={styles.imageContainer}>
+                    <Image
+                        source={require('./img/placeholder.jpg')}
+                        style={styles.image}
+                        
+                    />
+                </View>
+                    
                 <View style={{flex:1}}>
                     <Animated.ScrollView
                         horizontal
@@ -225,139 +205,11 @@ class PlaceScreen extends React.Component {
                         ))}
 
                     </Animated.ScrollView>
-                    <View
-                        style={{
-                            borderBottomColor: 'white',
-                            borderBottomWidth: 1,
-                            paddingTop: 3,
-                        }}
-                    />
-                </View>
-            )
-        } else {
-            
-            return(
-                <View style={{flex:0.5, }}>
-                    <Text style={{color:'#fff', fontSize:23, paddingLeft: 10, paddingBottom: 30}}>No reviews have been submitted for this place</Text>
-                    <View
-                        style={{
-                            borderBottomColor: 'white',
-                            borderBottomWidth: 1,
-                            paddingTop: 3,
-                        }}
-                    />
-                </View>
-                
-            )
-        }
-    }
-
-    bottomSection() {
-        if (this.state.first_visit) {
-            console.log("This is the user's first visit");
-            if (this.props.route.params.proximity) {
-                return(
-                    <View style={{flex:1}}>
-                        <View>
-                            <Text style={styles.text}>Give a rating and comment:</Text>
-                            <View style={styles.starContainer}>
-                                <StarRating
-                                    disabled={false}
-                                    fullStarColor={'#FDF900'}
-                                    emptyStarColor={'#BCBCBC'}
-                                    maxStars={5}
-                                    selectedStar={(rating) => this.ratingHandler(rating)}
-                                    rating={this.state.rating}
-                                />
-                            </View>
-                            
-                        </View>
-
-                    
-                        <TextInput 
-                            style={styles.input}
-                            multiline={true}                  
-                            placeholderTextColor= '#FF3E00'
-                            selectionColor = 'white'                  
-                            maxLength={70}
-                            autoCapitalize = "none"
-                            onChangeText = {(val) => this.commentHandler(val)}
-                        />
-                        <TouchableOpacity
-                            onPress = { () =>
-                                this.submitReview()
-                            }
-                            style={{alignItems:'center'}}
-                        >
-                            <LinearGradient
-                                colors={['#f05454','#FF1D1D']}
-                                style={styles.buttonStyle}    
-                            >
-                                <Text style={styles.buttonText}>Submit</Text>
-                            </LinearGradient>
-                        </TouchableOpacity>
-                    </View>
-                )
-            } else {
-                return(
-                    <View style={{flex:1}}>
-                        <Text style={{color:'#fff', fontSize:23, paddingLeft: 10, paddingTop: 40,}}>
-                            Approach the location to leave your review!
-                        </Text>
-                    </View>
-                )
-            }
-        } else {
-            return(
-                <View style={{flex:1, }}>
-                    <Text style={{color:'#fff', fontSize:25, padding:10}}>Your Review:</Text>
-                    <Text style={{color:'#fff', fontSize:23, paddingLeft:10}}>Rating: 
-                        <StarRating 
-                            rating={this.state.rating} 
-                            disabled={true}
-                            fullStarColor={'#FDF900'}
-                            emptyStarColor={'#BCBCBC'}
-                            starSize={25}
-                            containerStyle={{paddingLeft:20}}
-                        />
-                    </Text>
-                    <Text style={{color:'#fff', fontSize:20, paddingLeft:10}}>{this.state.comment}</Text>
-                </View>
-            )
-        }
-    }
-
-    componentDidMount() {
-        this.placeData();
-    }
-
-    render() {
-        if (this.state.isLoading){
-            return(
-              <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
-                  <ActivityIndicator size={50} color='#E50D0D'/>
-              </View>  
-            );
-        }
-        return(
-            <ScrollView style={styles.container}>
-                <Text style={styles.title}>{this.state.place.name}</Text>
-
-                <View style={styles.imageContainer}>
-                    <Image
-                        source={require('./img/placeholder.jpg')}
-                        style={styles.image}
-                        
-                    />
                 </View>
                 <View style={{flex:1}}>
-                    {this.midSection()}
+
+                    <Text style={styles.title}>Your review:</Text>
                 </View>
-                
-                <View style={{flex:1}}>
-                    {this.bottomSection()}
-                </View>
-                
                 
             </ScrollView>
 
@@ -453,7 +305,7 @@ const styles = StyleSheet.create({
     },
     image: {
         flex: 1,
-        height: 250,
+        height: 350,
         width: 400,
         // borderRadius: 15,
         // borderColor: '#f05454',
@@ -461,7 +313,7 @@ const styles = StyleSheet.create({
     },
     imageContainer:{
         // alignContent: 'center',
-        flex: 1.3,
+        flex: 2,
         // paddingTop: -20,
         paddingBottom: 150,
         // marginBottom: -75,

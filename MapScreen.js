@@ -8,7 +8,7 @@ import LinearGradient from 'react-native-linear-gradient'
 import StarRating from 'react-native-star-rating';
 import { Icon } from 'react-native-vector-icons/Ionicons'
 import { Header } from 'react-native-elements'
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width, height } = Dimensions.get("window");
 
@@ -29,7 +29,8 @@ export default class MapScreen extends React.Component{
         latitude: '',
         longitude: '',
         places: [],
-        isLoading: true
+        isLoading: true,
+        proximity: false,
     }
 
     requestLocationPermission = async () => {
@@ -68,7 +69,7 @@ export default class MapScreen extends React.Component{
 
     async findPlace() {
         try{
-            await fetch('http://10.0.2.2:5000/places', {  //'http://192.168.43.218/places', {
+            await fetch('http://10.0.2.2:5000/places', {  
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -80,22 +81,14 @@ export default class MapScreen extends React.Component{
                 longitude: this.state.longitude
             })
             })
-            // await axios({
-            //     method: 'post',
-            //     url: 'http://10.0.2.2:5000/places',
-            //     data: {
-            //         latitude: this.state.latitude,
-            //         longitude: this.state.longitude
-            //     }
-            // })
             .then((response) => response.json())
             .then((response) => {
                 console.log(response);
                 const temp = [];
-                for (var item in response['data']['results']) {
-                    temp.push({"id": response['data']['results'][item]["place_id"], "name": response['data']['results'][item]["name"], 
-                    "lat": response['data']['results'][item]['geometry'].location['lat'], "lng": response['data']['results'][item]['geometry'].location['lng'], 
-                    "icon": response['data']['results'][item]["icon"], "rating":response['data']['results'][item]['rating']});
+                for (var item in response) {
+                    temp.push({"id": response[item]["id"], "name": response[item]["name"], 
+                    "lat": response[item]['lat'], "lng": response[item]['lng'], 
+                    "icon": response[item]["icon"], "rating":response[item]['rating']});
                 
                 }
                 this.setState({places: temp});
@@ -105,7 +98,7 @@ export default class MapScreen extends React.Component{
         } catch (err) {
             console.error(err);
         }
-        
+        // this.setState({isLoading: false});
         
     }
 
@@ -114,39 +107,59 @@ export default class MapScreen extends React.Component{
         this.props.navigation;
     }
 
-    handlePlace(place_id) {
+    async handlePlace(place) {
+        try {
+            await AsyncStorage.setItem('place_id', place.id);
+            await AsyncStorage.setItem('place_name', place.name);
+            await AsyncStorage.setItem('place_lat', JSON.stringify(place.lat));
+            await AsyncStorage.setItem('place_lng', JSON.stringify(place.lng));
+            await AsyncStorage.setItem('place_rating', JSON.stringify(place.rating));
+            // if (this.state.review){
+            //     console.log('review=true');
+            var proximity = this.state.proximity;
+            this.props.navigation.navigate('PlaceScreen', {place, proximity});
+            // } else {
+            //     this.props.navigation.navigate('PlaceScreen2', {place});
+            // }
+            
+        } catch (e) {
+            console.log(e);
+        }
         // console.log("PlaceScreen");
-        this.props.navigation.navigate('PlaceScreen');
+        
     } 
 
-    checkDistance(place_id, place_lat, place_lng) {
+    checkDistance(place) {
         console.log('Checking Distance');   
-        if ((Math.abs(this.state.latitude - place_lat) < 0.001)&&(Math.abs(this.state.longitude - place_lng) < 0.001)){
-            console.log("Accessing place Details");
-            this.handlePlace(place_id);
+        if ((Math.abs(this.state.latitude - place.lat) < 0.0015)&&(Math.abs(this.state.longitude - place.lng) < 0.0015)){
+            console.log('User close enough to leave review');
+            this.setState({proximity: true});
+            this.handlePlace(place);
         } else {
-            // alert("Move closer to the site to access more info");
+            console.log('User too far to leave review');
+            this.handlePlace(place);
         }
     }
 
     createMarker = () => {
         // console.log(this.state.places);
         return this.state.places.map((place) => 
+            
             <Marker
                 key={place.id}
                 coordinate={{latitude: place.lat, longitude: place.lng}}
                 title={place.name}
                 // onPress = {this.checkDistance(place.lat, place.lng)}
-                icon={place.icon}
+                icon={{url: place.icon}}
             > 
                 <Callout>
                     <View>
                         <View style={styles.bubble}>
                             <Text style={styles.name}>{place.name}</Text>
-                            <TouchableOpacity
+                            {/* <TouchableOpacity
                                 style={styles.button}
                                 onPress={this.checkDistance}
-                            ><Text>More Info</Text></TouchableOpacity>
+                            ><Text>More Info</Text></TouchableOpacity> */}
                         </View>
                         <View style={styles.arrowBorder}/>
                         <View style={styles.arrow}/>
@@ -156,6 +169,10 @@ export default class MapScreen extends React.Component{
             
         )
     }
+
+    // async storePlace(place) {
+
+    // }
 
     render() {
 
@@ -171,42 +188,16 @@ export default class MapScreen extends React.Component{
         
         return (
             <View>
+
                 <MapView 
                     showsUserLocation={true}
                     provider={PROVIDER_GOOGLE}
                     ref={map => this._map = map}
                     style={styles.map}
-                    initialRegion={this.state.initialPosition}>
-                    <Marker
-                        coordinate={{latitude: 38.246550, longitude: 21.734669}}
-                        // coordinate={this.state.initialPosition.latitude, this.state.initialPosition.longitude}
-                        title={'Position'}
-                        onPress = {this.handlePlace}
-                    />
+                    initialRegion={this.state.initialPosition}>                
                     {this.createMarker()}
-                    
-                    {/* {this.state.places.map(places => (
-                        <MapView.Marker 
-                        coordinate={{places["geometry"].location["lat"], }}
-                        title={marker.title}
-                        />
-                    ))} */}
-
-
-                    {/* <Callout>
-                        <Image 
-                        source={require('./img/Map_Icons/chat.png')} 
-                        style={styles.map_image}
-                        />
-                        <Text>You are here</Text>
-                    </Callout> */}
-                        {/* <Image 
-                        source={require('./img/Map_Icons/chat.png')} 
-                        style={styles.map_image}
-                        /> */}
-
-                    {/* </Marker> */}
                 </MapView>
+
                 <Animated.ScrollView
                     horizontal
                     scrollEventThrottle={1}
@@ -240,7 +231,8 @@ export default class MapScreen extends React.Component{
                                             latitudeDelta: 0.01,
                                             longitudeDelta: 0.01
                                         });
-                                        this.checkDistance(place.id, place.lat, place.lng);
+                                        console.log('Details');
+                                        this.checkDistance(place);
                                     }}
                                 >
                                     <Text style={styles.cardDescription}>Details</Text>
