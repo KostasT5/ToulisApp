@@ -3,6 +3,7 @@ import { createDrawerNavigator } from '@react-navigation/drawer'
 import { createAppContainer } from 'react-navigation'
 import MapScreen from './MapScreen'
 import UserScreen from './UserScreen'
+import TestScreen from './TestScreen'
 
 const screens = {
     Map: {
@@ -12,12 +13,15 @@ const screens = {
             
         }
     },
-    User: { 
-        screen: UserScreen,
-        navigationOptions: {
-            title: 'User',
+    // User: { 
+    //     screen: UserScreen,
+    //     navigationOptions: {
+    //         title: 'User',
             
-        }
+    //     }
+    // }
+    Test: {
+        screen: TestScreen,
     }
 }
 

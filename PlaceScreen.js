@@ -11,7 +11,7 @@ import {
   FlatList,
   ScrollView,
   SafeAreaView,
-  Animated,
+//   Animated,
   ActivityIndicator,
 } from 'react-native';
 
@@ -19,6 +19,9 @@ import Header from 'react-native-elements'
 import LinearGradient from 'react-native-linear-gradient'
 import StarRating from 'react-native-star-rating';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Icon from 'react-native-vector-icons/Ionicons'
+import Animated from 'react-native-reanimated';
+import {launchImageLibrary} from 'react-native-image-picker';
 
 
 const { width, height } = Dimensions.get("window");
@@ -36,6 +39,11 @@ class PlaceScreen extends React.Component {
         user_reviews: [],
         first_visit: true,
         isLoading: true,
+        image: {
+            uri: null,
+            base64: null
+        },
+        gallery: [],
     }
     
     async placeData() {
@@ -94,12 +102,16 @@ class PlaceScreen extends React.Component {
             if (response.length){
                 // console.log(response);
                 const temp = [];
+                const pics = [];
                 for (var item in response) {
                     temp.push({"user": response[item][4], "rating": response[item][3], 
                     "comment": response[item][2]});
-                
+                    if (response[item][7]) {
+                        pics.push(response[item][7]);
+                    }
                 }
                 this.setState({user_reviews: temp});
+                this.setState({gallery: pics});
                 // console.log(this.state.user_reviews);
             }
             this.checkFirstVisit();
@@ -174,6 +186,7 @@ class PlaceScreen extends React.Component {
                     user_name: user,
                     rating: this.state.rating,
                     comment: this.state.comment,
+                    photo: this.state.image.base64,
                 })
             })
             .then((response) => response.json())
@@ -191,11 +204,143 @@ class PlaceScreen extends React.Component {
         }
     }
 
+    takePhoto() {
+        if (this.state.first_visit) {
+            if(this.props.route.params.proximity){
+                let options={
+                    mediaType: 'photo',
+                    includeBase64: true,
+                    allowsEditing: true,
+                    aspect: [4, 3],
+                    quality: 1,
+                    maxHeight: 300,
+                    maxWidth: 400,
+                }
+                launchImageLibrary(options, (response) => {
+                    // console.log(response);
+                    if (response.didCancel) {
+                        alert('User cancelled camera picker');
+                        return;
+                    } else if (response.errorCode == 'camera_unavailable') {
+                        alert('Camera not available on device');
+                        return;
+                    } else if (response.errorCode == 'permission') {
+                        alert('Permission not satisfied');
+                        return;
+                    } else if (response.errorCode == 'others') {
+                        alert(response.errorMessage);
+                        return;
+                    }
+                    this.setState({image:{uri: response.assets[0].uri, base64: response.assets[0].base64}});
+                    let temp = response.assets[0].base64;
+                    let temp2 = this.state.gallery
+                    this.setState({gallery: temp2.push(temp)});
+                    console.log(this.state.image.uri);
+                });
+
+                
+                // if (!result.cancelled) {
+                //     this.setState({image: {uri: result.uri, base64: result.base64}})
+                // }
+            }
+        }
+    }
+
+    topSection() {
+        if (this.state.gallery.length){
+            return(
+                <View>
+                    <Animated.ScrollView
+                        horizontal
+                        scrollEventThrottle={1}
+                        showsHorizontalScrollIndicator={false}
+                        style={{}}
+                    >
+                        
+                            {/* <View style={styles.imageContainer}>
+                                <Image
+                                    source={require('./img/placeholder.jpg')}
+                                    style={styles.image}
+                                    
+                            />
+                        
+
+                            </View> */}
+                        {this.state.gallery.map((gallery, index) => (
+                            <View style={styles.imageContainer} key={index}>
+                                <Image
+                                    source={{uri:`data:image/jpeg;base64,${gallery}`}}
+                                    style={styles.image}
+                                    
+                                />
+                            </View>
+                        ))}
+                    </Animated.ScrollView>
+                    <View style={{paddingBottom:10, justifyContent: 'center', alignItems: 'center'}}>
+                        <TouchableOpacity onPress={() => {this.takePhoto()}}>
+                            <View style={{flexDirection:'row'}}>  
+                                <Icon 
+                                    name='camera'
+                                    size={30}
+                                    color='#f05454'
+                                />
+                                <Text style={{paddingLeft: 20, color: '#f05454', fontSize: 22 }}>
+                                    Upload a picture
+                                </Text>                             
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+                
+            )
+        }
+
+        else {
+            return(
+                <View>
+
+                
+                    <View style={styles.imageContainer}>
+                        <Image
+                            source={require('./img/placeholder.jpg')}
+                            style={styles.image}
+                            
+                        />
+                        
+        
+                    </View>
+                    <View style={{paddingBottom:10, justifyContent: 'center', alignItems: 'center'}}>
+                        <TouchableOpacity onPress={() => {this.takePhoto()}}>
+                            <View style={{flexDirection:'row'}}>  
+                                <Icon 
+                                    name='camera'
+                                    size={30}
+                                    color='#f05454'
+                                />
+                                <Text style={{paddingLeft: 20, color: '#f05454', fontSize: 22 }}>
+                                    Upload a picture
+                                </Text>                             
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+                    {/* <View
+                        style={{
+                            borderBottomColor: 'white',
+                            borderBottomWidth: 1,
+                            paddingTop: 3,
+                        }}
+                    /> */}
+                </View>
+            )
+        }
+        
+    }
+
     midSection() {
         console.log(this.state.user_reviews);
         if (this.state.user_reviews.length) {
             return(
-                <View style={{flex:1}}>
+                <View style={{flex:1,}}>
                     <Animated.ScrollView
                         horizontal
                         scrollEventThrottle={1}
@@ -255,7 +400,9 @@ class PlaceScreen extends React.Component {
     bottomSection() {
         if (this.state.first_visit) {
             console.log("This is the user's first visit");
+            console.log(this.props.route.params.proximity);
             if (this.props.route.params.proximity) {
+                
                 return(
                     <View style={{flex:1}}>
                         <View>
@@ -329,7 +476,13 @@ class PlaceScreen extends React.Component {
 
     componentDidMount() {
         this.placeData();
+        
     }
+
+    // constructor(props) {
+    //     super(props);
+    //     const sheetRef = React.useRef(null);
+    // }
 
     render() {
         if (this.state.isLoading){
@@ -339,17 +492,27 @@ class PlaceScreen extends React.Component {
               </View>  
             );
         }
+
+        
+
         return(
             <ScrollView style={styles.container}>
                 <Text style={styles.title}>{this.state.place.name}</Text>
 
-                <View style={styles.imageContainer}>
+                {/* <View style={styles.imageContainer}>
                     <Image
                         source={require('./img/placeholder.jpg')}
                         style={styles.image}
                         
                     />
+                </View> */}
+
+                <View style={{flex:1}}>
+                    {this.topSection()}
+                    
+                    
                 </View>
+
                 <View style={{flex:1}}>
                     {this.midSection()}
                 </View>
@@ -357,7 +520,6 @@ class PlaceScreen extends React.Component {
                 <View style={{flex:1}}>
                     {this.bottomSection()}
                 </View>
-                
                 
             </ScrollView>
 
@@ -463,7 +625,7 @@ const styles = StyleSheet.create({
         // alignContent: 'center',
         flex: 1.3,
         // paddingTop: -20,
-        paddingBottom: 150,
+        paddingBottom: 15,
         // marginBottom: -75,
         alignItems: 'center',
         justifyContent: 'center',
@@ -476,14 +638,16 @@ const styles = StyleSheet.create({
         flex: 0.5,
     },
     scrollView: {
-        position: "absolute",
-        bottom: 0,
-        left: 0,
-        right: 0,
-        paddingVertical: 10,
+        // position: "absolute",
+        // bottom: 0,
+        // left: 0,
+        // right: 0,
+        // paddingVertical: 10,
+        // paddingTop: 100,
     },
     card: {
         // padding: 10,
+        // paddingTop:100,
         elevation: 2,
         flex:1,
         // backgroundColor: "#FFF",

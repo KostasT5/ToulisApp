@@ -1,48 +1,37 @@
 import React, {Component, useState, setState, useEffect} from 'react';
-import { Text, View, TextInput, Button, StyleSheet, Image, Platform, TouchableOpacity, FlatList, ActivityIndicator, ScrollView, Animated, Dimensions } from 'react-native';
+import { Text, View, TextInput, Button, StyleSheet, Image, Platform, TouchableOpacity, FlatList, ActivityIndicator, ScrollView, Animated, Dimensions, } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import StarRating from 'react-native-star-rating';
+import { Chip } from 'react-native-paper';
+import {Picker} from '@react-native-picker/picker';
+
 
 const { width, height } = Dimensions.get("window");
 
 export default function TestScreen() { 
-    return(
-        <View style={styles.container}>
-            <View style={styles.card}>
-                <Image
-                    source={require('./img/placeholder.jpg')}
-                    style={styles.cardImage}
-                />
-                <View style={styles.textContent}>
-                    <Text style={styles.cardTitle} numberOfLines={1}>Placeholder</Text>
-                    {/* <Text> */}
-                        {/* <Text style={styles.cardRating}>Rating:</Text> */}
-                        <StarRating 
-                            rating={4.4} 
-                            disabled={true}
-                            fullStarColor={'#FDF900'}
-                            emptyStarColor={'#BCBCBC'}
-                            starSize={25}
-                            containerStyle={{paddingLeft:30, paddingRight:30}}
-                        />
-                    {/* </Text> */}
-                    
+    const [path, setPath] = useState();
 
-                    <TouchableOpacity
-                        // onPress = {() => {
-                        //     this._map.animateToRegion({
-                        //         latitude: place.lat,
-                        //         longitude: place.lng,
-                        //         latitudeDelta: 0.01,
-                        //         longitudeDelta: 0.01
-                        //     });
-                        //     this.checkDistance(place.id, place.lat, place.lng);
-                        // }}
-                    >
-                        <Text style={styles.cardDescription}>Details</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
+    return(
+        // style={{position:'absolute', top:10, flexDirection:'row', flexWrap:'wrap'}}
+        <View>
+            <Text style={{fontSize:22, paddingLeft:10,}}>Pick a path:</Text>
+            <Picker
+                selectedValue={path}
+                mode='dropdown'
+                prompt='Pick a path:'
+                itemStyle={
+                    {fontSize:22}
+                }
+                onValueChange={(itemValue, itemIndex) => {
+                    setPath(itemValue);
+                    console.log(path);
+            }}>
+                <Picker.Item label="Tourist Attractions" value="tourist attraction" />
+                <Picker.Item label="Museums" value="museum" />
+                <Picker.Item label="Churches" value="church" />
+                <Picker.Item label="Parks & Squares" value="park" />
+            </Picker>
+                    
         </View>
     );
 }

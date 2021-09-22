@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {useState, setState, useEffect} from 'react';
 import { Text, View, TextInput, Button, StyleSheet, Image, Platform, TouchableOpacity, FlatList, ActivityIndicator, ScrollView, Animated, Dimensions } from 'react-native';
-import MapView, {PROVIDER_GOOGLE, Marker, Callout} from 'react-native-maps';
+import MapView, {PROVIDER_GOOGLE, Marker, Callout, Polyline} from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
 import {request, PERMISSIONS} from 'react-native-permissions';
 import LinearGradient from 'react-native-linear-gradient'
@@ -9,6 +9,8 @@ import StarRating from 'react-native-star-rating';
 import { Icon } from 'react-native-vector-icons/Ionicons'
 import { Header } from 'react-native-elements'
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Chip } from 'react-native-paper';
+import {Picker} from '@react-native-picker/picker';
 
 const { width, height } = Dimensions.get("window");
 
@@ -30,7 +32,10 @@ export default class MapScreen extends React.Component{
         longitude: '',
         places: [],
         isLoading: true,
+        creatingPath: true,
         proximity: false,
+        path: 'tourist attraction',
+        waypoints: [],
     }
 
     requestLocationPermission = async () => {
@@ -85,15 +90,25 @@ export default class MapScreen extends React.Component{
             .then((response) => {
                 console.log(response);
                 const temp = [];
-                for (var item in response) {
-                    temp.push({"id": response[item]["id"], "name": response[item]["name"], 
-                    "lat": response[item]['lat'], "lng": response[item]['lng'], 
-                    "icon": response[item]["icon"], "rating":response[item]['rating']});
+
+                // Live use place fetching
+                // for (var item in response) {
+                //     temp.push({"id": response[item]["id"], "name": response[item]["name"], 
+                //     "lat": response[item]['lat'], "lng": response[item]['lng'], 
+                //     "icon": response[item]["icon"], "rating":response[item]['rating']});
                 
+                // }
+
+                // Patras test place fetching
+                for (var item in response) {
+                    // console.log(item);
+                    temp.push({"id": response[item][3], "name": response[item][1], "lat": response[item][0], "lng": response[item][2], "rating": response[item][4], "type": response[item][5]})
                 }
                 this.setState({places: temp});
-                console.log(this.state.places);
+                // console.log(this.state.places)
+                // console.log(this.state.places);
                 this.setState({isLoading: false});
+                this.calculatePath();
             });
         } catch (err) {
             console.error(err);
@@ -131,7 +146,7 @@ export default class MapScreen extends React.Component{
 
     checkDistance(place) {
         console.log('Checking Distance');   
-        if ((Math.abs(this.state.latitude - place.lat) < 0.0015)&&(Math.abs(this.state.longitude - place.lng) < 0.0015)){
+        if ((Math.abs(this.state.latitude - place.lat) < 0.0011)&&(Math.abs(this.state.longitude - place.lng) < 0.0011)){
             console.log('User close enough to leave review');
             this.setState({proximity: true});
             this.handlePlace(place);
@@ -143,45 +158,82 @@ export default class MapScreen extends React.Component{
 
     createMarker = () => {
         // console.log(this.state.places);
+        
         return this.state.places.map((place) => 
-            
-            <Marker
-                key={place.id}
-                coordinate={{latitude: place.lat, longitude: place.lng}}
-                title={place.name}
-                // onPress = {this.checkDistance(place.lat, place.lng)}
-                icon={{url: place.icon}}
-            > 
-                <Callout>
-                    <View>
-                        <View style={styles.bubble}>
-                            <Text style={styles.name}>{place.name}</Text>
-                            {/* <TouchableOpacity
-                                style={styles.button}
-                                onPress={this.checkDistance}
-                            ><Text>More Info</Text></TouchableOpacity> */}
-                        </View>
-                        <View style={styles.arrowBorder}/>
-                        <View style={styles.arrow}/>
-                    </View>
-                </Callout>
-            </Marker>
+            {if (place.type===this.state.path) {
+                return (
+                    <Marker
+                        key={place.id}
+                        coordinate={{latitude: place.lat, longitude: place.lng}}
+                        title={place.name}
+                        // onPress = {this.checkDistance(place.lat, place.lng)}
+                        icon={{url: place.icon}}
+                    > 
+                        <Callout>
+                            <View>
+                                <View style={styles.bubble}>
+                                    <Text style={styles.name}>{place.name}</Text>
+                                </View>
+                                <View style={styles.arrowBorder}/>
+                                <View style={styles.arrow}/>
+                            </View>
+                        </Callout>
+                    </Marker>
+                )
+            }}
+            // <Marker
+            //     key={place.id}
+            //     coordinate={{latitude: place.lat, longitude: place.lng}}
+            //     title={place.name}
+            //     icon={{url: place.icon}}
+            // > 
+            //     <Callout>
+            //         <View>
+            //             <View style={styles.bubble}>
+            //                 <Text style={styles.name}>{place.name}</Text>
+            //             </View>
+            //             <View style={styles.arrowBorder}/>
+            //             <View style={styles.arrow}/>
+            //         </View>
+            //     </Callout>
+            // </Marker>
             
         )
     }
 
+    calculatePath = () => {
+        var temp1 = []
+        // Get the relevant coordinates for the path
+        for (var item in this.state.places) {
+            if (this.state.places[item].type===this.state.path) {
+                temp1.push({latitude: this.state.places[item].lat, longitude: this.state.places[item].lng});
+            }
+        }
+        // Sort them based on their distance from the user
+        for (let i=0; i < temp1.length; i++) {
+            for (let j=0; j < (temp1.length-i-1); j++) {
+                if ( ( Math.abs(this.state.latitude - temp1[j][0]) + Math.abs(this.state.longitude - temp1[j][1]) ) > ( Math.abs(this.state.latitude - temp1[j+1][0]) + Math.abs(this.state.longitude - temp1[j+1][1]) ) ){
+                    let temp = temp1[j];
+                    temp1[j] = temp1[j + 1];
+                    temp1[j + 1] = temp;
+                }
+            }
+        }
+        this.setState({waypoints: temp1});
+    }
     // async storePlace(place) {
 
     // }
 
     render() {
 
-        console.log(this.state);
+        // console.log(this.state);
 
         if (this.state.isLoading){
             return(
               <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
                   <ActivityIndicator size={50} color='#E50D0D'/>
+                  <Text style={{fontSize:22, color:'red'}}>Fetching Places...</Text>
               </View>  
             );
         }
@@ -196,8 +248,28 @@ export default class MapScreen extends React.Component{
                     style={styles.map}
                     initialRegion={this.state.initialPosition}>                
                     {this.createMarker()}
+                    {/* {this.calculatePath()} */}
+                    <Polyline 
+                        coordinates={this.state.waypoints}
+                    />
                 </MapView>
-
+                <View style={{position:'absolute', top:10,}}>
+                    <Text style={{fontSize:22, paddingLeft:10,}}>Pick a path:</Text>
+                    <Picker
+                        selectedValue={this.state.path}
+                        mode='dropdown'
+                        prompt='Pick a path:'
+                        style={{width: width*0.6}}
+                        onValueChange={(itemValue, itemIndex) => {
+                            this.setState({path: itemValue});
+                            console.log(this.state.path);
+                    }}>
+                        <Picker.Item label="Tourist Attractions" value="tourist attraction" />
+                        <Picker.Item label="Museums" value="museum" />
+                        <Picker.Item label="Churches" value="church" />
+                        <Picker.Item label="Parks & Squares" value="park" />
+                    </Picker>
+                </View>
                 <Animated.ScrollView
                     horizontal
                     scrollEventThrottle={1}
@@ -207,36 +279,44 @@ export default class MapScreen extends React.Component{
                 >
                     {this.state.places.map((place, index) => (
                         <View style={styles.card} key={index}>
+                            {/*
                             <Image
                                 source={require('./img/placeholder.jpg')}
                                 style={styles.cardImage}
                             />
+                            */}
                             <View style={styles.textContent}>
-                                <Text style={styles.cardTitle} numberOfLines={1}>{place.name}</Text>
+                                <View style={{flex:1}}>
+                                    <Text style={styles.cardTitle}>{place.name}</Text>
+                                </View>
+                                
                                 {/* <Text style={styles.cardDescription}>Rating: {place.rating}</Text> */}
-                                <StarRating 
-                                    rating={place.rating} 
-                                    disabled={true}
-                                    fullStarColor={'#FDF900'}
-                                    emptyStarColor={'#BCBCBC'}
-                                    starSize={25}
-                                    containerStyle={{paddingLeft:30, paddingRight:30}}
-                                />
-
-                                <TouchableOpacity
-                                    onPress = {() => {
-                                        this._map.animateToRegion({
-                                            latitude: place.lat,
-                                            longitude: place.lng,
-                                            latitudeDelta: 0.01,
-                                            longitudeDelta: 0.01
-                                        });
-                                        console.log('Details');
-                                        this.checkDistance(place);
-                                    }}
-                                >
-                                    <Text style={styles.cardDescription}>Details</Text>
-                                </TouchableOpacity>
+                                <View style={{flex:1, paddingTop:15}}>
+                                    <StarRating 
+                                        rating={place.rating} 
+                                        disabled={true}
+                                        fullStarColor={'#FDF900'}
+                                        emptyStarColor={'#BCBCBC'}
+                                        starSize={25}
+                                        containerStyle={{paddingLeft:30, paddingRight:30}}
+                                    />
+                                </View>
+                                <View style={{flex:1,}}>
+                                    <TouchableOpacity
+                                        onPress = {() => {
+                                            this._map.animateToRegion({
+                                                latitude: place.lat,
+                                                longitude: place.lng,
+                                                latitudeDelta: 0.01,
+                                                longitudeDelta: 0.01
+                                            });
+                                            console.log('Details');
+                                            this.checkDistance(place);
+                                        }}
+                                    >
+                                        <Text style={styles.cardDescription}>Details</Text>
+                                    </TouchableOpacity>
+                                </View>
                             </View>
                         </View>
                     ))}
@@ -289,15 +369,14 @@ const styles = StyleSheet.create({
         fontSize: 20,
         color: '#ffffff',
     },
-    loginBttn: {
-        color:'white',
-        backgroundColor:'white'
+    tag: {
+        backgroundColor: '#1C1E31',
+        borderRadius: 20,
+        padding: 9,
+        marginTop: 20,
     },
-    loginText: {
-        color:'blue'
-    },
-    registerButton: {
-
+    tag_name:{
+        color: 'white',
     },
     container: {
         backgroundColor: '#1C1E31',
@@ -374,8 +453,8 @@ const styles = StyleSheet.create({
         shadowRadius: 5,
         shadowOpacity: 0.3,
         shadowOffset: { x: 2, y: -2 },
-        height: 220,
-        width: width*0.8,
+        height: 150,
+        width: width*0.6,
         overflow: "hidden",
     },
     cardImage: {
@@ -389,13 +468,16 @@ const styles = StyleSheet.create({
         padding: 10,
     },
     cardTitle: {
-        fontSize: 20,
+        fontSize: 22,
         // marginTop: 5,
         fontWeight: "bold",
         color: 'white',
     },
     cardDescription: {
-        fontSize: 19,
+        // paddingTop: 10,
+        // position: 'absolute',
+        // top: 10,
+        fontSize: 22,
         color: "#f05454",
     },
 

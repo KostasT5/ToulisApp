@@ -100,7 +100,7 @@ class UserScreen extends React.Component{
                     style={styles.list}
                     data={this.state.history}
                     renderItem={({item}) => (
-                        <View key={item[0]}>
+                        <View key={item[0]} style={{paddingBottom:20}}>
                             <Text style={styles.item}>{item[0]}</Text>
                             <Text style={{color: '#ffffff', flex: 1, fontSize: 23, paddingBottom: 5,}}>
                                 Date: {item[1]}
@@ -124,6 +124,9 @@ class UserScreen extends React.Component{
                         </View>
                     )}
                 />
+                {/* <View style={{padding:20}}>
+
+                </View> */}
             </View>
         );
     }

@@ -1,7 +1,7 @@
 import React, { Component, useState, setState } from 'react'
 import { View, Text, TouchableOpacity, TextInput, StyleSheet } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function RegisterScreen({navigation}){
 
@@ -9,6 +9,15 @@ function RegisterScreen({navigation}){
     const[user, setUser] = useState('');
     const[psswd, setPsswd] = useState('');
     const[confirm, setConfirm] = useState('');
+
+    const storeData = async () => {
+        try {
+            console.log(user);
+            await AsyncStorage.setItem('user_name', user);
+        } catch (e) {
+            console.log(e);
+        }
+    }
 
     const emailHandler = (val) => {
         // console.log(val);
@@ -55,6 +64,8 @@ function RegisterScreen({navigation}){
                 .then((response) => 
                     response.json())
                 .then((response) => {
+                    storeData();
+                    console.log(AsyncStorage.getItem('user_name'));
                     if (response['result']==201){
                         navigation.reset({
                             index: 0,
