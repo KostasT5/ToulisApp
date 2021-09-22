@@ -11,6 +11,7 @@ import { Header } from 'react-native-elements'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Chip } from 'react-native-paper';
 import {Picker} from '@react-native-picker/picker';
+import MapViewDirections from 'react-native-maps-directions';
 
 const { width, height } = Dimensions.get("window");
 
@@ -35,7 +36,11 @@ export default class MapScreen extends React.Component{
         creatingPath: true,
         proximity: false,
         path: 'tourist attraction',
-        waypoints: [],
+        waypointsA: [],
+        waypointsB: [],
+        waypointsC: [],
+        waypointsD: [],
+        waypointsSelected: [],
     }
 
     requestLocationPermission = async () => {
@@ -101,19 +106,16 @@ export default class MapScreen extends React.Component{
 
                 // Patras test place fetching
                 for (var item in response) {
-                    // console.log(item);
                     temp.push({"id": response[item][3], "name": response[item][1], "lat": response[item][0], "lng": response[item][2], "rating": response[item][4], "type": response[item][5]})
                 }
                 this.setState({places: temp});
-                // console.log(this.state.places)
-                // console.log(this.state.places);
                 this.setState({isLoading: false});
                 this.calculatePath();
+                this.setState({waypointsSelected: this.state.waypointsA});
             });
         } catch (err) {
             console.error(err);
         }
-        // this.setState({isLoading: false});
         
     }
 
@@ -129,19 +131,11 @@ export default class MapScreen extends React.Component{
             await AsyncStorage.setItem('place_lat', JSON.stringify(place.lat));
             await AsyncStorage.setItem('place_lng', JSON.stringify(place.lng));
             await AsyncStorage.setItem('place_rating', JSON.stringify(place.rating));
-            // if (this.state.review){
-            //     console.log('review=true');
             var proximity = this.state.proximity;
-            this.props.navigation.navigate('PlaceScreen', {place, proximity});
-            // } else {
-            //     this.props.navigation.navigate('PlaceScreen2', {place});
-            // }
-            
+            this.props.navigation.navigate('PlaceScreen', {place, proximity});    
         } catch (e) {
             console.log(e);
-        }
-        // console.log("PlaceScreen");
-        
+        }      
     } 
 
     checkDistance(place) {
@@ -154,6 +148,77 @@ export default class MapScreen extends React.Component{
             console.log('User too far to leave review');
             this.handlePlace(place);
         }
+    }
+
+    calculateDistance(coords1, coords2) {
+        return (Math.abs(coords1[0]-coords2[0]) + Math.abs(coords1[1]-coords2[1]));
+    }
+
+    findMinDist(coords, array) {
+        let next = null;
+        let mindist = 1000;
+        for (let i=0; i<array.length; i++) {
+            let dist = this.calculateDistance([coords.latitude, coords.longitude], [array[i].latitude, array[i].longitude]);
+            if (dist < mindist) {
+                mindist = dist;
+                next = array[i];
+            }
+        }
+        return next;
+    }
+
+    findDestination(coords, array) {
+        let maxdist = 0;
+        let destination = null;
+        let dist = null;
+        for (let i=0; i<array.length; i++) {
+            dist = this.calculateDistance([coords.latitude, coords.longitude], [array[i].latitude, array[i].longitude]);
+            if (dist > maxdist) {
+                maxdist = dist;
+                destination = array[i];
+            }
+        }
+        return destination;
+    }
+
+    calculatePath = () => {
+        var paths=['tourist attraction', 'museum', 'church', 'park'];
+        for (let k in paths) {
+            var temp1 = [];
+            // Get the relevant coordinates for the path
+            for (var item in this.state.places) {
+                if (this.state.places[item].type===paths[k]) {
+                    temp1.push({latitude: this.state.places[item].lat, longitude: this.state.places[item].lng});
+                }
+            }
+            // Find the closest waypoint to the user's location and then the next closest waypoint to that until all waypoints are sorted
+            // var start = {latitude: this.state.latitude, longitude: this.state.longitude};
+            // var temp2 = [];
+            // while (temp1.length>=1) {
+            //     start = this.findMinDist(start, temp1);
+            //     let index = temp1.indexOf(start);
+            //     if (index > -1) {
+            //         temp1.splice(index,1);
+            //     }
+            //     temp2.push(start);
+            // }
+            var temp2 = temp1;
+            if (paths[k]==='tourist attraction'){
+                this.setState({waypointsA: temp2});
+            }
+            if (paths[k]==='museum'){
+                this.setState({waypointsB: temp2});
+            }
+            if (paths[k]==='church'){
+                this.setState({waypointsC: temp2});
+            }
+            if (paths[k]==='park'){
+                this.setState({waypointsD: temp2});
+            }
+        }
+
+        // console.log(this.state.waypoints);
+        this.setState({creatingPath: false});
     }
 
     createMarker = () => {
@@ -201,29 +266,86 @@ export default class MapScreen extends React.Component{
         )
     }
 
-    calculatePath = () => {
-        var temp1 = []
-        // Get the relevant coordinates for the path
-        for (var item in this.state.places) {
-            if (this.state.places[item].type===this.state.path) {
-                temp1.push({latitude: this.state.places[item].lat, longitude: this.state.places[item].lng});
-            }
-        }
-        // Sort them based on their distance from the user
-        for (let i=0; i < temp1.length; i++) {
-            for (let j=0; j < (temp1.length-i-1); j++) {
-                if ( ( Math.abs(this.state.latitude - temp1[j][0]) + Math.abs(this.state.longitude - temp1[j][1]) ) > ( Math.abs(this.state.latitude - temp1[j+1][0]) + Math.abs(this.state.longitude - temp1[j+1][1]) ) ){
-                    let temp = temp1[j];
-                    temp1[j] = temp1[j + 1];
-                    temp1[j + 1] = temp;
-                }
-            }
-        }
-        this.setState({waypoints: temp1});
-    }
+
     // async storePlace(place) {
 
     // }
+
+    mapSection() {
+        const Key = 'AIzaSyBSpTY-M9Ztfu7vKq8pqsusrGoe_FuUG4s';
+        // if (this.state.path==='tourist attraction') {
+            return(
+                <MapView 
+                    showsUserLocation={true}
+                    provider={PROVIDER_GOOGLE}
+                    ref={map => this._map = map}
+                    style={styles.map}
+                    initialRegion={this.state.initialPosition}>                
+                    {this.createMarker()}
+                    {/* {this.calculatePath()} */}
+                    {/* <Polyline 
+                        coordinates={this.state.waypoints}
+                    /> */}
+                    
+                    <MapViewDirections
+                        origin={{latitude: this.state.latitude, longitude: this.state.longitude}}
+                        destination={this.findDestination({latitude: this.state.latitude, longitude: this.state.longitude}, this.state.waypointsSelected)}
+                        apikey={Key}
+                        waypoints={this.state.waypointsSelected}
+                        mode="WALKING"
+                        strokeWidth={3}
+                        strokeColor="red"
+                        optimizeWaypoints={true}
+                        splitWaypoints={true}
+                    />
+                </MapView>
+            )
+    }
+
+    cardSection() {
+        return this.state.places.map((place, index) =>
+            {if (place.type===this.state.path) {
+                
+                return(
+                    <View style={styles.card} key={index}>
+                        <View style={styles.textContent}>
+                            <View style={{flex:1}}>
+                                <Text style={styles.cardTitle} numberOfLines={2}>{place.name}</Text>
+                            </View>
+                            <View style={{flex:1, paddingTop:15}}>
+                                <StarRating 
+                                    rating={place.rating} 
+                                    disabled={true}
+                                    fullStarColor={'#FDF900'}
+                                    emptyStarColor={'#BCBCBC'}
+                                    starSize={25}
+                                    containerStyle={{paddingLeft:30, paddingRight:30}}
+                                />
+                            </View>
+                            <View style={{flex:1,}}>
+                                <TouchableOpacity
+                                    onPress = {() => {
+                                        this._map.animateToRegion({
+                                            latitude: place.lat,
+                                            longitude: place.lng,
+                                            latitudeDelta: 0.01,
+                                            longitudeDelta: 0.01
+                                        });
+                                        console.log('Details');
+                                        this.checkDistance(place);
+                                    }}
+                                >
+                                    <Text style={styles.cardDescription}>Details</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </View>
+                )
+            }}      
+        )
+    }
+
+    
 
     render() {
 
@@ -237,32 +359,46 @@ export default class MapScreen extends React.Component{
               </View>  
             );
         }
+
+        if (this.state.creatingPath){
+            return(
+                <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
+                    <ActivityIndicator size={50} color='#E50D0D'/>
+                    <Text style={{fontSize:22, color:'red'}}>Creating Path...</Text>
+                </View>  
+              );
+        }
+
         
+        // if (this.state.path==='tourist attraction'){
         return (
             <View>
 
-                <MapView 
-                    showsUserLocation={true}
-                    provider={PROVIDER_GOOGLE}
-                    ref={map => this._map = map}
-                    style={styles.map}
-                    initialRegion={this.state.initialPosition}>                
-                    {this.createMarker()}
-                    {/* {this.calculatePath()} */}
-                    <Polyline 
-                        coordinates={this.state.waypoints}
-                    />
-                </MapView>
-                <View style={{position:'absolute', top:10,}}>
-                    <Text style={{fontSize:22, paddingLeft:10,}}>Pick a path:</Text>
+                {this.mapSection()}
+                <View style={{position:'absolute', top:0, backgroundColor: 'rgba(255, 255, 255, 0.7)', borderBottomEndRadius:10,}}>
+                    <Text style={{fontSize:24, paddingLeft:10, paddingTop:5, fontWeight:'bold',}}>Pick a path:</Text>
                     <Picker
                         selectedValue={this.state.path}
                         mode='dropdown'
                         prompt='Pick a path:'
-                        style={{width: width*0.6}}
+                        style={{width: width*0.55}}
                         onValueChange={(itemValue, itemIndex) => {
                             this.setState({path: itemValue});
-                            console.log(this.state.path);
+                            if (itemValue==='tourist attraction') {
+                                this.setState({waypointsSelected: this.state.waypointsA})
+                            }
+                            if (itemValue==='museum') {
+                                this.setState({waypointsSelected: this.state.waypointsB})
+                            }
+                            if (itemValue==='church') {
+                                this.setState({waypointsSelected: this.state.waypointsC})
+                            }
+                            if (itemValue==='park') {
+                                this.setState({waypointsSelected: this.state.waypointsD})
+                            }
+                            // console.log(this.state.path);
+                            this.setState({creatingPath: true});
+                            this.calculatePath();
                     }}>
                         <Picker.Item label="Tourist Attractions" value="tourist attraction" />
                         <Picker.Item label="Museums" value="museum" />
@@ -270,6 +406,7 @@ export default class MapScreen extends React.Component{
                         <Picker.Item label="Parks & Squares" value="park" />
                     </Picker>
                 </View>
+
                 <Animated.ScrollView
                     horizontal
                     scrollEventThrottle={1}
@@ -277,54 +414,12 @@ export default class MapScreen extends React.Component{
                     
                     style={styles.scrollView}
                 >
-                    {this.state.places.map((place, index) => (
-                        <View style={styles.card} key={index}>
-                            {/*
-                            <Image
-                                source={require('./img/placeholder.jpg')}
-                                style={styles.cardImage}
-                            />
-                            */}
-                            <View style={styles.textContent}>
-                                <View style={{flex:1}}>
-                                    <Text style={styles.cardTitle}>{place.name}</Text>
-                                </View>
-                                
-                                {/* <Text style={styles.cardDescription}>Rating: {place.rating}</Text> */}
-                                <View style={{flex:1, paddingTop:15}}>
-                                    <StarRating 
-                                        rating={place.rating} 
-                                        disabled={true}
-                                        fullStarColor={'#FDF900'}
-                                        emptyStarColor={'#BCBCBC'}
-                                        starSize={25}
-                                        containerStyle={{paddingLeft:30, paddingRight:30}}
-                                    />
-                                </View>
-                                <View style={{flex:1,}}>
-                                    <TouchableOpacity
-                                        onPress = {() => {
-                                            this._map.animateToRegion({
-                                                latitude: place.lat,
-                                                longitude: place.lng,
-                                                latitudeDelta: 0.01,
-                                                longitudeDelta: 0.01
-                                            });
-                                            console.log('Details');
-                                            this.checkDistance(place);
-                                        }}
-                                    >
-                                        <Text style={styles.cardDescription}>Details</Text>
-                                    </TouchableOpacity>
-                                </View>
-                            </View>
-                        </View>
-                    ))}
+                    {this.cardSection()}
                 </Animated.ScrollView>
             </View>
-        
-
         );
+       
+        
     }
 
 }

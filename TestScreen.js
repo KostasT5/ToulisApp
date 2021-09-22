@@ -13,26 +13,34 @@ export default function TestScreen() {
 
     return(
         // style={{position:'absolute', top:10, flexDirection:'row', flexWrap:'wrap'}}
-        <View>
-            <Text style={{fontSize:22, paddingLeft:10,}}>Pick a path:</Text>
-            <Picker
-                selectedValue={path}
-                mode='dropdown'
-                prompt='Pick a path:'
-                itemStyle={
-                    {fontSize:22}
-                }
-                onValueChange={(itemValue, itemIndex) => {
-                    setPath(itemValue);
-                    console.log(path);
-            }}>
-                <Picker.Item label="Tourist Attractions" value="tourist attraction" />
-                <Picker.Item label="Museums" value="museum" />
-                <Picker.Item label="Churches" value="church" />
-                <Picker.Item label="Parks & Squares" value="park" />
-            </Picker>
-                    
-        </View>
+        // <View style={{backgroundColor:'grey'}}>
+            <View style={{position:'absolute', top:10, backgroundColor: 'rgba(9, 0, 92, 0.5)', borderRadius: 10}}>
+                <Text style={{fontSize:25, paddingLeft:10, paddingTop: 5, fontWeight:'bold', color: 'white'}}>Pick a path:</Text>
+                <Picker
+                    selectedValue="tourist attraction"
+                    mode='dropdown'
+                    prompt='Pick a path:'
+                    style={{width: width*0.6, height: 50}}
+                    itemStyle={{
+                        color:'red',
+                        fontSize: 22,
+
+                    }}
+                    style={{
+                        // backgroundColor: 'rgba(9, 0, 92, 0.5)',
+                        width: width*0.6,
+                        height: height*0.1,
+                        fontSize: 22,
+                    }}
+                >
+                    <Picker.Item label="Tourist Attractions" value="tourist attraction" color="white"/>
+                    <Picker.Item label="Museums" value="museum" color="white"/>
+                    <Picker.Item label="Churches" value="church" color="white"/>
+                    <Picker.Item label="Parks & Squares" value="park" color="white"/>
+                </Picker>
+            </View>
+        // </View>
+        
     );
 }
 

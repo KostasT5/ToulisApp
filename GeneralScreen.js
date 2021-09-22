@@ -98,7 +98,7 @@ export default class App extends React.Component{
             // </NavigationContainer>
             <NavigationContainer independent={true}>
             <Tab.Navigator
-                initialRouteName="Test"
+                initialRouteName="User"
                 activeColor="#FFFFFF"
                 inactiveColor="#222831"
                 // inactiveColor = "#FF3E00"
@@ -130,8 +130,8 @@ export default class App extends React.Component{
                     }} 
                 />
                 <Tab.Screen 
-                    name="Test" 
-                    component={TestScreen} 
+                    name="User" 
+                    component={UserScreen} 
                     options={{
                         tabBarLabel: 'User',
                         tabBarIcon: ({color }) => (
