@@ -32,10 +32,12 @@ export default class MapScreen extends React.Component{
         latitude: '',
         longitude: '',
         places: [],
+        user: '',
         isLoading: true,
         creatingPath: true,
         proximity: false,
         path: 'tourist attraction',
+        history: [],
         waypointsA: [],
         waypointsB: [],
         waypointsC: [],
@@ -69,12 +71,49 @@ export default class MapScreen extends React.Component{
             }
             this.setState({initialPosition});
             this.setState({latitude: initialPosition.latitude, longitude:initialPosition.longitude});
-            this.findPlace();
+            this.fetchHistory();
+            // this.findPlace();
             
         },
         error => Alert.alert(error.message),
         {enableHighAccuracy: true, timeout: 10000, maximumAge: 1000}
         )      
+    }
+
+    async fetchHistory() {
+        try{
+            const username = await AsyncStorage.getItem('user_name');
+            this.setState({user: username});
+            await fetch('http://10.0.2.2:5000/history', {  
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    AcceptLanguage: '*',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({    
+                    user_name: this.state.user,                
+                })
+            })
+            .then((response) => response.json())
+            .then((response) => {
+                // if (response['result']=='202'){
+                    // setHistory(response['history']);
+                // }
+                console.log(response);
+                // setHistory(response);
+                let temp=[];
+                for (let i=0; i<response.length; i++) {
+                    temp.push(response[i][0]);
+                }
+                this.setState({history:temp});
+                // console.log("history ", this.state.history);
+                // this.setState({isLoading: false})
+                this.findPlace();
+            })
+        } catch (e) {
+            console.log(e)
+        }
     }
 
     async findPlace() {
@@ -106,7 +145,11 @@ export default class MapScreen extends React.Component{
 
                 // Patras test place fetching
                 for (var item in response) {
-                    temp.push({"id": response[item][3], "name": response[item][1], "lat": response[item][0], "lng": response[item][2], "rating": response[item][4], "type": response[item][5]})
+                    if (this.state.history.includes(response[item][3])){
+                        temp.push({"id": response[item][3], "name": response[item][1], "lat": response[item][0], "lng": response[item][2], "rating": response[item][4], "type": response[item][5], "visited": true})
+                    } else {
+                        temp.push({"id": response[item][3], "name": response[item][1], "lat": response[item][0], "lng": response[item][2], "rating": response[item][4], "type": response[item][5], "visited": false})
+                    }
                 }
                 this.setState({places: temp});
                 this.setState({isLoading: false});
@@ -187,21 +230,11 @@ export default class MapScreen extends React.Component{
             var temp1 = [];
             // Get the relevant coordinates for the path
             for (var item in this.state.places) {
-                if (this.state.places[item].type===paths[k]) {
+                if ((this.state.places[item].type===paths[k])&&(this.state.places[item].visited==false)) {
                     temp1.push({latitude: this.state.places[item].lat, longitude: this.state.places[item].lng});
                 }
             }
-            // Find the closest waypoint to the user's location and then the next closest waypoint to that until all waypoints are sorted
-            // var start = {latitude: this.state.latitude, longitude: this.state.longitude};
-            // var temp2 = [];
-            // while (temp1.length>=1) {
-            //     start = this.findMinDist(start, temp1);
-            //     let index = temp1.indexOf(start);
-            //     if (index > -1) {
-            //         temp1.splice(index,1);
-            //     }
-            //     temp2.push(start);
-            // }
+            
             var temp2 = temp1;
             if (paths[k]==='tourist attraction'){
                 this.setState({waypointsA: temp2});
@@ -280,7 +313,13 @@ export default class MapScreen extends React.Component{
                     provider={PROVIDER_GOOGLE}
                     ref={map => this._map = map}
                     style={styles.map}
-                    initialRegion={this.state.initialPosition}>                
+                    initialRegion={{
+                        latitude: this.state.latitude,
+                        longitude: this.state.longitude,
+                        latitudeDelta: 0.00922,
+                        longitudeDelta: 0.00421,
+                    }}
+                >                
                     {this.createMarker()}
                     {/* {this.calculatePath()} */}
                     {/* <Polyline 
@@ -355,7 +394,7 @@ export default class MapScreen extends React.Component{
             return(
               <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
                   <ActivityIndicator size={50} color='#E50D0D'/>
-                  <Text style={{fontSize:22, color:'red'}}>Fetching Places...</Text>
+                  <Text style={{fontSize:25, color:'red'}}>Fetching Places...</Text>
               </View>  
             );
         }
@@ -375,13 +414,13 @@ export default class MapScreen extends React.Component{
             <View>
 
                 {this.mapSection()}
-                <View style={{position:'absolute', top:0, backgroundColor: 'rgba(255, 255, 255, 0.7)', borderBottomEndRadius:10,}}>
-                    <Text style={{fontSize:24, paddingLeft:10, paddingTop:5, fontWeight:'bold',}}>Pick a path:</Text>
+                <View style={{position:'absolute', top:0, backgroundColor: 'rgba(2, 17, 87, 0.7)', borderBottomEndRadius:10,}}>
+                    <Text style={{fontSize:24, paddingLeft:10, paddingTop:5, fontWeight:'bold', color:'white',}}>Pick a path:</Text>
                     <Picker
                         selectedValue={this.state.path}
-                        mode='dropdown'
+                        mode='dialog'
                         prompt='Pick a path:'
-                        style={{width: width*0.55}}
+                        style={{width: width*0.65}}
                         onValueChange={(itemValue, itemIndex) => {
                             this.setState({path: itemValue});
                             if (itemValue==='tourist attraction') {
@@ -400,10 +439,10 @@ export default class MapScreen extends React.Component{
                             this.setState({creatingPath: true});
                             this.calculatePath();
                     }}>
-                        <Picker.Item label="Tourist Attractions" value="tourist attraction" />
-                        <Picker.Item label="Museums" value="museum" />
-                        <Picker.Item label="Churches" value="church" />
-                        <Picker.Item label="Parks & Squares" value="park" />
+                        <Picker.Item label="Tourist Attractions" value="tourist attraction" color="#f05454" style={{fontSize: 20}}/>
+                        <Picker.Item label="Museums" value="museum" color="#f05454" style={{fontSize: 20}}/>
+                        <Picker.Item label="Churches" value="church" color="#f05454" style={{fontSize: 20}}/>
+                        <Picker.Item label="Parks & Squares" value="park" color="#f05454" style={{fontSize: 20}}/>
                     </Picker>
                 </View>
 

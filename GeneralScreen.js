@@ -114,6 +114,7 @@ export default class App extends React.Component{
                 <Tab.Screen 
                     name="Map" 
                     component={MapStackScreen} 
+                    // children={() => <MapScreen }
                     initialParams = {this.state.places}
                     options={{
                         tabBarLabel: 'Map',

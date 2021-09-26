@@ -88,6 +88,7 @@ class UserScreen extends React.Component{
             return(
               <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
                   <ActivityIndicator size={50} color='#E50D0D'/>
+                  <Text style={{color:'#E50D0D', fontSize:26}}>Fetching your history...</Text>
               </View>  
             );
         }
