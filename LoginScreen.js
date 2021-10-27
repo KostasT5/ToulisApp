@@ -31,8 +31,8 @@ function LoginScreen({navigation}){
         // console.log('user: ' + user + ' password: ' + psswd);
     //   BASE = 'http://127.0.0.1:5000/'
         // console.log('loginHanlder');
-
-        fetch('http://10.0.2.2:5000/login', {
+        console.log("Login");
+        fetch('https://toulis-thesis.herokuapp.com/login', {//'http://10.0.2.2:5000/login', {
             method: 'POST',
             headers: {
                 // Accept: 'application/json',
@@ -52,7 +52,7 @@ function LoginScreen({navigation}){
                 console.log(AsyncStorage.getItem('user_name'));
                 navigation.reset({
                     index: 0,
-                    routes: [{name: 'GeneralScreen'}],
+                    routes: [{name: 'GeneralScreen', params: {user: user}}],
                 });
            } else {
                alert('Wrong Username or Password');

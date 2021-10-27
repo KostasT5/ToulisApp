@@ -12,15 +12,16 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Chip } from 'react-native-paper';
 import {Picker} from '@react-native-picker/picker';
 import MapViewDirections from 'react-native-maps-directions';
+import { min } from 'react-native-reanimated';
 
 const { width, height } = Dimensions.get("window");
 
-export default class MapScreen extends React.Component{
+class MapScreen extends React.Component{
+
     constructor(props) {
         super(props);
-        // this.state = {
-        //     places: this.props.dataParentToChild
-        // }
+        this.state.user = this.props.route.params.user;
+        this.state.history = this.props.route.params.history;
         this.handlePlace = this.handlePlace.bind(this);
     }
     
@@ -31,19 +32,30 @@ export default class MapScreen extends React.Component{
     state = {
         latitude: '',
         longitude: '',
+        initialPosition: {},
         places: [],
-        user: '',
+        user: null,
         isLoading: true,
+        available_time: null,
+        preference: 'closest',
         creatingPath: true,
         proximity: false,
         path: 'tourist attraction',
-        history: [],
+        history: null,
         waypointsA: [],
         waypointsB: [],
         waypointsC: [],
         waypointsD: [],
         waypointsSelected: [],
+        pathTimeA: [],
+        pathTimeB: [],
+        pathTimeC: [],
+        pathTimeD: [],
+        destination: {latitude: 0, longitude:0},
+        ready: false,
     }
+
+    //Find User's Position
 
     requestLocationPermission = async () => {
         if(Platform.OS === 'android') {
@@ -51,6 +63,7 @@ export default class MapScreen extends React.Component{
         
         if(response === 'granted') {
             this.locateCurrentPosition();
+            // this.findPlace();
         }
         } else {
 
@@ -71,54 +84,98 @@ export default class MapScreen extends React.Component{
             }
             this.setState({initialPosition});
             this.setState({latitude: initialPosition.latitude, longitude:initialPosition.longitude});
-            this.fetchHistory();
-            // this.findPlace();
+            // this.fetchHistory();
+            this.findPlace();
             
         },
-        error => Alert.alert(error.message),
-        {enableHighAccuracy: true, timeout: 10000, maximumAge: 1000}
+        error => {
+            console.log(error);
+            this.locateCoarsePosition();
+        } ,
+        {enableHighAccuracy: true, timeout: 3000, maximumAge: 10000}
         )      
     }
 
-    async fetchHistory() {
-        try{
-            const username = await AsyncStorage.getItem('user_name');
-            this.setState({user: username});
-            await fetch('http://10.0.2.2:5000/history', {  
-                method: 'POST',
-                headers: {
-                    Accept: 'application/json',
-                    AcceptLanguage: '*',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({    
-                    user_name: this.state.user,                
-                })
-            })
-            .then((response) => response.json())
-            .then((response) => {
-                // if (response['result']=='202'){
-                    // setHistory(response['history']);
-                // }
-                console.log(response);
-                // setHistory(response);
-                let temp=[];
-                for (let i=0; i<response.length; i++) {
-                    temp.push(response[i][0]);
+    locateCoarsePosition = () => {
+        Geolocation.getCurrentPosition(
+            position => {
+    
+                let initialPosition = {
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude,
+                
+                latitudeDelta: 0.09,
+                longitudeDelta: 0.035,
                 }
-                this.setState({history:temp});
-                // console.log("history ", this.state.history);
-                // this.setState({isLoading: false})
+                this.setState({initialPosition});
+                this.setState({latitude: initialPosition.latitude, longitude:initialPosition.longitude});
+                // this.fetchHistory();
                 this.findPlace();
-            })
+                
+            },
+            error => alert(error.message),
+            {enableHighAccuracy: false, timeout: 10000, maximumAge: 10000}
+        )      
+    }
+    
+
+    //Fetch Asyncronous Data
+
+    async readData() {
+        // console.log('Read username');
+        try {
+            const time = await AsyncStorage.getItem('time');
+            this.setState({available_time: parseFloat(time)});
+            console.log("Available time for path: "+this.state.available_time);
         } catch (e) {
-            console.log(e)
+            console.log('Failed to fetch the data from storage');
         }
     }
 
+    //Fetch User's History from DB
+
+    // async fetchHistory() {
+    //     try{
+    //         const username = await AsyncStorage.getItem('user_name');
+    //         this.setState({user: username});
+    //         await fetch('https://toulis-thesis.herokuapp.com/history', {  
+    //             method: 'POST',
+    //             headers: {
+    //                 Accept: 'application/json',
+    //                 AcceptLanguage: '*',
+    //                 'Content-Type': 'application/json'
+    //             },
+    //             body: JSON.stringify({    
+    //                 user_name: this.state.user,                
+    //             })
+    //         })
+    //         .then((response) => response.json())
+    //         .then((response) => {
+    //             // if (response['result']=='202'){
+    //                 // setHistory(response['history']);
+    //             // }
+    //             // console.log(response);
+    //             // setHistory(response);
+    //             let temp=[];
+    //             for (let i=0; i<response.length; i++) {
+    //                 temp.push(response[i][0]);
+    //             }
+    //             this.setState({history:temp});
+    //             // console.log("history ", this.state.history);
+    //             // this.setState({isLoading: false})
+    //             this.findPlace();
+    //         })
+    //     } catch (e) {
+    //         console.log(e)
+    //     }
+    // }
+
+    
+    //Query REST-API for Places
+
     async findPlace() {
         try{
-            await fetch('http://10.0.2.2:5000/places', {  
+            await fetch('https://toulis-thesis.herokuapp.com/places', {  
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -132,7 +189,7 @@ export default class MapScreen extends React.Component{
             })
             .then((response) => response.json())
             .then((response) => {
-                console.log(response);
+                // console.log(response);
                 const temp = [];
 
                 // Live use place fetching
@@ -144,17 +201,28 @@ export default class MapScreen extends React.Component{
                 // }
 
                 // Patras test place fetching
+                
+                // console.log("History: " + this.state.history);
                 for (var item in response) {
-                    if (this.state.history.includes(response[item][3])){
-                        temp.push({"id": response[item][3], "name": response[item][1], "lat": response[item][0], "lng": response[item][2], "rating": response[item][4], "type": response[item][5], "visited": true})
+                    if (this.state.history.includes(response[item][1])){
+                        temp.push({"id": response[item][3], "name": response[item][1], "lat": response[item][0], "lng": response[item][2], "rating": response[item][4], "type": response[item][5], "visited": true, "total_visits": response[item][6]})
                     } else {
-                        temp.push({"id": response[item][3], "name": response[item][1], "lat": response[item][0], "lng": response[item][2], "rating": response[item][4], "type": response[item][5], "visited": false})
+                        temp.push({"id": response[item][3], "name": response[item][1], "lat": response[item][0], "lng": response[item][2], "rating": response[item][4], "type": response[item][5], "visited": false, "total_visits": response[item][6]})
                     }
                 }
+                
                 this.setState({places: temp});
+                for (let i=0; i<this.state.places.length; i++){
+                    console.log(this.state.places[i].name, this.state.places[i].visited);
+                }
                 this.setState({isLoading: false});
-                this.calculatePath();
-                this.setState({waypointsSelected: this.state.waypointsA});
+                this.splitWaypoints();
+                // this.sortWaypoints();
+                // this.calculateTime();
+                // this.cutWaypoints();
+                // this.setState({isLoading: false});
+                
+                
             });
         } catch (err) {
             console.error(err);
@@ -162,69 +230,22 @@ export default class MapScreen extends React.Component{
         
     }
 
-    componentDidMount() {
-        this.requestLocationPermission();
-        this.props.navigation;
+    // Functions to create Path
+
+    // Finds straight line distance between two points
+    haversine_distance(mk1, mk2) {
+        var R = 6371.0710; // Radius of the Earth in km
+        var rlat1 = mk1.latitude * (Math.PI/180); // Convert degrees to radians
+        var rlat2 = mk2.latitude * (Math.PI/180); // Convert degrees to radians
+        var difflat = rlat2-rlat1; // Radian difference (latitudes)
+        var difflon = (mk2.longitude-mk1.longitude) * (Math.PI/180); // Radian difference (longitudes)
+  
+        var d = 2 * R * Math.asin(Math.sqrt(Math.sin(difflat/2)*Math.sin(difflat/2)+Math.cos(rlat1)*Math.cos(rlat2)*Math.sin(difflon/2)*Math.sin(difflon/2)));
+        return d;
     }
 
-    async handlePlace(place) {
-        try {
-            await AsyncStorage.setItem('place_id', place.id);
-            await AsyncStorage.setItem('place_name', place.name);
-            await AsyncStorage.setItem('place_lat', JSON.stringify(place.lat));
-            await AsyncStorage.setItem('place_lng', JSON.stringify(place.lng));
-            await AsyncStorage.setItem('place_rating', JSON.stringify(place.rating));
-            var proximity = this.state.proximity;
-            this.props.navigation.navigate('PlaceScreen', {place, proximity});    
-        } catch (e) {
-            console.log(e);
-        }      
-    } 
-
-    checkDistance(place) {
-        console.log('Checking Distance');   
-        if ((Math.abs(this.state.latitude - place.lat) < 0.0011)&&(Math.abs(this.state.longitude - place.lng) < 0.0011)){
-            console.log('User close enough to leave review');
-            this.setState({proximity: true});
-            this.handlePlace(place);
-        } else {
-            console.log('User too far to leave review');
-            this.handlePlace(place);
-        }
-    }
-
-    calculateDistance(coords1, coords2) {
-        return (Math.abs(coords1[0]-coords2[0]) + Math.abs(coords1[1]-coords2[1]));
-    }
-
-    findMinDist(coords, array) {
-        let next = null;
-        let mindist = 1000;
-        for (let i=0; i<array.length; i++) {
-            let dist = this.calculateDistance([coords.latitude, coords.longitude], [array[i].latitude, array[i].longitude]);
-            if (dist < mindist) {
-                mindist = dist;
-                next = array[i];
-            }
-        }
-        return next;
-    }
-
-    findDestination(coords, array) {
-        let maxdist = 0;
-        let destination = null;
-        let dist = null;
-        for (let i=0; i<array.length; i++) {
-            dist = this.calculateDistance([coords.latitude, coords.longitude], [array[i].latitude, array[i].longitude]);
-            if (dist > maxdist) {
-                maxdist = dist;
-                destination = array[i];
-            }
-        }
-        return destination;
-    }
-
-    calculatePath = () => {
+    splitWaypoints = () => {
+        // console.log(this.state.places[0]);
         var paths=['tourist attraction', 'museum', 'church', 'park'];
         for (let k in paths) {
             var temp1 = [];
@@ -234,7 +255,6 @@ export default class MapScreen extends React.Component{
                     temp1.push({latitude: this.state.places[item].lat, longitude: this.state.places[item].lng});
                 }
             }
-            
             var temp2 = temp1;
             if (paths[k]==='tourist attraction'){
                 this.setState({waypointsA: temp2});
@@ -249,9 +269,211 @@ export default class MapScreen extends React.Component{
                 this.setState({waypointsD: temp2});
             }
         }
+        // this.sortWaypoints();
+        this.calculateWeights();
+    }
 
-        // console.log(this.state.waypoints);
-        this.setState({creatingPath: false});
+    calculateWeights() {     
+        // Add starting position as a waypoint node to each path
+        var Waypoints = [this.state.waypointsA, this.state.waypointsB, this.state.waypointsC, this.state.waypointsD];
+        // console.log("WaypointsA: ", this.state.waypointsA);
+        // console.log(Waypoints[0]);
+        var c=0;    
+        for (let w of Waypoints) {
+            // var Enum = [];
+            // for (let p of w.entries()) {
+            //     Enum.push(p);
+                
+            // }
+            // var Weights = Array.from({length: Enum.length}, _ => new Array(Enum.length).fill(100000));
+            // for (let i=0; i<Enum.length; i++) {
+            //     for (let j=0; j<i; j++){
+                    
+            //         let val = this.haversine_distance(Enum[i][1], Enum[j][1]);
+            //         Weights[i][j] = val;
+            //         Weights[j][i] = val;
+            //         // } else {
+            //         //     Weights[i][j] = 1000000;
+            //         // }
+            //     }
+                
+                
+            // }
+            c++;
+            // Once Weights Matrix is calculated pass it and the Waypoints array to the Nearest Neighbor Algorithm function
+            // console.log(Weights);
+            if (c===1) {
+                var path = this.nearestNeighbor(w,c);
+                this.setState({waypointsA: path});
+            }
+            if (c===2) {
+                var path = this.nearestNeighbor(w,c);
+                this.setState({waypointsB: path});
+            }
+            if (c===3) {
+                var path = this.nearestNeighbor(w,c);
+                this.setState({waypointsC: path});
+            }
+            if (c===4) {
+                var path = this.nearestNeighbor(w,c);
+                this.setState({waypointsD: path});
+            }
+        }
+        
+        // for (let )
+        console.log("WaypointsA: ",this.state.waypointsA);
+        this.setState({waypointsSelected: this.state.waypointsA});
+        this.setState({destination: this.state.waypointsSelected.pop()});
+        this.setState({creatingPath:false});
+        
+    }
+
+    // Nearest Neighbor Algorithm 
+    nearestNeighbor(Nodes, type) {
+        var Visited = [{latitude:this.state.latitude, longitude:this.state.longitude}];
+
+        var time_elapsed = 0;
+        while ((Nodes.length>1) && (time_elapsed<=this.state.available_time)) {
+            let min_dist=1000;
+            let min_i = 0;
+
+            // Search remaining nodes for the closest neighbor
+            for (let i=0; i<Nodes.length; i++){
+                let dist = this.haversine_distance(Visited[Visited.length-1], Nodes[i]);
+                if (dist<min_dist) {
+                    // console.log("malakas");
+                    min_dist = dist;
+                    min_i = i;
+                }
+            }
+            let t = this.calculateTime(min_dist,type);
+            time_elapsed=time_elapsed+t;
+            let temp = Nodes[min_i];
+            Nodes.splice(min_i,1);
+            // console.log(Nodes);s
+            // console.log("Temp: ", temp);
+            Visited.push(temp);
+            // console.log("Visited: ", Visited);
+        }
+            // console.log("Visited: ", Visited);
+        //     var closest = Weights[start[0]].indexOf(Math.min(...Weights[start[0]]));
+        //     var t = this.calculateTime(Math.min(...Weights[start[0]]), type);
+        //     time_elapsed = time_elapsed +t;
+        //     if (time_elapsed>this.state.available_time) {
+        //         console.log("Time to complete path exceeds available time: ", this.state.available_time);
+        //     }
+        //     // console.log("Closest: ", closest);
+        //     for (let i=0; i<Nodes.length; i++){
+        //         if (Nodes[i][0]===closest){
+        //             var temp = Nodes.splice(i,1);
+        //         }
+        //     }
+        //     // console.log("Closest waypoint: ", Weights[start[0]].indexOf(Math.min(...Weights[start[0]])), " ",Math.min(...Weights[start[0]]))
+            
+        //     Nodes.unshift(temp[0]);
+
+        //     // console.log("New Nodes: ",Nodes);
+        // }
+        console.log(Visited);
+        return Visited;
+    }
+
+    // array_move(arr, old_index, new_index) {
+    //     if (new_index >= arr.length) {
+    //         var k = new_index - arr.length + 1;
+    //         while (k--) {
+    //             arr.push(undefined);
+    //         }
+    //     }
+    //     arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
+    //     return arr; // for testing
+    // }
+
+
+    calculateTime(dist, type) {
+
+        if (type!==2) {
+            // console.log("Time to complete subpath: ", 1.2*dist/5 + 1/12);
+            return 1.35*dist/5 + 1/12;
+        } else {
+            // console.log("Time to complete subpath: ", 1.2*dist/5 + 1/2);
+            return 1.35*dist/5 + 1/2;
+        }    
+    }
+
+
+    findDestination() {
+        
+        let w = this.state.waypointsSelected;
+        this.setState({destination: this.state.waypointsSelected.slice(-1)[0]});
+        console.log("Destination: "+this.state.destination.latitude + " " +this.state.destination.longitude);
+        this.setState({creatingPath:false});
+    }
+
+    logPath() {
+        console.log("Start is: " + this.state.initialPosition.latitude+ " "+ this.state.initialPosition.longitude);
+        console.log("Waypoints of path are: ");
+        for (let i=0; i<this.state.waypointsSelected.length; i++){
+            console.log(this.state.waypointsSelected[i]);
+        }
+        console.log("Path destination: ");
+        console.log(this.state.destination.latitude, this.state.destination.longitude);
+    }
+
+    // Handle Place Selection
+
+    async checkDistance(place) {
+        try {
+            Geolocation.getCurrentPosition(
+            position => {
+                this.setState({latitude: position.coords.latitude, longitude:position.coords.longitude, ready: true});    
+            },
+            // error => {
+            //     console.log(error);
+            //     this.locateCoarsePosition();
+            // } ,
+            {enableHighAccuracy: true, timeout: 1000, maximumAge: 10000}
+        )} catch (e) {
+            Geolocation.getCurrentPosition(
+                position => {
+                    this.setState({latitude: position.coords.latitude, longitude:position.coords.longitude, ready: true});    
+                },
+                // error => {
+                //     console.log(error);
+                //     this.locateCoarsePosition();
+                // } ,
+                {enableHighAccuracy: false, timeout: 5000, maximumAge: 10000}
+            )
+        }     
+        // this.getPosition();
+        var pos = {latitude: this.state.latitude, longitude: this.state.longitude}; 
+        var loc = {latitude: place.lat, longitude: place.lng};
+        if (this.haversine_distance(pos, loc) < 0.1){           //If user is within 100 meters of site they can leave a review
+            // alert(this.haversine_distance(pos, loc));
+            console.log('User close enough to leave review');
+            this.setState({proximity: true});
+            this.handlePlace(place);
+        } else {
+            console.log('User too far to leave review');
+            // alert(this.haversine_distance(pos, loc));
+            this.setState({proximity: false});
+            this.handlePlace(place);
+        }
+    }
+
+    handlePlace(place) {
+
+        this.props.navigation.navigate('PlaceScreen', {place});    
+           
+    } 
+
+    
+    
+
+    componentDidMount() {
+        this.readData();
+        this.requestLocationPermission();
+        this.props.navigation;
     }
 
     createMarker = () => {
@@ -266,79 +488,68 @@ export default class MapScreen extends React.Component{
                         title={place.name}
                         // onPress = {this.checkDistance(place.lat, place.lng)}
                         icon={{url: place.icon}}
+                        onCalloutPress = {(e) => {e.stopPropagation(); this.handlePlace(place)}}
                     > 
                         <Callout>
-                            <View>
+                            {/* <View> */}
                                 <View style={styles.bubble}>
-                                    <Text style={styles.name}>{place.name}</Text>
+                                    <Text style={styles.name}>
+                                        {place.name}
+                                        {/* <Button
+                                            onPress = {
+                                                (e) => {e.stopPropagation(); this.checkDistance(place)}
+                                            }
+                                            title = 'Details'
+                                        /> */}
+                                    </Text>
+                                     
                                 </View>
-                                <View style={styles.arrowBorder}/>
-                                <View style={styles.arrow}/>
-                            </View>
+                                {/* <View style={styles.arrowBorder}/>
+                                <View style={styles.arrow}/> */}
+                            {/* </View> */}
                         </Callout>
                     </Marker>
                 )
             }}
-            // <Marker
-            //     key={place.id}
-            //     coordinate={{latitude: place.lat, longitude: place.lng}}
-            //     title={place.name}
-            //     icon={{url: place.icon}}
-            // > 
-            //     <Callout>
-            //         <View>
-            //             <View style={styles.bubble}>
-            //                 <Text style={styles.name}>{place.name}</Text>
-            //             </View>
-            //             <View style={styles.arrowBorder}/>
-            //             <View style={styles.arrow}/>
-            //         </View>
-            //     </Callout>
-            // </Marker>
+            
             
         )
-    }
-
-
-    // async storePlace(place) {
-
-    // }
+    }   
 
     mapSection() {
         const Key = 'AIzaSyBSpTY-M9Ztfu7vKq8pqsusrGoe_FuUG4s';
-        // if (this.state.path==='tourist attraction') {
-            return(
-                <MapView 
-                    showsUserLocation={true}
-                    provider={PROVIDER_GOOGLE}
-                    ref={map => this._map = map}
-                    style={styles.map}
-                    initialRegion={{
-                        latitude: this.state.latitude,
-                        longitude: this.state.longitude,
-                        latitudeDelta: 0.00922,
-                        longitudeDelta: 0.00421,
+        return(
+            <MapView 
+                showsUserLocation={true}
+                provider={PROVIDER_GOOGLE}
+                ref={map => this._map = map}
+                style={styles.map}
+                initialRegion={{
+                    latitude: this.state.latitude,
+                    longitude: this.state.longitude,
+                    latitudeDelta: 0.00922,
+                    longitudeDelta: 0.00421,
+                }}
+            >                
+                {this.createMarker()}
+                
+                <MapViewDirections
+                    origin={{latitude: this.state.initialPosition.latitude, longitude: this.state.initialPosition.longitude}}
+                    destination= {{latitude: this.state.destination.latitude, longitude: this.state.destination.longitude}}
+                    apikey={Key}
+                    waypoints={this.state.waypointsSelected}
+                    mode="WALKING"
+                    strokeWidth={3}
+                    strokeColor="red"
+                    onStart={() => {this.setState({creatingPath:false})}}
+                    onError={(errorMessage) => {
+                        console.log(errorMessage);
                     }}
-                >                
-                    {this.createMarker()}
-                    {/* {this.calculatePath()} */}
-                    {/* <Polyline 
-                        coordinates={this.state.waypoints}
-                    /> */}
-                    
-                    <MapViewDirections
-                        origin={{latitude: this.state.latitude, longitude: this.state.longitude}}
-                        destination={this.findDestination({latitude: this.state.latitude, longitude: this.state.longitude}, this.state.waypointsSelected)}
-                        apikey={Key}
-                        waypoints={this.state.waypointsSelected}
-                        mode="WALKING"
-                        strokeWidth={3}
-                        strokeColor="red"
-                        optimizeWaypoints={true}
-                        splitWaypoints={true}
-                    />
-                </MapView>
-            )
+                    // optimizeWaypoints={true}
+                    splitWaypoints={true}
+                />
+            </MapView>
+        )
     }
 
     cardSection() {
@@ -371,7 +582,7 @@ export default class MapScreen extends React.Component{
                                             longitudeDelta: 0.01
                                         });
                                         console.log('Details');
-                                        this.checkDistance(place);
+                                        this.handlePlace(place);
                                     }}
                                 >
                                     <Text style={styles.cardDescription}>Details</Text>
@@ -389,6 +600,7 @@ export default class MapScreen extends React.Component{
     render() {
 
         // console.log(this.state);
+        // this.logPath();
 
         if (this.state.isLoading){
             return(
@@ -424,20 +636,44 @@ export default class MapScreen extends React.Component{
                         onValueChange={(itemValue, itemIndex) => {
                             this.setState({path: itemValue});
                             if (itemValue==='tourist attraction') {
-                                this.setState({waypointsSelected: this.state.waypointsA})
+                                let w = this.state.waypointsA;
+                                this.setState({waypointsSelected: w});
+                                this.setState({destination: w.pop()});
+                                this.logPath();
+                                // this.findDestination();
                             }
                             if (itemValue==='museum') {
-                                this.setState({waypointsSelected: this.state.waypointsB})
+                                // for (let i=0; i<this.state.waypointsB.length; i++){
+                                //     console.log(this.state.waypointsB[i].latitude, this.state.waypointsB[i].longitude);
+                                // }
+                                let w = this.state.waypointsB;
+                                this.setState({waypointsSelected: w});
+                                this.setState({destination: w.pop()});
+                                this.logPath();
+                                // this.findDestination();
                             }
                             if (itemValue==='church') {
-                                this.setState({waypointsSelected: this.state.waypointsC})
+                                let w = this.state.waypointsC;
+                                this.setState({waypointsSelected: w});
+                                this.setState({destination: w.pop()});//slice(-1)[0]});
+                                this.logPath();
+                                // this.findDestination();
                             }
                             if (itemValue==='park') {
-                                this.setState({waypointsSelected: this.state.waypointsD})
+                                let w = this.state.waypointsD;
+                                this.setState({waypointsSelected: w});
+                                this.setState({destination: w.pop()});
+                                this.logPath();
+                                // this.findDestination();
                             }
+                            // console.log("Path waypoints:");
+                            // for (let i=0; i<this.state.waypointsSelected.length; i++) {
+                                
+                            //     console.log(this.state.waypointsSelected[i].latitude, this.state.waypointsSelected[i].longitude);
+                            // }
                             // console.log(this.state.path);
-                            this.setState({creatingPath: true});
-                            this.calculatePath();
+                            // this.setState({creatingPath: true});
+                            // this.calculatePath();
                     }}>
                         <Picker.Item label="Tourist Attractions" value="tourist attraction" color="#f05454" style={{fontSize: 20}}/>
                         <Picker.Item label="Museums" value="museum" color="#f05454" style={{fontSize: 20}}/>
@@ -464,7 +700,7 @@ export default class MapScreen extends React.Component{
 }
 
 
-// export default MapScreen
+export default MapScreen
 
 const styles = StyleSheet.create({
     map: {
@@ -524,7 +760,7 @@ const styles = StyleSheet.create({
     bubble: {
         flexDirection: 'column',
         alignSelf: 'flex-start',
-        backgroundColor: '#fff',
+        backgroundColor: '#1C1E31',
         borderRadius: 6,
         borderColor: '#ccc',
         borderWidth: 0.5,
@@ -534,23 +770,9 @@ const styles = StyleSheet.create({
     name: {
         fontSize: 16,
         marginBottom: 5,
+        color: "#fff",
     },
-    arrowBorder: {
-        backgroundColor: 'transparent',
-        borderColor: 'transparent',
-        borderTopColor: '#007a87',
-        borderWidth: 16,
-        alignSelf: 'center',
-        marginTop: -0.5,
-    },
-    arrow: {
-        backgroundColor: 'transparent',
-        borderColor: 'transparent',
-        borderTopColor: '#fff',
-        borderWidth: 16,
-        alignSelf: 'center',
-        marginTop: -32,
-    },
+
     chipsScrollView: {
         position:'absolute',
         paddingHorizontal: 10,

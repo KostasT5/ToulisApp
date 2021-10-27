@@ -2,100 +2,91 @@ import * as React from 'react';
 import {useState, setState, useEffect} from 'react';
 import { Text, View, TextInput, Button, StyleSheet, Image, 
     Platform, TouchableOpacity, FlatList, ActivityIndicator, ScrollView, 
-    Animated, Dimensions } from 'react-native';
+    Animated, Dimensions, LogBox } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient'
 import { Icon } from 'react-native-vector-icons/Ionicons'
 import { Header } from 'react-native-elements'
-import { useNavigation, DrawerActions } from '@react-navigation/native';
+import { useNavigation, DrawerActions, NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import StarRating from 'react-native-star-rating';
+import Slider from '@react-native-community/slider';
 
 
 const { width, height } = Dimensions.get("window");
-
+LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
+LogBox.ignoreAllLogs();
 
 class UserScreen extends React.Component{
-    // const [history,setHistory] = useState(
-   
-    // );
-
-    // const [user, setUser] = useState('');
-
-    // useEffect(() => {
-    //     readData();
-    //     fetchHistory();
-    // });
+    
+    constructor(props) {
+        super(props);
+        this.state.user = this.props.route.params.user;
+        this.state.history = this.props.route.params.history;
+        
+    }
 
     state = {
         history: null,
         user: null,
-        isLoading: true
+        time: 0.5
     }
     
-    async readData() {
-        console.log('Read username');
+    
+    async storeData() {
+        console.log("Passing time variable to map screen");
         try {
-            const username = await AsyncStorage.getItem('user_name');
-        
-            if (username !== null) {
-                // setUser(username);
-                this.setState({user: username});
-                this.fetchHistory();
-            } else {
-                console.log('USername not set');
-            }
+            await AsyncStorage.setItem('time', String(this.state.time));
         } catch (e) {
-            console.log('Failed to fetch the data from storage');
+            console.log(e);
         }
     }
 
-    async fetchHistory() {
-        try{
-            await fetch('http://10.0.2.2:5000/history', {  
-                method: 'POST',
-                headers: {
-                    Accept: 'application/json',
-                    AcceptLanguage: '*',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({    
-                    user_name: this.state.user,                
-                })
-            })
-            .then((response) => response.json())
-            .then((response) => {
-                // if (response['result']=='202'){
-                    // setHistory(response['history']);
-                // }
-                console.log(response);
-                // setHistory(response);
-                this.setState({history:response});
-                this.setState({isLoading: false})
-            })
-        } catch (e) {
-            console.log(e)
-        }
-    }
+
     
     componentDidMount() {
-        this.readData();
+        // this.readData();
+        // this.fetchHistory();
+        // this.setState({user: this.props.route.params.user, history: this.props.route.params.history});
+        console.log(this.state.user);
+        
         // this.fetchHistory();
     }
 
+    componentWillUnmount() {
+        this.storeData();
+    }
+
     render() {
-        if (this.state.isLoading){
-            return(
-              <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
-                  <ActivityIndicator size={50} color='#E50D0D'/>
-                  <Text style={{color:'#E50D0D', fontSize:26}}>Fetching your history...</Text>
-              </View>  
-            );
-        }
+        // if (this.state.isLoading){
+        //     return(
+        //       <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
+        //           <ActivityIndicator size={50} color='#E50D0D'/>
+        //           <Text style={{color:'#E50D0D', fontSize:26}}>Fetching your history...</Text>
+        //       </View>  
+        //     );
+        // }
 
         return (
             <View style={ styles.container }>
                 <Text style={styles.title}>Welcome {this.state.user}</Text>
+                <View style={{backgroundColor: '#2F3454', marginBottom:20, paddingBottom:2, borderRadius:6}}>
+                    <Text style={styles.item}> Available time for the path: </Text>
+                    <View style={{justifyContent:'center', alignItems:'center'}}>
+                        <Slider 
+                            style={{width: '90%', height: 50, }}
+                            minimumValue={0.5}
+                            maximumValue={4}
+                            step={0.5}
+                            minimumTrackTintColor="#f05454"
+                            maximumTrackTintColor="#ffffff"
+                            onValueChange={value => this.setState({time: value})}
+                            onSlidingComplete={value => this.storeData()}
+                        />
+                        <Text style={{fontSize: 25, color: '#ffffff',paddingBottom:20}}> {this.state.time} hrs</Text>
+                    </View>
+                    
+                </View>
                 <Text style={styles.title2}>History</Text>
                 <FlatList
                     style={styles.list}

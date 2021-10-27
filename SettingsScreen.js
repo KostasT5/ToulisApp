@@ -46,14 +46,16 @@ function SettingsScreen(){
                     Places is an app designed to help users navigate through sites of interest within a city.
                 </Text>
                 <Text style={styles.item}>
-                    Head to the Map screen where recommendantions  are listed with user scores. 
+                    Use the User Screen to overview your previous activity and set the available time for the generated path.
                 </Text>
                 <Text style={styles.item}>
-                    You can press the View on Map button to zoom in to a place's location.
+                    Use the Map Screen to view site recommendations and the path that leads you to them.
                 </Text>
+                {/* <Text style={styles.item}>
+                    You can press the View on Map button to zoom in to a place's location and change the type of visible sites. 
+                </Text> */}
                 <Text style={styles.item}>
-                    Once you arrive in the vicinity of the place, press the View on Map button to leave a comment and rating of the place for other users to see!
-
+                    Approach a site to leave a photo and upload a picture!
                 </Text>
             </View>
 
@@ -128,7 +130,7 @@ const styles = StyleSheet.create({
     item :{
         fontSize: 19,
         color: '#ffffff',
-        paddingBottom: 10,
+        paddingBottom: 25,
         // paddingLeft: 15,
         // paddingTop: 10,
     },

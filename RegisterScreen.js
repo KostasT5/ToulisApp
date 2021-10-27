@@ -48,7 +48,7 @@ function RegisterScreen({navigation}){
             if (confirm === psswd && email != '' && user != '' && psswd != '') {
                 // console.log('email: ' + email + ' password: ' + psswd);
                 console.log('Registering user with credentials: ' + email + ' ' + user + ' ' + psswd);
-                fetch('http://10.0.2.2:5000/register', {
+                fetch('https://toulis-thesis.herokuapp.com/register', {
                     method: 'POST',
                     headers: {
                         // Accept: 'application/json',
@@ -69,7 +69,7 @@ function RegisterScreen({navigation}){
                     if (response['result']==201){
                         navigation.reset({
                             index: 0,
-                            routes: [{name: 'GeneralScreen'}],
+                            routes: [{name: 'GeneralScreen', params: {user: user}}],
                         });
                     } else {
                         alert(response['message']);

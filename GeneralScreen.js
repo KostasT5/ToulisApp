@@ -45,22 +45,69 @@ export default class App extends React.Component{
     constructor(props) {
         super(props);
         // this.handlePlace = this.handlePlace.bind(this);
+        this.state.user = this.props.route.params.user;
     }
     
     state = {
         latitude: '',
         longitude: '',
-        places: []
+        places: [],
+        history: [],
+        isLoading: true,
+        user:'',
+    }
+
+
+    async fetchHistory() {
+        console.log("Fetching history for:", this.state.user);
+        try{
+            await fetch('https://toulis-thesis.herokuapp.com/history', {  
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    AcceptLanguage: '*',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({    
+                    user_name: this.state.user,                
+                })
+            })
+            .then((response) => response.json())
+            .then((response) => {
+                // if (response['result']=='202'){
+                    // setHistory(response['history']);
+                // }
+                // console.log(response);
+                // setHistory(response);
+                this.setState({history:response});
+                console.log("History: ", this.state.history);
+                this.setState({isLoading: false})
+            })
+        } catch (e) {
+            console.log(e)
+        }
     }
 
     componentDidMount() {
         // this.requestLocationPermission();
         this.props.navigation;
+        // this.setState({user: this.props.route.params.user});
+        // console.log("GS ",this.state.user);
+        this.fetchHistory();
     }
 
     
     render() {
-        // console.log(this.state.places);
+        console.log("USER: ",this.state.user);
+        console.log("HISTORY: ",this.state.history);
+        if (this.state.isLoading) {
+            return(
+                <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
+                    <ActivityIndicator size={50} color='#E50D0D'/>
+                    <Text style={{color:'#E50D0D', fontSize:26}}>Fetching your history...</Text>
+                </View>  
+              );
+        }
         return (
 
             // <NavigationContainer 
@@ -101,6 +148,7 @@ export default class App extends React.Component{
                 initialRouteName="User"
                 activeColor="#FFFFFF"
                 inactiveColor="#222831"
+                
                 // inactiveColor = "#FF3E00"
                 // dataParentToChild = {this.state.places}
                 barStyle={{ 
@@ -114,10 +162,11 @@ export default class App extends React.Component{
                 <Tab.Screen 
                     name="Map" 
                     component={MapStackScreen} 
-                    // children={() => <MapScreen }
-                    initialParams = {this.state.places}
+                    // children={() => <UserScreen available_time = {this.state.time} /> }
+                    initialParams = {{user: this.state.user, history: this.state.history}}
                     options={{
                         tabBarLabel: 'Map',
+                        
                         tabBarIcon: ({ color }) => (
                         // <Image
                         //     source={require('./img/Tab_icons/placeholder.png')}
@@ -133,6 +182,7 @@ export default class App extends React.Component{
                 <Tab.Screen 
                     name="User" 
                     component={UserScreen} 
+                    initialParams = {{user: this.state.user, history: this.state.history}}
                     options={{
                         tabBarLabel: 'User',
                         tabBarIcon: ({color }) => (

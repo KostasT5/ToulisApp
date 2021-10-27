@@ -15,6 +15,8 @@ import {
   ActivityIndicator,
 } from 'react-native';
 
+import {request, PERMISSIONS} from 'react-native-permissions';
+import Geolocation from '@react-native-community/geolocation';
 import Header from 'react-native-elements'
 import LinearGradient from 'react-native-linear-gradient'
 import StarRating from 'react-native-star-rating';
@@ -44,36 +46,37 @@ class PlaceScreen extends React.Component {
             base64: null
         },
         gallery: [],
+        proximity: false,
     }
     
-    async placeData() {
-        try {
-            const temp1 = await AsyncStorage.getItem('place_id');
-            const temp2 = await AsyncStorage.getItem('place_name');
-            const temp3 = await AsyncStorage.getItem('place_lat');
-            const temp4 = await AsyncStorage.getItem('place_lng');
-            const temp5 = await AsyncStorage.getItem('place_rating');
-            if (temp1 !== null) {
-                this.setState({place: {
-                    id: temp1,
-                    name: temp2,
-                    lat: temp3,
-                    lng: temp4,
-                    rating: temp5,
-                }});
-                this.fetchReviews();
-                // this.checkFirstVisit();
-            } else {
-                console.log('Place details were not saved');
-            }
-        } catch (e) {
-            console.log('Failed to fetch the data from storage');
-        }
-    }
+    // async placeData() {
+    //     try {
+    //         const temp1 = await AsyncStorage.getItem('place_id');
+    //         const temp2 = await AsyncStorage.getItem('place_name');
+    //         const temp3 = await AsyncStorage.getItem('place_lat');
+    //         const temp4 = await AsyncStorage.getItem('place_lng');
+    //         const temp5 = await AsyncStorage.getItem('place_rating');
+    //         if (temp1 !== null) {
+    //             this.setState({place: {
+    //                 id: temp1,
+    //                 name: temp2,
+    //                 lat: temp3,
+    //                 lng: temp4,
+    //                 rating: temp5,
+    //             }});
+    //             this.fetchReviews();
+    //             // this.checkFirstVisit();
+    //         } else {
+    //             console.log('Place details were not saved');
+    //         }
+    //     } catch (e) {
+    //         console.log('Failed to fetch the data from storage');
+    //     }
+    // }
 
     async fetchReviews() {
-        const place_id = this.state.place['id']
-        fetch('http://10.0.2.2:5000/reviews', {
+        const place_id = this.props.route.params.place.id;
+        fetch('https://toulis-thesis.herokuapp.com/reviews', {
             method: 'POST',
             headers: {
                 // Accept: 'application/json',
@@ -124,7 +127,8 @@ class PlaceScreen extends React.Component {
     async checkFirstVisit() {
         try{
             const user = await AsyncStorage.getItem('user_name');
-            fetch('http://10.0.2.2:5000/check_history', {
+            console.log(user);
+            fetch('https://toulis-thesis.herokuapp.com/check_history', {
             method: 'POST',
             headers: {
                 // Accept: 'application/json',
@@ -146,14 +150,15 @@ class PlaceScreen extends React.Component {
                 this.setState({first_visit: false});
                 this.setState({rating: response[0][3], comment: response[0][2]});
                 // console.log(this.state.rating, this.state.comment);
+                
             }
         })
         } catch (e) {
             console.log(e);
         }
-        this.setState({isLoading: false});
+        // this.setState({isLoading: false});
         // console.log('Check First Visit')
-        
+        this.setState({isLoading:false});
     }
 
     ratingHandler(val){
@@ -172,7 +177,7 @@ class PlaceScreen extends React.Component {
         console.log(this.state.rating);
         console.log(this.state.comment);
         try{
-            await fetch('http://10.0.2.2:5000/review', {  
+            await fetch('https://toulis-thesis.herokuapp.com/review', {  
                 method: 'POST',
                 headers: {
                     Accept: 'application/json',
@@ -206,7 +211,7 @@ class PlaceScreen extends React.Component {
 
     takePhoto() {
         if (this.state.first_visit) {
-            if(this.props.route.params.proximity){
+            if(this.state.proximity){
                 let options={
                     mediaType: 'photo',
                     includeBase64: true,
@@ -242,8 +247,98 @@ class PlaceScreen extends React.Component {
                 // if (!result.cancelled) {
                 //     this.setState({image: {uri: result.uri, base64: result.base64}})
                 // }
+            } else {
+                alert("Move closer to the site to upload a photo");
+
             }
+        } else {
+            alert("You cannot upload a photo after you have submitted a review");
         }
+    }
+
+
+    requestLocationPermission = async () => {
+        if(Platform.OS === 'android') {
+        var response = await request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
+        
+        if(response === 'granted') {
+            this.locateCurrentPosition();
+            // this.findPlace();
+        }
+        } else {
+
+        }
+    }
+
+    locateCurrentPosition = () => {
+        Geolocation.getCurrentPosition(
+        position => {
+
+            let initialPosition = {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            
+            latitudeDelta: 0.09,
+            longitudeDelta: 0.035,
+            }
+            this.setState({initialPosition});
+            this.setState({latitude: initialPosition.latitude, longitude:initialPosition.longitude});
+            // this.fetchHistory();
+            this.fetchReviews();
+            let place_pos = {latitude: this.props.route.params.place.lat, longitude: this.props.route.params.place.lng};
+            this.haversine_distance(initialPosition, place_pos);
+            
+        },
+        error => {
+            console.log(error);
+            this.locateCoarsePosition();
+        } ,
+        {enableHighAccuracy: true, timeout: 3000, maximumAge: 10000}
+        )      
+    }
+
+    locateCoarsePosition = () => {
+        Geolocation.getCurrentPosition(
+            position => {
+    
+                let initialPosition = {
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude,
+                
+                latitudeDelta: 0.09,
+                longitudeDelta: 0.035,
+                }
+                this.setState({initialPosition});
+                this.setState({latitude: initialPosition.latitude, longitude:initialPosition.longitude});
+                // this.fetchHistory();
+                this.fetchReviews();
+                let place_pos = {latitude: this.props.route.params.place.lat, longitude: this.props.route.params.place.lng};
+                this.haversine_distance(initialPosition, place_pos);
+                
+            },
+            error => alert(error.message),
+            {enableHighAccuracy: false, timeout: 10000, maximumAge: 10000}
+        )      
+    }
+
+    haversine_distance(mk1, mk2) {
+        console.log("User Location: ", mk1.latitude,mk1.longitude);
+        console.log("Place Location: ", mk2.latitude,mk2.longitude);
+        var R = 6371.0710; // Radius of the Earth in km
+        var rlat1 = mk1.latitude * (Math.PI/180); // Convert degrees to radians
+        var rlat2 = mk2.latitude * (Math.PI/180); // Convert degrees to radians
+        var difflat = rlat2-rlat1; // Radian difference (latitudes)
+        var difflon = (mk2.longitude-mk1.longitude) * (Math.PI/180); // Radian difference (longitudes)
+  
+        var d = 2 * R * Math.asin(Math.sqrt(Math.sin(difflat/2)*Math.sin(difflat/2)+Math.cos(rlat1)*Math.cos(rlat2)*Math.sin(difflon/2)*Math.sin(difflon/2)));
+        // return d;
+        console.log("Distance: ", d);
+        // alert(d);
+        if (d<0.15) {
+
+            this.setState({proximity:true});
+        }
+        
     }
 
     topSection() {
@@ -400,8 +495,8 @@ class PlaceScreen extends React.Component {
     bottomSection() {
         if (this.state.first_visit) {
             console.log("This is the user's first visit");
-            console.log(this.props.route.params.proximity);
-            if (this.props.route.params.proximity) {
+            // console.log(this.props.route.params.proximity);
+            if (this.state.proximity) {
                 
                 return(
                     <View style={{flex:1}}>
@@ -475,7 +570,9 @@ class PlaceScreen extends React.Component {
     }
 
     componentDidMount() {
-        this.placeData();
+        // console.log(this.props.route.params.place.lat, this.props.route.params.place.lng);
+        this.requestLocationPermission();
+        // this.placeData();
         
     }
 
@@ -489,6 +586,7 @@ class PlaceScreen extends React.Component {
             return(
               <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
                   <ActivityIndicator size={50} color='#E50D0D'/>
+                  <Text style={{color:'#E50D0D', fontSize:26}}>Loading Location Details...</Text>
               </View>  
             );
         }
@@ -497,7 +595,7 @@ class PlaceScreen extends React.Component {
 
         return(
             <ScrollView style={styles.container}>
-                <Text style={styles.title}>{this.state.place.name}</Text>
+                <Text style={styles.title}>{this.props.route.params.name}</Text>
 
                 {/* <View style={styles.imageContainer}>
                     <Image
