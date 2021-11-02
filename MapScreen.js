@@ -189,32 +189,36 @@ class MapScreen extends React.Component{
             })
             .then((response) => response.json())
             .then((response) => {
-                // console.log(response);
+                console.log(response);
                 const temp = [];
 
                 // Live use place fetching
-                // for (var item in response) {
-                //     temp.push({"id": response[item]["id"], "name": response[item]["name"], 
-                //     "lat": response[item]['lat'], "lng": response[item]['lng'], 
-                //     "icon": response[item]["icon"], "rating":response[item]['rating']});
+                for (var item in response) {
+                    if (this.state.history.includes(response[item][1])){
+                        temp.push({"id": response[item]["id"], "name": response[item]["name"], 
+                        "lat": response[item]['lat'], "lng": response[item]['lng'], 
+                        "icon": response[item]["icon"], "rating":response[item]['rating'], "type":response[item]['type'], "visited": true});
+                    } else {
+                        temp.push({"id": response[item]["id"], "name": response[item]["name"], 
+                        "lat": response[item]['lat'], "lng": response[item]['lng'], 
+                        "icon": response[item]["icon"], "rating":response[item]['rating'], "type":response[item]['type'], "visited": false});
+                    }
                 
-                // }
+                }
 
                 // Patras test place fetching
                 
                 // console.log("History: " + this.state.history);
-                for (var item in response) {
-                    if (this.state.history.includes(response[item][1])){
-                        temp.push({"id": response[item][3], "name": response[item][1], "lat": response[item][0], "lng": response[item][2], "rating": response[item][4], "type": response[item][5], "visited": true, "total_visits": response[item][6]})
-                    } else {
-                        temp.push({"id": response[item][3], "name": response[item][1], "lat": response[item][0], "lng": response[item][2], "rating": response[item][4], "type": response[item][5], "visited": false, "total_visits": response[item][6]})
-                    }
-                }
+                // for (var item in response) {
+                //     if (this.state.history.includes(response[item][1])){
+                //         temp.push({"id": response[item][3], "name": response[item][1], "lat": response[item][0], "lng": response[item][2], "rating": response[item][4], "type": response[item][5], "visited": true, "total_visits": response[item][6]})
+                //     } else {
+                //         temp.push({"id": response[item][3], "name": response[item][1], "lat": response[item][0], "lng": response[item][2], "rating": response[item][4], "type": response[item][5], "visited": false, "total_visits": response[item][6]})
+                //     }
+                // }
                 
                 this.setState({places: temp});
-                for (let i=0; i<this.state.places.length; i++){
-                    console.log(this.state.places[i].name, this.state.places[i].visited);
-                }
+                
                 this.setState({isLoading: false});
                 this.splitWaypoints();
                 // this.sortWaypoints();
@@ -478,7 +482,9 @@ class MapScreen extends React.Component{
 
     createMarker = () => {
         // console.log(this.state.places);
-        
+        // for (let i=0; i<this.state.places.length; i++){
+        //     console.log(this.state.places[i].name, this.state.places[i].lat, this.state.places[i].lng);
+        // }
         return this.state.places.map((place) => 
             {if (place.type===this.state.path) {
                 return (

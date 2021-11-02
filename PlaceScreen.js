@@ -23,7 +23,7 @@ import StarRating from 'react-native-star-rating';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/Ionicons'
 import Animated from 'react-native-reanimated';
-import {launchImageLibrary} from 'react-native-image-picker';
+import {launchImageLibrary, launchCamera} from 'react-native-image-picker';
 
 
 const { width, height } = Dimensions.get("window");
@@ -172,40 +172,46 @@ class PlaceScreen extends React.Component {
 
     async submitReview() {
         const user = await AsyncStorage.getItem('user_name');
-        console.log(this.state.place);
+        // console.log(this.state.place);
         console.log(user);
         console.log(this.state.rating);
         console.log(this.state.comment);
-        try{
-            await fetch('https://toulis-thesis.herokuapp.com/review', {  
-                method: 'POST',
-                headers: {
-                    Accept: 'application/json',
-                    AcceptLanguage: '*',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    // place_id: this.state.place.id,
-                    // place_name: this.state.place.name,
-                    place: this.state.place,
-                    user_name: user,
-                    rating: this.state.rating,
-                    comment: this.state.comment,
-                    photo: this.state.image.base64,
+        if (this.state.comment.length) {
+        
+            try{
+                await fetch('https://toulis-thesis.herokuapp.com/review', {  
+                    method: 'POST',
+                    headers: {
+                        Accept: 'application/json',
+                        AcceptLanguage: '*',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        // place_id: this.state.place.id,
+                        // place_name: this.state.place.name,
+                        place: this.props.route.params.place,
+                        user_name: user,
+                        rating: this.state.rating,
+                        comment: this.state.comment,
+                        photo: this.state.image.base64,
+                    })
                 })
-            })
-            .then((response) => response.json())
-            .then((response) => {
-                if (response['result']=='202'){
-                    this.props.navigation.reset({
-                        index: 0,
-                        routes: [{name: 'MapScreen'}],
-                    });
-                }
-            })
-        }
-        catch (err) {
-            console.log(err);
+                .then((response) => response.json())
+                .then((response) => {
+                    if (response['result']=='202'){
+                        // this.props.navigation.reset({
+                        //     index: 0,
+                        //     routes: [{name: 'MapScreen'}],
+                        // });
+                        this.props.navigation.pop();
+                    }
+                })
+            }
+            catch (err) {
+                console.log(err);
+            }
+        } else {
+            alert("You have not written a comment");
         }
     }
 
@@ -218,10 +224,10 @@ class PlaceScreen extends React.Component {
                     allowsEditing: true,
                     aspect: [4, 3],
                     quality: 1,
-                    maxHeight: 300,
-                    maxWidth: 400,
+                    maxHeight: 900,
+                    maxWidth: 1600,
                 }
-                launchImageLibrary(options, (response) => {
+                launchCamera(options, (response) => {
                     // console.log(response);
                     if (response.didCancel) {
                         alert('User cancelled camera picker');
@@ -345,6 +351,7 @@ class PlaceScreen extends React.Component {
         if (this.state.gallery.length){
             return(
                 <View>
+                    <Text style={styles.title}> {this.props.route.params.place.name} </Text>
                     <Animated.ScrollView
                         horizontal
                         scrollEventThrottle={1}
@@ -393,7 +400,7 @@ class PlaceScreen extends React.Component {
         else {
             return(
                 <View>
-
+                    <Text style={styles.title}> {this.props.route.params.place.name} </Text>
                 
                     <View style={styles.imageContainer}>
                         <Image
@@ -521,7 +528,7 @@ class PlaceScreen extends React.Component {
                             multiline={true}                  
                             placeholderTextColor= '#FF3E00'
                             selectionColor = 'white'                  
-                            maxLength={70}
+                            maxLength={100}
                             autoCapitalize = "none"
                             onChangeText = {(val) => this.commentHandler(val)}
                         />
@@ -670,7 +677,7 @@ const styles = StyleSheet.create({
         // marginTop: 10,
         paddingLeft: 10,
         // justifyContent:'center',
-        flex: 1,
+        // flex: 1,
     },
     text: {
         fontSize:25,

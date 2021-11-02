@@ -77,9 +77,13 @@ export default class App extends React.Component{
                 // if (response['result']=='202'){
                     // setHistory(response['history']);
                 // }
-                // console.log(response);
+                // console.log("RESPONSE: ",response);
                 // setHistory(response);
-                this.setState({history:response});
+                let temp = []
+                for (let i in response) {
+                    temp.push({"name":response[i][5], "date": response[i][6], "rating": response[i][3], "comment":response[i][2], "photo":response[i][7]})
+                }
+                this.setState({history:temp});
                 console.log("History: ", this.state.history);
                 this.setState({isLoading: false})
             })
@@ -94,6 +98,9 @@ export default class App extends React.Component{
         // this.setState({user: this.props.route.params.user});
         // console.log("GS ",this.state.user);
         this.fetchHistory();
+        for (let i=0; i<this.state.history.length; i++) {
+            console.log(this.state.history[i].name);
+        }
     }
 
     

@@ -70,8 +70,9 @@ class UserScreen extends React.Component{
         return (
             <View style={ styles.container }>
                 <Text style={styles.title}>Welcome {this.state.user}</Text>
-                <View style={{backgroundColor: '#2F3454', marginBottom:20, paddingBottom:2, borderRadius:6}}>
-                    <Text style={styles.item}> Available time for the path: </Text>
+                <Text style={{color:'#fff', fontSize:20}}> Available time for the path: </Text>
+                <View style={{backgroundColor: '#2F3454', marginBottom:20, paddingBottom:2, borderRadius:6, height:80}}>
+                    
                     <View style={{justifyContent:'center', alignItems:'center'}}>
                         <Slider 
                             style={{width: '90%', height: 50, }}
@@ -83,21 +84,32 @@ class UserScreen extends React.Component{
                             onValueChange={value => this.setState({time: value})}
                             onSlidingComplete={value => this.storeData()}
                         />
-                        <Text style={{fontSize: 25, color: '#ffffff',paddingBottom:20}}> {this.state.time} hrs</Text>
+                        <Text style={{fontSize: 25, color: '#ffffff',paddingBottom:20, }}> {this.state.time} hrs</Text>
                     </View>
                     
                 </View>
                 <Text style={styles.title2}>History</Text>
                 <FlatList
                     style={styles.list}
-                    data={this.state.history}
+                    data={this.state.history.reverse()}
                     renderItem={({item}) => (
                         <View key={item[0]} style={{paddingBottom:20}}>
-                            <Text style={styles.item}>{item[0]}</Text>
+                            <Text style={styles.item}>
+                                {item.name}
+                                {/* <TouchableOpacity
+                                    onPress={alert("delete")}
+                                > */}
+                                    {/* <Icon 
+                                        name='trash'
+                                        size={30}
+                                        color='#f05454'
+                                    /> */}
+                                {/* </TouchableOpacity> */}
+                            </Text>
                             <Text style={{color: '#ffffff', flex: 1, fontSize: 23, paddingBottom: 5,}}>
-                                Date: {item[1]}
+                                Date: {item.date}
                                 <StarRating 
-                                    rating={parseInt(item[2])} 
+                                    rating={parseInt(item.rating)} 
                                     disabled={true}
                                     fullStarColor={'#FDF900'}
                                     emptyStarColor={'#BCBCBC'}
@@ -105,7 +117,14 @@ class UserScreen extends React.Component{
                                     containerStyle={{paddingLeft:30, paddingRight:30}}
                                 />
                             </Text>
-                            <Text style={styles.innerText}>{item[3]}</Text>
+                            <View style={{height:250, width:420}}>
+                            <Image
+                                source={{uri:`data:image/jpeg;base64,${item.photo}`}}
+                                style={{height:250, width:420}}
+                                    
+                            />
+                            </View>
+                            <Text style={styles.innerText}>{item.comment}</Text>
                             <View
                                 style={{
                                     borderBottomColor: 'white',
