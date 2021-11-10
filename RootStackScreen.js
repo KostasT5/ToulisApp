@@ -1,21 +1,18 @@
-import React, { Component, useState } from 'react'
-import { View, Text, TouchableOpacity, TextInput, StyleSheet, Button } from 'react-native'
+import React from 'react'
+import { Button } from 'react-native'
 import {createStackNavigator} from '@react-navigation/stack'
-
 import SplashScreen from './SplashScreen.js'
 import LoginScreen from './LoginScreen.js'
 import RegisterScreen from './RegisterScreen.js'
 import GeneralScreen from './GeneralScreen.js'
 import PlaceScreen from './PlaceScreen.js'
-// import MapScreen from './MapScreen.js'
 import SettingsScreen from './SettingsScreen.js'
 
 const RootStack = createStackNavigator();
 
 const RootStackScreen = ({navigation}) => {
     return(
-        <RootStack.Navigator headerMode = 'none'>
-            
+        <RootStack.Navigator headerMode = 'none'>       
             <RootStack.Screen name = 'SplashScreen' component = {SplashScreen}/>
             <RootStack.Screen 
                 name = 'LoginScreen' 
@@ -26,8 +23,7 @@ const RootStackScreen = ({navigation}) => {
                             title="Back"
                             onPress={() => navigation.navigate('SplashScreen')}
                         />
-                    )
-                    
+                    )             
                 }}
             />
             <RootStack.Screen 
@@ -39,8 +35,7 @@ const RootStackScreen = ({navigation}) => {
                             title="Back"
                             onPress={() => navigation.navigate('SplashScreen')}
                         />
-                    )
-                    
+                    )               
                 }}
             />
             <RootStack.Screen name = 'GeneralScreen' component = {GeneralScreen}/>
@@ -53,8 +48,7 @@ const RootStackScreen = ({navigation}) => {
                             title="Back"
                             onPress={() => navigation.navigate('GeneralScreen')}
                         />
-                    )
-                    
+                    )                  
                 }}
             />
             <RootStack.Screen name = 'SettingsScreen' component = {SettingsScreen}/>
