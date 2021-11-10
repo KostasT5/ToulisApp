@@ -1,10 +1,7 @@
-import React, { Component, useState } from 'react'
+import React, { useState } from 'react'
 import { View, Text, TouchableOpacity, TextInput, StyleSheet, ActivityIndicator } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
-import {useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-// const navigation = useNavigation();
 
 function LoginScreen({navigation}){
     const[user, setUser] = useState('');
@@ -28,11 +25,7 @@ function LoginScreen({navigation}){
     }
 
     const loginHandler = () => {
-        // console.log('user: ' + user + ' password: ' + psswd);
-    //   BASE = 'http://127.0.0.1:5000/'
-        // console.log('loginHanlder');
-        console.log("Login");
-        fetch('https://toulis-thesis.herokuapp.com/login', {//'http://10.0.2.2:5000/login', {
+        fetch('https://toulis-thesis.herokuapp.com/login', {
             method: 'POST',
             headers: {
                 // Accept: 'application/json',
@@ -57,23 +50,15 @@ function LoginScreen({navigation}){
            } else {
                alert('Wrong Username or Password');
            }
-        })
-            // console.log(response))               
-        .catch((error) => console.log(error));
-        
-
-        
-      
+        })              
+        .catch((error) => console.log(error));     
     }
 
-    
-    // render(){
     return (
         <View style = {styles.container}>
             <TextInput style = {styles.input}
                 underlineColorAndroid = "transparent"
                 placeholder = "User Name"
-                // placeholderTextColor = "#9a73ef"
                 placeholderTextColor= '#FF3E00'
                 textContentType = 'emailAddress'
                 selectionColor = 'white'
@@ -84,7 +69,6 @@ function LoginScreen({navigation}){
             <TextInput style = {styles.input}
                 underlineColorAndroid = "transparent"
                 placeholder = "Password"
-                // placeholderTextColor = "#9a73ef"
                 placeholderTextColor= '#FF3E00'
                 textContentType = 'password'
                 selectionColor = 'white'
@@ -94,7 +78,6 @@ function LoginScreen({navigation}){
             />
 
             <TouchableOpacity
-                // style = {styles.submitButton}
                 onPress = {
                     loginHandler
                 }>
@@ -107,7 +90,6 @@ function LoginScreen({navigation}){
             </TouchableOpacity>
         </View>
     )
-    // }
 }
 
 export default LoginScreen

@@ -1,50 +1,20 @@
-// import * as React from 'react';
-import React, {Component, useState, setState, useEffect} from 'react';
-import { Text, View, TextInput, Button, StyleSheet, Image, Platform, TouchableOpacity, FlatList, ActivityIndicator, ScrollView, Animated, Dimensions } from 'react-native';
+
+import React from 'react';
+import { Text, View, StyleSheet, ActivityIndicator, Dimensions } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { createDrawerNavigator, DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
-// import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
-// import SettingsScreen from './settings.js'
-import LinearGradient from 'react-native-linear-gradient'
-import LoginScreen from './LoginScreen.js'
-import RegisterScreen from './registerpage.js'
-import StartingScreen from './loginorregister.js'
-import StarRating from 'react-native-star-rating';
-import MapScreen from './MapScreen.js';
 import UserScreen from './UserScreen.js';
 import SettingsScreen from './SettingsScreen.js';
-import DrawerContent from './DrawerContent.js';
-import PlaceScreen from './PlaceScreen.js';
 import MapStackScreen from './MapStackScreen.js';
-import { getHeaderTitle } from '@react-navigation/elements';
-
-import { Header } from './Header.js';
-
 import Icon from 'react-native-vector-icons/Ionicons'
-import TestScreen from './TestScreen.js';
-// import { getHeaderTitle } from '@react-navigation/elements';
-
-// import StarRatingBar from 'react-native-star-rating-view/StarRatingBar'
-
-// import User from './UserScreen.js'
-// import apiKey from './google_api_key.txt'
 
 const { width, height } = Dimensions.get("window");
-
-
-  
-
 const Tab = createMaterialBottomTabNavigator();
-
-// const Drawer = createDrawerNavigator();
-
 
 export default class App extends React.Component{
 
     constructor(props) {
         super(props);
-        // this.handlePlace = this.handlePlace.bind(this);
         this.state.user = this.props.route.params.user;
     }
     
@@ -56,7 +26,6 @@ export default class App extends React.Component{
         isLoading: true,
         user:'',
     }
-
 
     async fetchHistory() {
         console.log("Fetching history for:", this.state.user);
@@ -74,11 +43,6 @@ export default class App extends React.Component{
             })
             .then((response) => response.json())
             .then((response) => {
-                // if (response['result']=='202'){
-                    // setHistory(response['history']);
-                // }
-                // console.log("RESPONSE: ",response);
-                // setHistory(response);
                 let temp = []
                 for (let i in response) {
                     temp.push({"name":response[i][5], "date": response[i][6], "rating": response[i][3], "comment":response[i][2], "photo":response[i][7]})
@@ -93,16 +57,9 @@ export default class App extends React.Component{
     }
 
     componentDidMount() {
-        // this.requestLocationPermission();
         this.props.navigation;
-        // this.setState({user: this.props.route.params.user});
-        // console.log("GS ",this.state.user);
-        this.fetchHistory();
-        for (let i=0; i<this.state.history.length; i++) {
-            console.log(this.state.history[i].name);
-        }
+        this.fetchHistory();      
     }
-
     
     render() {
         console.log("USER: ",this.state.user);
@@ -116,68 +73,23 @@ export default class App extends React.Component{
               );
         }
         return (
-
-            // <NavigationContainer 
-            //     independent={true}
-            // >
-            //     <Drawer.Navigator 
-            //         drawerContent={props => <DrawerContent {...props}/>}
-            //         edgeWidth={50}
-            //         defaultStatus='open'
-            //         initialRouteName='User'
-            //         drawerStyle={{
-            //             backgroundColor:'#1C1E31'
-            //         }}
-            //         screenOptions={{
-            //             // headerTitle: () => <Header />,
-            //             headerShown:false,
-            //         }}
-                    
-            //     >
-            //         <Drawer.Screen 
-            //             name="Map" 
-            //             component={MapScreen} 
-            //             options={{
-            //                 title:"Map",
-                            
-            //             }}
-                        
-            //         />
-            //         <Drawer.Screen 
-            //             name="User" 
-            //             component={UserScreen}
-                        
-            //         />
-            //     </Drawer.Navigator>
-            // </NavigationContainer>
             <NavigationContainer independent={true}>
             <Tab.Navigator
                 initialRouteName="User"
                 activeColor="#FFFFFF"
                 inactiveColor="#222831"
-                
-                // inactiveColor = "#FF3E00"
-                // dataParentToChild = {this.state.places}
                 barStyle={{ 
-                    // backgroundColor: '#2D068E',
                     backgroundColor: '#f05454',
-                    // height: 55,
-                    // paddingBottom: 10
                 }}
             >
                 
                 <Tab.Screen 
                     name="Map" 
                     component={MapStackScreen} 
-                    // children={() => <UserScreen available_time = {this.state.time} /> }
                     initialParams = {{user: this.state.user, history: this.state.history}}
                     options={{
                         tabBarLabel: 'Map',
-                        
                         tabBarIcon: ({ color }) => (
-                        // <Image
-                        //     source={require('./img/Tab_icons/placeholder.png')}
-                        //     style={[styles.icon, {tintColor: '#c4c4c4'}]} />
                             <Icon 
                                 name='map'
                                 color={color}
@@ -225,37 +137,6 @@ export default class App extends React.Component{
 
 }
 
-// class HomeScreen extends React.Component{
-//     state = {
-//         latitude: '',
-//         longitude: '',
-//         places: []      
-//     }
-
-
-//     componentDidMount() {
-//         this.props.navigation;
-//     }
-
-//     render(){
-//         return (
-//             <View style={styles.container}>
-              
-//               <Text style={styles.title}>Places near you:</Text>
-//               <FlatList
-//                   style={styles.list}
-//                   data={this.state.places}
-//                   renderItem={({item}) => (
-//                       <View>
-//                           <Text style={styles.item} key={item.id}>{item.name}</Text>     
-//                       </View>
-//                   )}
-//               />
-//             </View>
-//           );
-//     }
-    
-// }
 
 
 

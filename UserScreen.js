@@ -1,13 +1,6 @@
 import * as React from 'react';
-import {useState, setState, useEffect} from 'react';
-import { Text, View, TextInput, Button, StyleSheet, Image, 
-    Platform, TouchableOpacity, FlatList, ActivityIndicator, ScrollView, 
-    Animated, Dimensions, LogBox } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient'
-import { Icon } from 'react-native-vector-icons/Ionicons'
-import { Header } from 'react-native-elements'
-import { useNavigation, DrawerActions, NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack'
+import { Text, View, StyleSheet, Image, 
+    FlatList, Dimensions, LogBox } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import StarRating from 'react-native-star-rating';
 import Slider from '@react-native-community/slider';
@@ -22,8 +15,7 @@ class UserScreen extends React.Component{
     constructor(props) {
         super(props);
         this.state.user = this.props.route.params.user;
-        this.state.history = this.props.route.params.history;
-        
+        this.state.history = this.props.route.params.history;   
     }
 
     state = {
@@ -31,7 +23,6 @@ class UserScreen extends React.Component{
         user: null,
         time: 0.5
     }
-    
     
     async storeData() {
         console.log("Passing time variable to map screen");
@@ -41,16 +32,9 @@ class UserScreen extends React.Component{
             console.log(e);
         }
     }
-
-
     
     componentDidMount() {
-        // this.readData();
-        // this.fetchHistory();
-        // this.setState({user: this.props.route.params.user, history: this.props.route.params.history});
         console.log(this.state.user);
-        
-        // this.fetchHistory();
     }
 
     componentWillUnmount() {
@@ -58,15 +42,6 @@ class UserScreen extends React.Component{
     }
 
     render() {
-        // if (this.state.isLoading){
-        //     return(
-        //       <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
-        //           <ActivityIndicator size={50} color='#E50D0D'/>
-        //           <Text style={{color:'#E50D0D', fontSize:26}}>Fetching your history...</Text>
-        //       </View>  
-        //     );
-        // }
-
         return (
             <View style={ styles.container }>
                 <Text style={styles.title}>Welcome {this.state.user}</Text>
@@ -96,15 +71,6 @@ class UserScreen extends React.Component{
                         <View key={item[0]} style={{paddingBottom:20}}>
                             <Text style={styles.item}>
                                 {item.name}
-                                {/* <TouchableOpacity
-                                    onPress={alert("delete")}
-                                > */}
-                                    {/* <Icon 
-                                        name='trash'
-                                        size={30}
-                                        color='#f05454'
-                                    /> */}
-                                {/* </TouchableOpacity> */}
                             </Text>
                             <Text style={{color: '#ffffff', flex: 1, fontSize: 23, paddingBottom: 5,}}>
                                 Date: {item.date}
@@ -135,9 +101,6 @@ class UserScreen extends React.Component{
                         </View>
                     )}
                 />
-                {/* <View style={{padding:20}}>
-
-                </View> */}
             </View>
         );
     }

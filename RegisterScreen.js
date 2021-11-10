@@ -1,4 +1,4 @@
-import React, { Component, useState, setState } from 'react'
+import React, { useState } from 'react'
 import { View, Text, TouchableOpacity, TextInput, StyleSheet } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -20,19 +20,15 @@ function RegisterScreen({navigation}){
     }
 
     const emailHandler = (val) => {
-        // console.log(val);
         setEmail(val);
-        // console.log(email);
     }
 
     const userHandler = (val) => {
         setUser(val);
-        // console.log(user);
     }
 
     const psswdHandler = (val) => {
         setPsswd(val);
-        // console.log(psswd);
     }
 
     const confirmHandler = (val) => {
@@ -46,7 +42,6 @@ function RegisterScreen({navigation}){
         }
         else {
             if (confirm === psswd && email != '' && user != '' && psswd != '') {
-                // console.log('email: ' + email + ' password: ' + psswd);
                 console.log('Registering user with credentials: ' + email + ' ' + user + ' ' + psswd);
                 fetch('https://toulis-thesis.herokuapp.com/register', {
                     method: 'POST',
@@ -78,7 +73,6 @@ function RegisterScreen({navigation}){
                 .catch((error) => console.log(error));
             
             } else {
-                console.log('DATA: ' + email + ' ' + user + ' ' + psswd);
                 alert('Invalid Data');
             }
 
@@ -91,58 +85,45 @@ function RegisterScreen({navigation}){
             <TextInput style = {styles.input}
                 underlineColorAndroid = "transparent"
                 placeholder = "Email"
-                // value = {email}
-                // placeholderTextColor = "#9a73ef"
                 placeholderTextColor= '#FF3E00'
                 textContentType = 'emailAddress'
                 selectionColor = 'white'
                 autoCapitalize = "none"
-                // onEndEditing = {emailHandler}
                 onChangeText = {emailHandler}
             />
 
             <TextInput style = {styles.input}
                 underlineColorAndroid = "transparent"
                 placeholder = "Username"
-                // value = {user}
-                // placeholderTextColor = "#9a73ef"
                 placeholderTextColor= '#FF3E00'
                 selectionColor = 'white'
                 autoCapitalize = "none"
-                // onEndEditing = {userHandler}
                 onChangeText = {userHandler}
             />
 
             <TextInput style = {styles.input}
                 underlineColorAndroid = "transparent"
                 placeholder = "Password"
-                // value = {psswd}
-                // placeholderTextColor = "#9a73ef"
                 placeholderTextColor= '#FF3E00'
                 textContentType = 'password'
                 selectionColor = 'white'
                 secureTextEntry={true}
                 autoCapitalize = "none"
-                // onEndEditing = {psswdHandler}
                 onChangeText = {psswdHandler}
             />
 
             <TextInput style = {styles.input}
                 underlineColorAndroid = "transparent"
                 placeholder = "Confirm Password"
-                // value = {confirm}
-                // placeholderTextColor = "#9a73ef"
                 placeholderTextColor= '#FF3E00'
                 textContentType = 'password'
                 selectionColor = 'white'
                 secureTextEntry={true}
                 autoCapitalize = "none"
-                // onEndEditing = {confirmHandler}
                 onChangeText = {confirmHandler}
             />
 
             <TouchableOpacity
-                // style = {styles.submitButton}
                 onPress = {
                     registerHandler
                 }>

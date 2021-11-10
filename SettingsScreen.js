@@ -1,9 +1,5 @@
 import * as React from 'react';
-import { Text, View, TextInput, Button, StyleSheet, Image, Platform, TouchableOpacity, ScrollView } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import { Component } from 'react';
-import {useNavigation} from '@react-navigation/native';
-import { StackActions } from '@react-navigation/native';
+import { Text, View, StyleSheet, TouchableOpacity} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import RNRestart from 'react-native-restart';
 
@@ -12,34 +8,15 @@ import Icon from 'react-native-vector-icons/Ionicons'
 
 function SettingsScreen(){
 
-    // const navigation = useNavigation();
-
     const logoutHandler = () => {
-    //     navigation.reset({
-    //         index: 0,
-    //         routes: [{name: 'SplashScreen'}],
-    //     });
-        // navigation.dispatch(
-        //     StackActions.popToTop()
-        // );
-        console.log('restart');
         RNRestart.Restart();
     }
 
-    // logoutHandler = () => {
-    //     this.props.navigation.dispatch(
-    //         StackActions.popToTop()
-    //     );
-    // }
-
-
-    // render() {
     return(
         <View style={styles.container}>
             <View style={{ flex: 0.5, justifyContent: 'center', alignItems: 'center' }}>
                 <Text style={styles.title}>Welcome to Places</Text>
-            </View>
-            
+            </View>            
             <View style={styles.list}>
                 <Text style={styles.title}>About</Text>
                 <Text style={styles.item}>
@@ -51,21 +28,16 @@ function SettingsScreen(){
                 <Text style={styles.item}>
                     Use the Map Screen to view site recommendations and the path that leads you to them.
                 </Text>
-                {/* <Text style={styles.item}>
-                    You can press the View on Map button to zoom in to a place's location and change the type of visible sites. 
-                </Text> */}
                 <Text style={styles.item}>
                     Approach a site to leave a photo and upload a picture!
                 </Text>
             </View>
-
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}> 
                 <TouchableOpacity              
                     onPress = {
                         logoutHandler
                     }
                 >
-
                     <LinearGradient
                         colors={['#f05454','#FF1D1D']}
                         style={styles.buttonStyle}    
@@ -74,25 +46,17 @@ function SettingsScreen(){
                             name='log-out-outline'
                             size={40}
                             color='white'    
-                        />
-                    
+                        />                   
                         <Text 
                             style = {styles.buttonText}
                         >
                             Sign Out
                         </Text>
-                    </LinearGradient>
-                    
+                    </LinearGradient>                   
                 </TouchableOpacity>
             </View>
-        </View>
-        
-    );
-    // }
-
-    
-    
-    
+        </View>  
+    );     
 }
 
 export default SettingsScreen;

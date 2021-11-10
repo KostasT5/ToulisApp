@@ -1,29 +1,13 @@
-import React, {useState, useEffect, Component, setState} from 'react';
-import {
-  View,
-  StyleSheet,
-  Text, 
-  Button,
-  Dimensions,
-  TouchableOpacity,
-  Image,
-  TextInput,
-  FlatList,
-  ScrollView,
-  SafeAreaView,
-//   Animated,
-  ActivityIndicator,
-} from 'react-native';
-
+import React from 'react';
+import {View, StyleSheet, Text, Dimensions, TouchableOpacity, Image, TextInput, ScrollView, ActivityIndicator} from 'react-native';
 import {request, PERMISSIONS} from 'react-native-permissions';
 import Geolocation from '@react-native-community/geolocation';
-import Header from 'react-native-elements'
 import LinearGradient from 'react-native-linear-gradient'
 import StarRating from 'react-native-star-rating';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/Ionicons'
 import Animated from 'react-native-reanimated';
-import {launchImageLibrary, launchCamera} from 'react-native-image-picker';
+import {launchCamera} from 'react-native-image-picker';
 
 
 const { width, height } = Dimensions.get("window");
@@ -48,31 +32,6 @@ class PlaceScreen extends React.Component {
         gallery: [],
         proximity: false,
     }
-    
-    // async placeData() {
-    //     try {
-    //         const temp1 = await AsyncStorage.getItem('place_id');
-    //         const temp2 = await AsyncStorage.getItem('place_name');
-    //         const temp3 = await AsyncStorage.getItem('place_lat');
-    //         const temp4 = await AsyncStorage.getItem('place_lng');
-    //         const temp5 = await AsyncStorage.getItem('place_rating');
-    //         if (temp1 !== null) {
-    //             this.setState({place: {
-    //                 id: temp1,
-    //                 name: temp2,
-    //                 lat: temp3,
-    //                 lng: temp4,
-    //                 rating: temp5,
-    //             }});
-    //             this.fetchReviews();
-    //             // this.checkFirstVisit();
-    //         } else {
-    //             console.log('Place details were not saved');
-    //         }
-    //     } catch (e) {
-    //         console.log('Failed to fetch the data from storage');
-    //     }
-    // }
 
     async fetchReviews() {
         const place_id = this.props.route.params.place.id;
@@ -86,24 +45,13 @@ class PlaceScreen extends React.Component {
             body: JSON.stringify({
                 place_id: place_id,
             })
-        })
-        // .then((response) => {
-        //     if (response.status==400){
-        //         console.log('No registered reviews');
-        //     }
-        // })          
+        })    
         .then((response) => 
-            // console.log("Status: ", response.status);
-            // if (response.status == 400){
-            //     console.log("No reviews rageistered for this place");
-            // }
             response.json()
-            // console.log(response);
         )
  
         .then((response) => {
             if (response.length){
-                // console.log(response);
                 const temp = [];
                 const pics = [];
                 for (var item in response) {
@@ -115,12 +63,10 @@ class PlaceScreen extends React.Component {
                 }
                 this.setState({user_reviews: temp});
                 this.setState({gallery: pics});
-                // console.log(this.state.user_reviews);
             }
             this.checkFirstVisit();
             
-        })
-            // console.log(response))               
+        })             
         .catch((error) => console.log(error));
     }
 
@@ -148,16 +94,12 @@ class PlaceScreen extends React.Component {
                 console.log("USer has already visited this place");
                 console.log(response);
                 this.setState({first_visit: false});
-                this.setState({rating: response[0][3], comment: response[0][2]});
-                // console.log(this.state.rating, this.state.comment);
-                
+                this.setState({rating: response[0][3], comment: response[0][2]}); 
             }
         })
         } catch (e) {
             console.log(e);
         }
-        // this.setState({isLoading: false});
-        // console.log('Check First Visit')
         this.setState({isLoading:false});
     }
 
@@ -172,12 +114,7 @@ class PlaceScreen extends React.Component {
 
     async submitReview() {
         const user = await AsyncStorage.getItem('user_name');
-        // console.log(this.state.place);
-        console.log(user);
-        console.log(this.state.rating);
-        console.log(this.state.comment);
-        if (this.state.comment.length) {
-        
+        if (this.state.comment.length) {    
             try{
                 await fetch('https://toulis-thesis.herokuapp.com/review', {  
                     method: 'POST',
@@ -187,8 +124,6 @@ class PlaceScreen extends React.Component {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        // place_id: this.state.place.id,
-                        // place_name: this.state.place.name,
                         place: this.props.route.params.place,
                         user_name: user,
                         rating: this.state.rating,
@@ -199,10 +134,6 @@ class PlaceScreen extends React.Component {
                 .then((response) => response.json())
                 .then((response) => {
                     if (response['result']=='202'){
-                        // this.props.navigation.reset({
-                        //     index: 0,
-                        //     routes: [{name: 'MapScreen'}],
-                        // });
                         this.props.navigation.pop();
                     }
                 })
@@ -228,7 +159,6 @@ class PlaceScreen extends React.Component {
                     maxWidth: 1600,
                 }
                 launchCamera(options, (response) => {
-                    // console.log(response);
                     if (response.didCancel) {
                         alert('User cancelled camera picker');
                         return;
@@ -248,11 +178,6 @@ class PlaceScreen extends React.Component {
                     this.setState({gallery: temp2.push(temp)});
                     console.log(this.state.image.uri);
                 });
-
-                
-                // if (!result.cancelled) {
-                //     this.setState({image: {uri: result.uri, base64: result.base64}})
-                // }
             } else {
                 alert("Move closer to the site to upload a photo");
 
@@ -262,14 +187,12 @@ class PlaceScreen extends React.Component {
         }
     }
 
-
     requestLocationPermission = async () => {
         if(Platform.OS === 'android') {
         var response = await request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
         
         if(response === 'granted') {
             this.locateCurrentPosition();
-            // this.findPlace();
         }
         } else {
 
@@ -279,21 +202,17 @@ class PlaceScreen extends React.Component {
     locateCurrentPosition = () => {
         Geolocation.getCurrentPosition(
         position => {
-
             let initialPosition = {
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-            
-            latitudeDelta: 0.09,
-            longitudeDelta: 0.035,
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude,              
+                latitudeDelta: 0.09,
+                longitudeDelta: 0.035,
             }
             this.setState({initialPosition});
             this.setState({latitude: initialPosition.latitude, longitude:initialPosition.longitude});
-            // this.fetchHistory();
             this.fetchReviews();
             let place_pos = {latitude: this.props.route.params.place.lat, longitude: this.props.route.params.place.lng};
-            this.haversine_distance(initialPosition, place_pos);
-            
+            this.haversine_distance(initialPosition, place_pos);        
         },
         error => {
             console.log(error);
@@ -305,22 +224,18 @@ class PlaceScreen extends React.Component {
 
     locateCoarsePosition = () => {
         Geolocation.getCurrentPosition(
-            position => {
-    
+            position => {    
                 let initialPosition = {
-                latitude: position.coords.latitude,
-                longitude: position.coords.longitude,
-                
-                latitudeDelta: 0.09,
-                longitudeDelta: 0.035,
+                    latitude: position.coords.latitude,
+                    longitude: position.coords.longitude,             
+                    latitudeDelta: 0.09,
+                    longitudeDelta: 0.035,
                 }
                 this.setState({initialPosition});
                 this.setState({latitude: initialPosition.latitude, longitude:initialPosition.longitude});
-                // this.fetchHistory();
                 this.fetchReviews();
                 let place_pos = {latitude: this.props.route.params.place.lat, longitude: this.props.route.params.place.lng};
-                this.haversine_distance(initialPosition, place_pos);
-                
+                this.haversine_distance(initialPosition, place_pos);           
             },
             error => alert(error.message),
             {enableHighAccuracy: false, timeout: 10000, maximumAge: 10000}
@@ -335,16 +250,10 @@ class PlaceScreen extends React.Component {
         var rlat2 = mk2.latitude * (Math.PI/180); // Convert degrees to radians
         var difflat = rlat2-rlat1; // Radian difference (latitudes)
         var difflon = (mk2.longitude-mk1.longitude) * (Math.PI/180); // Radian difference (longitudes)
-  
         var d = 2 * R * Math.asin(Math.sqrt(Math.sin(difflat/2)*Math.sin(difflat/2)+Math.cos(rlat1)*Math.cos(rlat2)*Math.sin(difflon/2)*Math.sin(difflon/2)));
-        // return d;
-        console.log("Distance: ", d);
-        // alert(d);
         if (d<0.15) {
-
             this.setState({proximity:true});
-        }
-        
+        }   
     }
 
     topSection() {
@@ -358,25 +267,15 @@ class PlaceScreen extends React.Component {
                         showsHorizontalScrollIndicator={false}
                         style={{}}
                     >
-                        
-                            {/* <View style={styles.imageContainer}>
-                                <Image
-                                    source={require('./img/placeholder.jpg')}
-                                    style={styles.image}
-                                    
+                    {this.state.gallery.map((gallery, index) => (
+                        <View style={styles.imageContainer} key={index}>
+                            <Image
+                                source={{uri:`data:image/jpeg;base64,${gallery}`}}
+                                style={styles.image}
+                                
                             />
-                        
-
-                            </View> */}
-                        {this.state.gallery.map((gallery, index) => (
-                            <View style={styles.imageContainer} key={index}>
-                                <Image
-                                    source={{uri:`data:image/jpeg;base64,${gallery}`}}
-                                    style={styles.image}
-                                    
-                                />
-                            </View>
-                        ))}
+                        </View>
+                    ))}
                     </Animated.ScrollView>
                     <View style={{paddingBottom:10, justifyContent: 'center', alignItems: 'center'}}>
                         <TouchableOpacity onPress={() => {this.takePhoto()}}>
@@ -392,12 +291,9 @@ class PlaceScreen extends React.Component {
                             </View>
                         </TouchableOpacity>
                     </View>
-                </View>
-                
+                </View>    
             )
-        }
-
-        else {
+        } else {
             return(
                 <View>
                     <Text style={styles.title}> {this.props.route.params.place.name} </Text>
@@ -405,11 +301,8 @@ class PlaceScreen extends React.Component {
                     <View style={styles.imageContainer}>
                         <Image
                             source={require('./img/placeholder.jpg')}
-                            style={styles.image}
-                            
+                            style={styles.image}   
                         />
-                        
-        
                     </View>
                     <View style={{paddingBottom:10, justifyContent: 'center', alignItems: 'center'}}>
                         <TouchableOpacity onPress={() => {this.takePhoto()}}>
@@ -425,13 +318,6 @@ class PlaceScreen extends React.Component {
                             </View>
                         </TouchableOpacity>
                     </View>
-                    {/* <View
-                        style={{
-                            borderBottomColor: 'white',
-                            borderBottomWidth: 1,
-                            paddingTop: 3,
-                        }}
-                    /> */}
                 </View>
             )
         }
@@ -454,7 +340,6 @@ class PlaceScreen extends React.Component {
                                 <View style={styles.textContent}>
                                     <Text>
                                         <Text style={styles.cardTitle} numberOfLines={1}>{user_reviews.user}</Text>
-                                        {/* <Text style={styles.cardDescription}>Rating: {place.rating}</Text> */}
                                         <StarRating 
                                             rating={user_reviews.rating} 
                                             disabled={true}
@@ -463,14 +348,11 @@ class PlaceScreen extends React.Component {
                                             starSize={15}
                                             containerStyle={{paddingLeft:20}}
                                         />
-                                    </Text>
-                                    
-                                    <Text style={styles.textContent}>{user_reviews.comment}</Text>
-                                    
+                                    </Text> 
+                                    <Text style={styles.textContent}>{user_reviews.comment}</Text>  
                                 </View>
                             </View>
                         ))}
-
                     </Animated.ScrollView>
                     <View
                         style={{
@@ -481,8 +363,7 @@ class PlaceScreen extends React.Component {
                     />
                 </View>
             )
-        } else {
-            
+        } else {           
             return(
                 <View style={{flex:0.5, }}>
                     <Text style={{color:'#fff', fontSize:23, paddingLeft: 10, paddingBottom: 30}}>No reviews have been submitted for this place</Text>
@@ -493,18 +374,14 @@ class PlaceScreen extends React.Component {
                             paddingTop: 3,
                         }}
                     />
-                </View>
-                
+                </View>        
             )
         }
     }
 
     bottomSection() {
         if (this.state.first_visit) {
-            console.log("This is the user's first visit");
-            // console.log(this.props.route.params.proximity);
-            if (this.state.proximity) {
-                
+            if (this.state.proximity) {      
                 return(
                     <View style={{flex:1}}>
                         <View>
@@ -521,8 +398,6 @@ class PlaceScreen extends React.Component {
                             </View>
                             
                         </View>
-
-                    
                         <TextInput 
                             style={styles.input}
                             multiline={true}                  
@@ -577,16 +452,8 @@ class PlaceScreen extends React.Component {
     }
 
     componentDidMount() {
-        // console.log(this.props.route.params.place.lat, this.props.route.params.place.lng);
-        this.requestLocationPermission();
-        // this.placeData();
-        
+        this.requestLocationPermission();   
     }
-
-    // constructor(props) {
-    //     super(props);
-    //     const sheetRef = React.useRef(null);
-    // }
 
     render() {
         if (this.state.isLoading){
@@ -598,40 +465,20 @@ class PlaceScreen extends React.Component {
             );
         }
 
-        
-
         return(
             <ScrollView style={styles.container}>
                 <Text style={styles.title}>{this.props.route.params.name}</Text>
-
-                {/* <View style={styles.imageContainer}>
-                    <Image
-                        source={require('./img/placeholder.jpg')}
-                        style={styles.image}
-                        
-                    />
-                </View> */}
-
                 <View style={{flex:1}}>
-                    {this.topSection()}
-                    
-                    
+                    {this.topSection()}                
                 </View>
-
                 <View style={{flex:1}}>
                     {this.midSection()}
                 </View>
-                
                 <View style={{flex:1}}>
                     {this.bottomSection()}
-                </View>
-                
+                </View> 
             </ScrollView>
-
-        );
-        
-        
-        
+        );   
     }
 }
 
