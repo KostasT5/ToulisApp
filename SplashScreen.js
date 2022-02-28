@@ -1,35 +1,26 @@
-// Example of Splash, Login and Sign Up in React Native
-// https://aboutreact.com/react-native-login-and-signup/
 
-// Import React and Component
-import React, {useState, useEffect, Component} from 'react';
+import React from 'react';
 import {
   View,
   StyleSheet,
   Text, 
-  Button,
   Dimensions,
   TouchableOpacity,
-  Image,
 } from 'react-native';
 
 import LinearGradient from 'react-native-linear-gradient'
 import * as Animatable from 'react-native-animatable'
-// import LoginScreen from './LoginScreen.js'
 
 const SplashScreen = ({navigation}) => {
     return (
         <View style={styles.container}>
             <View style={styles.header}>
-                {/* <Text style={styles.logo}>Logo</Text>
-                 */}
                 <Animatable.Image
                     animation='bounceIn'
                     duraton={2000}
                     source={require('./img/logo1.png')}
                     style={styles.logo}
-                />
-                
+                />             
             </View>
             <Animatable.View 
                 style={styles.footer}
@@ -39,7 +30,6 @@ const SplashScreen = ({navigation}) => {
                 <Text style={styles.title}>Login or Create an Account</Text>
                 <View style={styles.buttonContainer}>
                     <TouchableOpacity
-                        // style={styles.buttonStyle}
                         activeOpacity={0.5}
                         onPress={() => {navigation.navigate('LoginScreen')}}> 
                         <LinearGradient
@@ -47,11 +37,9 @@ const SplashScreen = ({navigation}) => {
                             style={styles.buttonStyle}    
                         >
                             <Text style={styles.buttonText}>Log In</Text>
-                        </LinearGradient>
-                        
+                        </LinearGradient>                       
                     </TouchableOpacity>
                     <TouchableOpacity
-                        // style={styles.buttonStyle}
                         activeOpacity={0.5}
                         onPress={() => {navigation.navigate('RegisterScreen')}}>
                         <LinearGradient
@@ -61,10 +49,8 @@ const SplashScreen = ({navigation}) => {
                             <Text style={styles.buttonText}>Register</Text>
                         </LinearGradient>
                     </TouchableOpacity>
-                </View>
-                
-            </Animatable.View>
-            
+                </View>               
+            </Animatable.View>           
         </View>
     );
 };
@@ -78,13 +64,15 @@ const styles = StyleSheet.create({
         flex: 1,
         // alignItems: 'center',
         // justifyContent: 'center',
-        backgroundColor: '#dddddd'
+        // backgroundColor: '#dddddd'
+        
+        backgroundColor: '#F8F8FF'
     },
     header: {
         flex: 2,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#dddddd'
+        backgroundColor: '#F8F8FF'
     },
     logo: {
         width: 0.35*height,
@@ -102,7 +90,7 @@ const styles = StyleSheet.create({
         // flexDirection: 'row',
         // alignItems: 'flex-start',
         // justifyContent: 'space-between',
-        backgroundColor: '#222831',
+        backgroundColor: '#1C1E31',
         borderTopLeftRadius: 40,
         borderTopRightRadius: 40,
         paddingVertical: 50,
@@ -114,7 +102,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        backgroundColor: '#222831',
+        backgroundColor: '#1C1E31',
         marginTop: 40,
         marginLeft: -20,
         marginRight: -20,

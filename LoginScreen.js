@@ -1,57 +1,74 @@
-import React, { Component, useState } from 'react'
-import { View, Text, TouchableOpacity, TextInput, StyleSheet } from 'react-native'
+import React, { useState } from 'react'
+import { View, Text, TouchableOpacity, TextInput, StyleSheet, ActivityIndicator } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function LoginScreen({navigation}){
-    const[email, setEmail] = useState('');
+    const[user, setUser] = useState('');
     const[psswd, setPsswd] = useState('');
-    // const[confirm, setConfirm] = useState('');
-    const emailHandler = (val) => {
-        setEmail(val);
+    
+    const userHandler = (val) => {
+        setUser(val);
     }
 
     const psswdHandler = (val) => {
         setPsswd(val);
     }
 
-    // const confirmHandler = (val) => {
-    //     if (val === psswd) {
-    //         // console.log(psswd);
-    //         setConfirm(true);
-    //         console.log(confirm);
-    //         return true;
-    //     } else {
-    //         // console.log('val');
-    //         // alert('Passwords need to match');
-    //         return false;
-    //     }
-    // }
-
-    const loginHandler = () => {
-      console.log('email: ' + email + ' password: ' + psswd);
-      navigation.navigate('GeneralScreen');
+    const storeData = async () => {
+        try {
+            console.log(user);
+            await AsyncStorage.setItem('user_name', user);
+        } catch (e) {
+            console.log(e);
+        }
     }
 
-    
-    // render(){
+    const loginHandler = () => {
+        fetch('https://toulis-thesis.herokuapp.com/login', {
+            method: 'POST',
+            headers: {
+                // Accept: 'application/json',
+                // AcceptLanguage: '*',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                user_name: user,
+                password: psswd
+            })
+        })          
+        .then((response) => 
+            response.json())
+        .then((response) => {
+           if (response['result']==202){
+                storeData();
+                console.log(AsyncStorage.getItem('user_name'));
+                navigation.reset({
+                    index: 0,
+                    routes: [{name: 'GeneralScreen', params: {user: user}}],
+                });
+           } else {
+               alert('Wrong Username or Password');
+           }
+        })              
+        .catch((error) => console.log(error));     
+    }
+
     return (
         <View style = {styles.container}>
             <TextInput style = {styles.input}
                 underlineColorAndroid = "transparent"
-                placeholder = "Email"
-                // placeholderTextColor = "#9a73ef"
+                placeholder = "User Name"
                 placeholderTextColor= '#FF3E00'
                 textContentType = 'emailAddress'
                 selectionColor = 'white'
                 autoCapitalize = "none"
-                onChangeText = {emailHandler}
+                onChangeText = {userHandler}
             />
 
             <TextInput style = {styles.input}
                 underlineColorAndroid = "transparent"
                 placeholder = "Password"
-                // placeholderTextColor = "#9a73ef"
                 placeholderTextColor= '#FF3E00'
                 textContentType = 'password'
                 selectionColor = 'white'
@@ -61,7 +78,6 @@ function LoginScreen({navigation}){
             />
 
             <TouchableOpacity
-                // style = {styles.submitButton}
                 onPress = {
                     loginHandler
                 }>
@@ -74,14 +90,13 @@ function LoginScreen({navigation}){
             </TouchableOpacity>
         </View>
     )
-    // }
 }
 
 export default LoginScreen
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: '#222831',
+        backgroundColor: '#1C1E31',
         flex: 1,
         // paddingTop: 23,
         alignContent: 'center',
@@ -111,14 +126,12 @@ const styles = StyleSheet.create({
         color: '#ffffff',
     },
     buttonStyle: {
-      // flex: 1,
-      // flexDirection: 'column',
-      // backgroundColor: '#f05454',
+      
       borderWidth: 1,
-      // color: '#9dbeb7',
+      
       borderColor: '#FF3E00',
       height: 60,
-      // width: 140,
+      
       alignItems: 'center',
       justifyContent: 'center',
       borderRadius: 15,

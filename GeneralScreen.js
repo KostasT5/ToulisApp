@@ -1,557 +1,142 @@
-import * as React from 'react';
-import {useState, setState} from 'react';
-import { Text, View, TextInput, Button, StyleSheet, Image, Platform, TouchableOpacity, FlatList } from 'react-native';
+
+import React from 'react';
+import { Text, View, StyleSheet, ActivityIndicator, Dimensions } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-// import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
-import MapView, {PROVIDER_GOOGLE, Marker, Callout} from 'react-native-maps';
-import Geolocation from '@react-native-community/geolocation';
-import {request, PERMISSIONS} from 'react-native-permissions';
-// import SettingsScreen from './settings.js'
-import LinearGradient from 'react-native-linear-gradient'
-import LoginScreen from './LoginScreen.js'
-import RegisterScreen from './registerpage.js'
-import StartingScreen from './loginorregister.js'
-// import User from './UserScreen.js'
-// import apiKey from './google_api_key.txt'
+import UserScreen from './UserScreen.js';
+import SettingsScreen from './SettingsScreen.js';
+import MapStackScreen from './MapStackScreen.js';
+import Icon from 'react-native-vector-icons/Ionicons'
 
-class HomeScreen extends React.Component{
-    
-    // constructor(props) {
-    //     super(props);
-    //     this.state = {
-    //         places: this.props.dataParentToChild
-    //     }
-    //     // this.state = {
-    //     //     places: this.props.dataParentToChild
-    //     // }
-    //     // console.log(places);
-    // } 
-
-    state = {
-        latitude: '',
-        longitude: '',
-        places: []      
-    }
-    requestLocationPermission = async () => {
-        if(Platform.OS === 'android') {
-        var response = await request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
-        
-        if(response === 'granted') {
-            this.locateCurrentPosition();
-        }
-        } else {
-        }
-    }
-    locateCurrentPosition = () => {
-        Geolocation.getCurrentPosition(
-        position => {
-       
-            let initialPosition = {
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-            
-            latitudeDelta: 0.09,
-            longitudeDelta: 0.035,
-            }
-          
-            this.setState({initialPosition});
-            this.setState({latitude: initialPosition.latitude, longitude:initialPosition.longitude});
-       
-            this.findPlace();
-            
-            
-        },
-        error => Alert.alert(error.message),
-        {enableHighAccuracy: true, timeout: 10000, maximumAge: 1000}
-        )
-        
-       
-    }
-    async findPlace() {
-        const apiKey = 'AIzaSyBSpTY-M9Ztfu7vKq8pqsusrGoe_FuUG4s'
-        console.log(this.state.latitude);
-        console.log(this.state.longitude);
-        const apiURL = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${this.state.latitude}, ${this.state.longitude}&radius=3000&type=tourist_attraction&key=${apiKey}`
-        try{
-            const result = await fetch(apiURL);
-            const json = await result.json();
-            var json_res = json['results'];
-            const temp = [];
-            for (var item in json_res) {
-                temp.push({"id": json_res[item]["place_id"], "name": json_res[item]["name"], "lat": json_res[item]['geometry'].location['lat'], 
-                    "lng": json_res[item]['geometry'].location['lng'], "icon": json_res[item]["icon"]});
-                try {
-                    temp.push({"photo_id": json_res[item]["photos"][0].photo_reference});
-                } catch (err) {
-                    temp.push({"photo_id": "unavailable"}); //'"https://media.fdmckosovo.org/2020/07/placeholder.png"'});
-                }
-            }
-            this.setState({places: temp});
-            this.getPhoto();
-        } catch (err) {
-            console.error(err);
-        }
-        // for (var i in this.state.places) {
-        //     console.log(this.state.places[i].photo_id);
-        // }
-       
-        
-    }
-    getPhoto() {
-        const apiKey = 'AIzaSyBSpTY-M9Ztfu7vKq8pqsusrGoe_FuUG4s'
-        console.log('getphoto');
-        for (var i in this.state.places) {
-            var apiURL = `https://maps.googleapis.com/maps/api/place/photo?key=${apiKey}&photoreference=${this.state.places[i].photo_id}&maxheight=200&maxwidth=200`
-            try{
-                console.log(this.state.places[i].name);
-                // var xhr = new XMLHttpRequest();
-                // xhr.open('GET', apiURL, true);
-                // xhr.onload = () => {
-                //     // this.setState({imageUrl: xhr.responseURL});
-                //     console.log(this.state.places[i].name);
-                //     console.log(xhr.responseURL);
-                // };
-                // xhr.send(null);
-            
-            } catch (err) {
-                console.log(err);
-            }
-        }
-    }
-
-    componentDidMount() {
-        this.requestLocationPermission();
-        // this.findPlace();
-        this.props.navigation;
-        // console.log(this.props.places);
-    }
-
-    render(){
-        console.log(this.state.places);
-        return (
-            <View style={styles.container}>
-              
-              <Text style={styles.title}>Places near you:</Text>
-              <FlatList
-                  style={styles.list}
-                  data={this.state.places}
-                //   keyExtractor={(item,index) => item.id}
-                //   key={item.id}
-                  renderItem={({item}) => (
-                      <View>
-                          <Text style={styles.item} key={item.id}>{item.name}</Text>
-                          {/* <Text style={styles.item}>{item.photo}</Text> */}
-      
-                      </View>
-                  )}
-              />
-            </View>
-          );
-    }
-    
-}
-  
-function UserScreen({navigation}) {
-    const [history,setHistory] = useState([
-        {name: 'Place 1', key: '1', comment:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'},
-        {name: 'Place 2', key: '2', comment:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'},
-        {name: 'Place 3', key: '3', comment:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'},
-        {name: 'Place 4', key: '4', comment:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'},
-        {name: 'Place 5', key: '5', comment:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'},
-        {name: 'Place 6', key: '6', comment:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'},
-        {name: 'Place 7', key: '7', comment:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'},
-        {name: 'Place 8', key: '8', comment:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'},  
-        {name: 'Place 9', key: '9', comment:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'},
-        {name: 'Place 10', key: '10', comment:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'},
-        {name: 'Place 11', key: '11', comment:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'},
-        {name: 'Place 12', key: '12', comment:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'},
-        {name: 'Place 13', key: '13', comment:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'},
-        {name: 'Place 14', key: '14', comment:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'},
-        {name: 'Place 15', key: '15', comment:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'},
-        {name: 'Place 16', key: '16', comment:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'}, 
-    ]);
-    const logoutHandler = () => {
-        navigation.navigate('SplashScreen');
-    }
-    return (
-        <View style={ styles.container }>
-            <TouchableOpacity
-                // style = {styles.submitButton}
-                onPress = {
-                    logoutHandler
-                }>
-                    <LinearGradient
-                        colors={['#f05454','#FF1D1D']}
-                        style={styles.buttonStyle}    
-                    >
-                    <Text style={styles.buttonText}>Logout</Text>
-                </LinearGradient>
-            </TouchableOpacity>
-            <Text style={styles.title}>History</Text>
-            <FlatList
-                style={styles.list}
-                data={history}
-                renderItem={({item}) => (
-                    <View>
-                        <Text style={styles.item}>{item.name}</Text>
-                        <Text style={styles.innerText}>{item.comment}</Text>
-                    </View>
-                )}
-            />
-        </View>
-    );
-}
-
-
-
-class MapScreen extends React.Component{
-    constructor(props) {
-        super(props);
-        this.handlePlace = this.handlePlace.bind(this);
-    }
-    
-
-    state = {
-        // coordinates: [
-        // {name: 'Patras', latitude: 38.246550, longitude: 21.734669},
-        // ],
-        // position: [
-        //     {
-        latitude: '',
-        longitude: '',
-        places: []
-        //     }
-            
-        // ]
-        
-    }
-
-    requestLocationPermission = async () => {
-        if(Platform.OS === 'android') {
-        var response = await request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
-        
-        if(response === 'granted') {
-            this.locateCurrentPosition();
-        }
-        } else {
-
-        }
-    }
-
-
-    locateCurrentPosition = () => {
-        Geolocation.getCurrentPosition(
-        position => {
-            // console.log(JSON.stringify(position));
-
-            let initialPosition = {
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-            
-            latitudeDelta: 0.09,
-            longitudeDelta: 0.035,
-            }
-            // console.log(initialPosition.latitude,initialPosition.longitude);
-            this.setState({initialPosition});
-            this.setState({latitude: initialPosition.latitude, longitude:initialPosition.longitude});
-            // console.log(this.state.latitude);
-            this.findPlace();
-            // console.log(this.state.latitude);
-            // console.log(this.state.longitude);
-            // this.state.latitude = initialPosition.latitude;
-            // this.state.longitude = initialPosition.longitude;
-            
-        },
-        error => Alert.alert(error.message),
-        {enableHighAccuracy: true, timeout: 10000, maximumAge: 1000}
-        )
-        // console.log(this.state.latitude);
-        // console.log(this.state.longitude);
-       
-    }
-
-    async findPlace() {
-        const apiKey = 'AIzaSyBSpTY-M9Ztfu7vKq8pqsusrGoe_FuUG4s'
-        console.log(this.state.latitude);
-        console.log(this.state.longitude);
-        const apiURL = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${this.state.latitude}, ${this.state.longitude}&radius=3000&type=tourist_attraction&key=${apiKey}`
-        try{
-            const result = await fetch(apiURL);
-            const json = await result.json();
-            var json_res = json['results'];
-            // console.log(json['results']['geometry'].location);
-            // this.state.places = json['results'];
-            // this.setState({places: [json['results']['place_id'], json['results']['name'], json['results']['geometry']]});
-            // console.log(this.state.places);  
-
-            const temp = [];
-            for (var item in json_res) {
-                temp.push({"id": json_res[item]["place_id"], "name": json_res[item]["name"], "lat": json_res[item]['geometry'].location['lat'], "lng": json_res[item]['geometry'].location['lng'], "icon": json_res[item]["icon"]});
-                // console.log(this.state.places[item]["geometry"].location);
-                // this.setState({places: [json['results']['place_id'], json['results']['name'], json['results']['geometry']]});
-            }
-            // console.log(places_id);
-            this.setState({places: temp});
-            // console.log(this.state.places);
-            // console.log(this.state.places[0][2].lat);
-        } catch (err) {
-            console.error(err);
-        }
-      
-        
-    }
-
-    componentDidMount() {
-        this.requestLocationPermission();
-        // this.findPlace();
-        this.props.navigation;
-    }
-
-    handlePlace = ({navigation}) => {
-        // console.log("PlaceScreen");
-        this.props.navigation.navigate('PlaceScreen');
-    } 
-
-    createMarker = () => {
-        console.log(this.state.places);
-        return this.state.places.map((place) => 
-            <Marker
-                key={place.id}
-                coordinate={{latitude: place.lat, longitude: place.lng}}
-                title={place.name}
-                // icon={place.icon}
-            />
-            
-        )
-    }
-
-    render() {
-
-        
-
-        return (
-        
-            <MapView 
-                showsUserLocation={true}
-                provider={PROVIDER_GOOGLE}
-                ref={map => this._map = map}
-                style={styles.map}
-                initialRegion={this.state.initialPosition}>
-                <Marker
-                    coordinate={{latitude: 38.246550, longitude: 21.734669}}
-                    // coordinate={this.state.initialPosition.latitude, this.state.initialPosition.longitude}
-                    title={'Position'}
-                    onPress = {this.handlePlace}
-                />
-                {this.createMarker()}
-                
-                {/* {this.state.places.map(places => (
-                    <MapView.Marker 
-                    coordinate={{places["geometry"].location["lat"], }}
-                    title={marker.title}
-                    />
-                ))} */}
-
-
-                {/* <Callout>
-                    <Image 
-                    source={require('./img/Map_Icons/chat.png')} 
-                    style={styles.map_image}
-                    />
-                    <Text>You are here</Text>
-                </Callout> */}
-                    {/* <Image 
-                    source={require('./img/Map_Icons/chat.png')} 
-                    style={styles.map_image}
-                    /> */}
-
-                {/* </Marker> */}
-            </MapView>
-        
-
-        );
-    }
-
-}
-
-// const Tab = createBottomTabNavigator();
+const { width, height } = Dimensions.get("window");
 const Tab = createMaterialBottomTabNavigator();
-
-
 
 export default class App extends React.Component{
 
     constructor(props) {
         super(props);
-        // this.handlePlace = this.handlePlace.bind(this);
+        this.state.user = this.props.route.params.user;
     }
     
     state = {
-        
         latitude: '',
         longitude: '',
-        places: []
-        
+        places: [],
+        history: [],
+        isLoading: true,
+        user:'',
     }
 
-    requestLocationPermission = async () => {
-        if(Platform.OS === 'android') {
-        var response = await request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
-        
-        if(response === 'granted') {
-            this.locateCurrentPosition();
-        }
-        } else {
-
-        }
-    }
-
-
-    locateCurrentPosition = () => {
-        Geolocation.getCurrentPosition(
-        position => {
-            // console.log(JSON.stringify(position));
-
-            let initialPosition = {
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-            
-            latitudeDelta: 0.09,
-            longitudeDelta: 0.035,
-            }
-            // console.log(initialPosition.latitude,initialPosition.longitude);
-            this.setState({initialPosition});
-            this.setState({latitude: initialPosition.latitude, longitude:initialPosition.longitude});
-            // console.log(this.state.latitude);
-            this.findPlace();
-            // console.log(this.state.latitude);
-            // console.log(this.state.longitude);
-            // this.state.latitude = initialPosition.latitude;
-            // this.state.longitude = initialPosition.longitude;
-            
-        },
-        error => Alert.alert(error.message),
-        {enableHighAccuracy: true, timeout: 10000, maximumAge: 1000}
-        )
-        // console.log(this.state.latitude);
-        // console.log(this.state.longitude);
-       
-    }
-
-    async findPlace() {
-        const apiKey = 'AIzaSyBSpTY-M9Ztfu7vKq8pqsusrGoe_FuUG4s'
-        // console.log(this.state.latitude);
-        // console.log(this.state.longitude);
-        const apiURL = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${this.state.latitude}, ${this.state.longitude}&radius=3000&type=tourist_attraction&key=${apiKey}`
+    async fetchHistory() {
+        console.log("Fetching history for:", this.state.user);
         try{
-            const result = await fetch(apiURL);
-            const json = await result.json();
-            var json_res = json['results'];
-            // console.log(json['results']['geometry'].location);
-            // this.state.places = json['results'];
-            // this.setState({places: [json['results']['place_id'], json['results']['name'], json['results']['geometry']]});
-            // console.log(this.state.places);  
-
-            const temp = [];
-            for (var item in json_res) {
-                temp.push({"id": json_res[item]["place_id"], "name": json_res[item]["name"], "lat": json_res[item]['geometry'].location['lat'], "lng": json_res[item]['geometry'].location['lng'], "icon": json_res[item]["icon"]});
-                // console.log(this.state.places[item]["geometry"].location);
-                // this.setState({places: [json['results']['place_id'], json['results']['name'], json['results']['geometry']]});
-            }
-            // console.log(places_id);
-            this.setState({places: temp});
-            // console.log(this.state.places);
-            // console.log(this.state.places[0][2].lat);
-        } catch (err) {
-            console.error(err);
+            await fetch('https://toulis-thesis.herokuapp.com/history', {  
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    AcceptLanguage: '*',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({    
+                    user_name: this.state.user,                
+                })
+            })
+            .then((response) => response.json())
+            .then((response) => {
+                let temp = []
+                for (let i in response) {
+                    temp.push({"name":response[i][5], "date": response[i][6], "rating": response[i][3], "comment":response[i][2], "photo":response[i][7]})
+                }
+                this.setState({history:temp});
+                console.log("History: ", this.state.history);
+                this.setState({isLoading: false})
+            })
+        } catch (e) {
+            console.log(e)
         }
-        // console.log(this.state.places);
-      
-        
     }
 
     componentDidMount() {
-        this.requestLocationPermission();
-        // this.findPlace();
         this.props.navigation;
-        
+        this.fetchHistory();      
     }
+    
     render() {
-        // console.log(this.state.places);
+        console.log("USER: ",this.state.user);
+        console.log("HISTORY: ",this.state.history);
+        if (this.state.isLoading) {
+            return(
+                <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
+                    <ActivityIndicator size={50} color='#E50D0D'/>
+                    <Text style={{color:'#E50D0D', fontSize:26}}>Fetching your history...</Text>
+                </View>  
+              );
+        }
         return (
-            // <NavigationContainer independent={true}>
+            <NavigationContainer independent={true}>
             <Tab.Navigator
-                initialRouteName="Home"
+                initialRouteName="User"
                 activeColor="#FFFFFF"
                 inactiveColor="#222831"
-                // inactiveColor = "#FF3E00"
-                // dataParentToChild = {this.state.places}
                 barStyle={{ 
-                    // backgroundColor: '#2D068E',
                     backgroundColor: '#f05454',
-                    // height: 55,
-                    // paddingBottom: 10
                 }}
             >
-                <Tab.Screen 
-                    name="Home" 
-                    // children={() => <HomeScreen 
-                    //     places={this.state.places}
-                    //     options={{
-                    //         tabBarLabel: 'Home',
-            
-                    //         tabBarIcon: ({ tintColor }) => (
-                    //         <Image
-                    //             source={require('./img/Tab_icons/home.png')}
-                    //             style={[styles.icon, {tintColor: '#c4c4c4'}]} />
-                    //         )
-                    //     }} 
-                    // />}
-                    component={HomeScreen}
-                    // dataParentToChild = {this.state.places}
-                    
-                    options={{
-                        tabBarLabel: 'Home',
-        
-                        tabBarIcon: ({ tintColor }) => (
-                        <Image
-                            source={require('./img/Tab_icons/home.png')}
-                            style={[styles.icon, {tintColor: '#c4c4c4'}]} />
-                        )
-                    }} 
-                />
+                
                 <Tab.Screen 
                     name="Map" 
-                    component={MapScreen} 
+                    component={MapStackScreen} 
+                    initialParams = {{user: this.state.user, history: this.state.history}}
                     options={{
                         tabBarLabel: 'Map',
-                        tabBarIcon: ({ tintColor }) => (
-                        <Image
-                            source={require('./img/Tab_icons/placeholder.png')}
-                            style={[styles.icon, {tintColor: '#c4c4c4'}]} />
+                        tabBarIcon: ({ color }) => (
+                            <Icon 
+                                name='map'
+                                color={color}
+                                size={25}
+                            />
                         )
                     }} 
                 />
                 <Tab.Screen 
                     name="User" 
                     component={UserScreen} 
+                    initialParams = {{user: this.state.user, history: this.state.history}}
                     options={{
                         tabBarLabel: 'User',
-                        tabBarIcon: ({tintColor }) => (
-                        <Image
-                            source={require('./img/Tab_icons/user.png')}
-                            style={[styles.icon, {tintColor: '#c4c4c4'}]} />
+                        tabBarIcon: ({color }) => (
+                            <Icon 
+                                name='person'
+                                color={color}
+                                size={25}
+                            />
+                        )
+                    }} 
+                />
+                <Tab.Screen 
+                    name="Settings"  
+                    component={SettingsScreen}
+                 
+                    options={{
+                        tabBarLabel: 'Settings',
+        
+                        tabBarIcon: ({ color }) => (
+                            <Icon 
+                                name='md-settings-sharp'
+                                color={color}
+                                size={25}
+                            />
                         )
                     }} 
                 />
             </Tab.Navigator>
-            // </NavigationContainer>
+            </NavigationContainer>
         );
 
     }
 
 }
+
 
 
 
@@ -575,7 +160,7 @@ const styles = StyleSheet.create({
     input: {
         margin: 15,
         height: 40,
-        borderColor: '#7a42f4',
+        borderColor: '#2F3454',
         borderWidth: 1
         },
     submitButton: {
@@ -603,7 +188,7 @@ const styles = StyleSheet.create({
 
     },
     container: {
-        backgroundColor: '#222831',
+        backgroundColor: '#1C1E31',
         flex: 1,
         paddingTop: 23
     },
@@ -611,6 +196,97 @@ const styles = StyleSheet.create({
         color: '#ffffff',
         flex: 1
     },
+    bubble: {
+        flexDirection: 'column',
+        alignSelf: 'flex-start',
+        backgroundColor: '#fff',
+        borderRadius: 6,
+        borderColor: '#ccc',
+        borderWidth: 0.5,
+        padding: 15,
+        width: 150,
+    },
+    name: {
+        fontSize: 16,
+        marginBottom: 5,
+    },
+    arrowBorder: {
+        backgroundColor: 'transparent',
+        borderColor: 'transparent',
+        borderTopColor: '#007a87',
+        borderWidth: 16,
+        alignSelf: 'center',
+        marginTop: -0.5,
+    },
+    arrow: {
+        backgroundColor: 'transparent',
+        borderColor: 'transparent',
+        borderTopColor: '#fff',
+        borderWidth: 16,
+        alignSelf: 'center',
+        marginTop: -32,
+    },
+    chipsScrollView: {
+        position:'absolute',
+        paddingHorizontal: 10,
+    },
+    chipsItem: {
+        flexDirection: 'row',
+        backgroundColor:'#fff',
+        borderRadius:20,
+        padding:0,
+        paddingHorizontal:20,
+        marginHorizontal:10,
+        height:35,
+        shadowColor:'#ccc',
+        shadowOffset:{width:0, height:3},
+        shadowOpacity: 0.5,
+        shadowRadius:5,
+        elevation:10,
+    },
+    scrollView: {
+        position: "absolute",
+        bottom: 0,
+        left: 0,
+        right: 0,
+        paddingVertical: 10,
+    },
+    card: {
+        // padding: 10,
+        elevation: 2,
+        backgroundColor: "#2F3454",
+        borderTopLeftRadius: 5,
+        borderTopRightRadius: 5,
+        marginHorizontal: 10,
+        shadowColor: "#000",
+        shadowRadius: 5,
+        shadowOpacity: 0.3,
+        shadowOffset: { x: 2, y: -2 },
+        height: 220,
+        width: width*0.8,
+        overflow: "hidden",
+    },
+    cardImage: {
+        flex: 3,
+        width: "100%",
+        height: "100%",
+        alignSelf: "center",
+    },
+    textContent: {
+        flex: 2,
+        padding: 10,
+    },
+    cardTitle: {
+        fontSize: 17,
+        // marginTop: 5,
+        fontWeight: "bold",
+        color: 'white',
+    },
+    cardDescription: {
+        fontSize: 24,
+        color: "#f05454",
+    },
+
     title: {
         fontSize: 35,
         color: '#ffffff',
@@ -630,7 +306,7 @@ const styles = StyleSheet.create({
     },
     list: {
         flex: 1,
-        backgroundColor: '#30475e',
+        backgroundColor: '#2F3454',
         padding: 15,
         // paddingBottom: 40,
         borderTopRightRadius: 15,

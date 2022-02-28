@@ -1,14 +1,30 @@
-import React, { Component, useState } from 'react'
+import React, { useState } from 'react'
 import { View, Text, TouchableOpacity, TextInput, StyleSheet } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
+function RegisterScreen({navigation}){
 
-function RegisterScreen(){
     const[email, setEmail] = useState('');
+    const[user, setUser] = useState('');
     const[psswd, setPsswd] = useState('');
     const[confirm, setConfirm] = useState('');
+
+    const storeData = async () => {
+        try {
+            console.log(user);
+            await AsyncStorage.setItem('user_name', user);
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
     const emailHandler = (val) => {
         setEmail(val);
+    }
+
+    const userHandler = (val) => {
+        setUser(val);
     }
 
     const psswdHandler = (val) => {
@@ -16,36 +32,59 @@ function RegisterScreen(){
     }
 
     const confirmHandler = (val) => {
-        if (val === psswd) {
-            // console.log(psswd);
-            setConfirm(true);
-            console.log(confirm);
-            return true;
-        } else {
-            // console.log('val');
-            // alert('Passwords need to match');
-            return false;
-        }
+        setConfirm(val);
     }
 
     const registerHandler = () => {
-        if (confirm) {
-            console.log('email: ' + email + ' password: ' + psswd);
-        } else {
-            alert('Passwords need to match');
+        console.log(email,user,psswd);
+        if (psswd.length < 6) {
+            alert('Password length must be at least 6 characters');
         }
-        
-        // setEmail(val)
-    }
+        else {
+            if (confirm === psswd && email != '' && user != '' && psswd != '') {
+                console.log('Registering user with credentials: ' + email + ' ' + user + ' ' + psswd);
+                fetch('https://toulis-thesis.herokuapp.com/register', {
+                    method: 'POST',
+                    headers: {
+                        // Accept: 'application/json',
+                        // AcceptLanguage: '*',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        user_name: user,
+                        password: psswd
+                    })
+                })          
+                .then((response) => 
+                    response.json())
+                .then((response) => {
+                    storeData();
+                    console.log(AsyncStorage.getItem('user_name'));
+                    if (response['result']==201){
+                        navigation.reset({
+                            index: 0,
+                            routes: [{name: 'GeneralScreen', params: {user: user}}],
+                        });
+                    } else {
+                        alert(response['message']);
+                    }
+                })   
+                .catch((error) => console.log(error));
+            
+            } else {
+                alert('Invalid Data');
+            }
 
-    
-    // render(){
+        }
+    }
+        
+
     return (
         <View style = {styles.container}>
             <TextInput style = {styles.input}
                 underlineColorAndroid = "transparent"
                 placeholder = "Email"
-                // placeholderTextColor = "#9a73ef"
                 placeholderTextColor= '#FF3E00'
                 textContentType = 'emailAddress'
                 selectionColor = 'white'
@@ -56,17 +95,15 @@ function RegisterScreen(){
             <TextInput style = {styles.input}
                 underlineColorAndroid = "transparent"
                 placeholder = "Username"
-                // placeholderTextColor = "#9a73ef"
                 placeholderTextColor= '#FF3E00'
                 selectionColor = 'white'
                 autoCapitalize = "none"
-                onChangeText = {psswdHandler}
+                onChangeText = {userHandler}
             />
 
             <TextInput style = {styles.input}
                 underlineColorAndroid = "transparent"
                 placeholder = "Password"
-                // placeholderTextColor = "#9a73ef"
                 placeholderTextColor= '#FF3E00'
                 textContentType = 'password'
                 selectionColor = 'white'
@@ -78,17 +115,15 @@ function RegisterScreen(){
             <TextInput style = {styles.input}
                 underlineColorAndroid = "transparent"
                 placeholder = "Confirm Password"
-                // placeholderTextColor = "#9a73ef"
                 placeholderTextColor= '#FF3E00'
                 textContentType = 'password'
                 selectionColor = 'white'
                 secureTextEntry={true}
                 autoCapitalize = "none"
-                onEndEditing = {confirmHandler}
+                onChangeText = {confirmHandler}
             />
 
             <TouchableOpacity
-                // style = {styles.submitButton}
                 onPress = {
                     registerHandler
                 }>
@@ -101,14 +136,16 @@ function RegisterScreen(){
             </TouchableOpacity>
         </View>
     )
-    // }
+  
 }
+
+
 
 export default RegisterScreen
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: '#222831',
+        backgroundColor: '#1C1E31',
         flex: 1,
         // paddingTop: -10,
         alignContent: 'center',
