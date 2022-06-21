@@ -13,6 +13,6 @@ Setup:
 
 Navigate to the project directory and run <npm install>. This should install the dependencies of the project. If this command doesn't complete successfully, you will need to delete the package-lock.json file from the project's root directory and try again.
 
-The app is focused on an android version, so it can run on an Android device or a simulated device through Android Studio. Following the instructions in the link provided under the React Native CLI Quickstart tab, you can complete the setup and launch the app in a virtual android device: https://reactnative.dev/docs/environment-setup. 
+The app is focused on an android version, so it can run on an Android device or a simulated device through Android Studio. Following the instructions in the link provided under the React Native CLI Quickstart tab, you can complete the setup and launch the app: https://reactnative.dev/docs/environment-setup. 
 
 
