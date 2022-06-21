@@ -59,3 +59,17 @@ buck-out/
 /ios/Pods/
 *.docx
 
+# Legacy Code
+DrawerContent.js
+general.js
+Header.js
+Loader.js
+loginorregister.js
+loginpage.js
+MapScreen2.js
+PlaceScreen2.js
+PlaceScreen3.js
+registerpage.js
+settings.js
+startingpage.js
+TestScreen.js
