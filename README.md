@@ -3,7 +3,8 @@ This repository contains the app developed during my diploma thesis in the depar
 
 PlacesApp makes use of Maps API to display the map of the user's general area, Places API to fetch details on locations in either one of the four categories mentioned and Directions API to generate and suggest a route between them. The outgoing and ingoing data is filtered through a cloud server running on Heroku. The user can check photos and reviews of a location uploaded by previous visitors. In addition, they can submit their own photo and review once they are in close proximity with such a location.
 
-![image](https://user-images.githubusercontent.com/58190713/174788066-83732ea3-d530-4602-a350-c020bbb9c79c.png)
+![image](https://user-images.githubusercontent.com/58190713/174788066-83732ea3-d530-4602-a350-c020bbb9c79c.png) ![image](https://user-images.githubusercontent.com/58190713/174788276-59479212-e44b-442e-9774-8a0d85efd2c4.png)
+
 
 
 
